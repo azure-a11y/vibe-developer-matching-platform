@@ -1,0 +1,1 @@
+.gallery-track{grid-template-columns:none;grid-template-rows:108px;grid-auto-columns:calc((100% - 36px)/5)}@media(max-width:800px){.gallery-track{grid-template-columns:none;grid-template-rows:82px;grid-auto-columns:calc((100% - 36px)/5)}}

@@ -1,0 +1,2 @@
+.mosaic-copy h3{font-size:clamp(27px,2.5vw,39px)!important;line-height:1.35!important}
+@media(max-width:600px){.mosaic-copy h3{font-size:clamp(25px,6vw,34px)!important}}
