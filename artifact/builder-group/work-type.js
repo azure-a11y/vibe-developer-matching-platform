@@ -1,11 +1,13 @@
 const workSectionLabel = document.querySelector('.mosaic-title footer span');
 workSectionLabel.textContent = '01 SELECTED WORK';
-const workTitle = document.querySelector('.mosaic-title h3');
-const workTitleText = '일하는 방식과 검증된\n맞춤 개발자 매칭';
+const mosaicTitle = document.querySelector('.mosaic-title');
+const mosaicSmall = mosaicTitle.querySelector('small');
+mosaicTitle.querySelector('h3').remove();
+mosaicSmall.textContent = 'BUILDER SPOTLIGHT';
 const mosaicCopy = document.createElement('div');
 mosaicCopy.className = 'mosaic-copy';
-mosaicCopy.append(document.querySelector('.mosaic-title small'), workTitle);
-document.querySelector('.mosaic-title').prepend(mosaicCopy);
+mosaicCopy.append(mosaicSmall);
+mosaicTitle.prepend(mosaicCopy);
 
 const rightBuilderNames = ['조유리','최성훈','한도균','홍영준'];
 document.querySelectorAll('.project-grid .project').forEach((project, index) => {
@@ -29,26 +31,46 @@ builderPair.className = 'builder-pair';
 builderPair.innerHTML = featuredBuilders.map((builder) => `<article class="project project-left-builder" data-project="${builder.title}" data-builder="${builder.name}" data-date="${builder.date}" data-field="${builder.field}" data-summary="${builder.summary}"><div class="profile ${builder.photo}"></div><div><small><b>${builder.name}</b> 빌더 · ${builder.date}</small><h3>${builder.title}</h3></div><p>${builder.summary}</p><div class="stats"><b>${builder.cohort}기<small>기수</small></b><b>${builder.years}<small>EXPERIENCE</small></b><i class="cover ${builder.cover}"></i></div><footer><span>${builder.field}</span><em>VIEW ↗</em></footer></article>`).join('');
 document.querySelector('.mosaic-title footer').before(builderPair);
 
-function typeWorkTitle() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    workTitle.innerHTML = workTitleText.replace('\n', '<br>');
-    return;
-  }
-  workTitle.classList.add('is-typing');
-  workTitle.textContent = '';
-  let index = 0;
-  const typeNext = () => {
-    if (index >= workTitleText.length) return;
-    const character = workTitleText[index++];
-    workTitle.append(character === '\n' ? document.createElement('br') : document.createTextNode(character));
-    window.setTimeout(typeNext, character === '\n' ? 240 : 108);
-  };
-  typeNext();
+// Yellow panel rotates through every builder shown in the grid (left highlights + right grid),
+// reusing each card's own data-* attributes so the spotlight never drifts out of sync with the cards.
+const spotlight = document.createElement('div');
+spotlight.className = 'mosaic-spotlight';
+mosaicCopy.append(spotlight);
+
+const spotlightCovers = [
+  {label: 'B2B Dashboard', pos: '0% 0%'},
+  {label: 'Brand Site', pos: '100% 0%'},
+  {label: 'Landing Page', pos: '0% 100%'},
+  {label: 'Admin System', pos: '100% 100%'},
+];
+
+function renderSpotlight(builder) {
+  spotlight.innerHTML = `<p class="spotlight-name"><b>${builder.name}</b> 빌더</p><p class="spotlight-summary">${builder.summary}</p><button class="spotlight-more" type="button">더 알아보기 ↗</button><div class="spotlight-portfolio">${spotlightCovers.map((c) => `<i style="background-position:${c.pos}" aria-label="${builder.title} · ${c.label}"></i>`).join('')}</div>`;
+  spotlight.querySelector('.spotlight-more').addEventListener('click', () => builder.card.click());
 }
 
-new IntersectionObserver((entries, observer) => {
-  if (entries[0].isIntersecting) {
-    typeWorkTitle();
-    observer.unobserve(entries[0].target);
-  }
-}, {threshold:.4}).observe(workTitle);
+function collectBuilders() {
+  const cards = [...document.querySelectorAll('.builder-pair .project-left-builder'), ...document.querySelectorAll('.project-grid .project')];
+  return cards.map((card) => ({name: card.dataset.builder, title: card.dataset.project, summary: card.dataset.summary, card}));
+}
+
+const spotlightBuilders = collectBuilders();
+let spotlightIndex = 0;
+if (spotlightBuilders[0]) renderSpotlight(spotlightBuilders[0]);
+
+if (spotlightBuilders.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const advanceSpotlight = () => {
+    spotlight.classList.add('is-swapping');
+    window.setTimeout(() => {
+      spotlightIndex = (spotlightIndex + 1) % spotlightBuilders.length;
+      renderSpotlight(spotlightBuilders[spotlightIndex]);
+      spotlight.classList.remove('is-swapping');
+    }, 400);
+  };
+  new IntersectionObserver((entries, observer) => {
+    if (entries[0].isIntersecting) {
+      window.setInterval(advanceSpotlight, 4200);
+      observer.unobserve(entries[0].target);
+    }
+  }, {threshold: .4}).observe(mosaicTitle);
+}
