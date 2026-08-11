@@ -30,7 +30,6 @@ const aesopYoutubeQueries = [
 // video-view address used by the EDU section (rather than a search-results page).
 const kimAesopChannelId = 'UCjf8cxzqPlayWaJpmtvNC-A';
 const kimAesopUploadsId = 'UUjf8cxzqPlayWaJpmtvNC-A';
-const aesopYoutubeUrl = () => `https://www.youtube.com/playlist?list=${kimAesopUploadsId}`;
 
 const videoFrame = document.querySelector('#video-frame');
 videoFrame.allow = 'autoplay; encrypted-media; picture-in-picture';
@@ -55,16 +54,24 @@ pdfContainer.append(downloadButton);
 const youtubeTransition = document.createElement('div');
 youtubeTransition.className = 'edu-youtube-transition';
 youtubeTransition.setAttribute('aria-live', 'polite');
-youtubeTransition.innerHTML = '<div><span class="edu-youtube-mark">▶</span><p>\uC720\uD29C\uBE0C\uB85C \uC5F0\uACB0\uB429\uB2C8\uB2E4.</p><b><i>\uD558\uB098</i><i>\uB458</i><i>\uC14B</i></b></div>';
+youtubeTransition.innerHTML = '<div><span class="edu-youtube-mark">▶</span><p>\uC720\uD29C\uBE0C\uB85C \uC5F0\uACB0\uB429\uB2C8\uB2E4.</p><b><i>1</i><i>2</i><i>3</i></b></div>';
 document.body.append(youtubeTransition);
 
 function openYoutubeWithTransition(url) {
   const externalWindow = window.open('about:blank', '_blank');
-  youtubeTransition.classList.add('is-visible');
+  if (externalWindow) {
+    externalWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title>YouTube로 이동 중</title><style>html,body{margin:0;height:100%;background:#111;display:grid;place-items:center;font-family:Arial,"Noto Sans KR",sans-serif;color:#fff}.mark{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:#ffe233;color:#111;font-size:24px}p{margin:0 0 14px;font-size:16px;font-weight:700}.dots{display:flex;justify-content:center;gap:11px;margin:0;padding:0}.dots i{display:grid;place-items:center;width:26px;height:26px;border:1px solid rgba(255,255,255,.42);border-radius:50%;font:700 11px monospace;font-style:normal;animation:load 1.05s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}@keyframes load{0%,100%{background:transparent;color:#fff;transform:scale(1)}45%{background:#ffe233;color:#111;transform:scale(1.18)}}</style></head><body><div style="text-align:center"><span class="mark">▶</span><p>유튜브로 연결됩니다.</p><b class="dots"><i>1</i><i>2</i><i>3</i></b></div></body></html>');
+    externalWindow.document.close();
+  } else {
+    youtubeTransition.classList.add('is-visible');
+  }
   window.setTimeout(() => {
-    if (externalWindow) externalWindow.location.href = url;
-    else window.location.href = url;
-    youtubeTransition.classList.remove('is-visible');
+    if (externalWindow) {
+      externalWindow.location.href = url;
+    } else {
+      window.location.href = url;
+      youtubeTransition.classList.remove('is-visible');
+    }
   }, 1250);
 }
 
@@ -76,7 +83,7 @@ function selectEduCourse(index, openYoutube) {
   pdfHeading.textContent = course.pdfTitle;
   pdfCopy.textContent = course.pdf;
   pdfNumber.textContent = String(index + 1).padStart(2, '0');
-  const sampleUrl = aesopYoutubeUrl(index);
+  const sampleUrl = `https://www.youtube.com/watch?v=${course.videoId}`;
   videoLink.href = sampleUrl;
   videoLink.textContent = 'YouTube에서 영상 열기 ↗';
   document.querySelectorAll('.course-list button').forEach((button, buttonIndex) => {

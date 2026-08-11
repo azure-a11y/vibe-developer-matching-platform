@@ -1,1 +1,11 @@
 .hero-art::before{display:none}.hero-art small,.hero-art strong{position:relative;z-index:1}.hero-art>span{position:absolute;z-index:1;right:8%;bottom:8%}.hero h1{font:400 clamp(58px,4.5vw,108px)/.98 "Noto Serif KR",serif;line-height:1.5}.hero .english,.hero .intro{font-size:16px;line-height:1.8;color:#111}.hero .english{margin-bottom:8px}
+.hero-art{transition:transform .9s cubic-bezier(.16,.84,.24,1),box-shadow .9s cubic-bezier(.16,.84,.24,1)}
+.hero-art.is-revealed{transform:rotate(0deg)!important;box-shadow:0 0 0 #ffe233}
+.hero-unfold{position:absolute;top:0;bottom:0;right:100%;width:0;overflow:hidden;background:#111;z-index:5;display:flex;align-items:center;transition:width .9s cubic-bezier(.16,.84,.24,1)}
+.hero-art.is-revealed .hero-unfold{width:min(56vw,640px)}
+.hero-unfold-copy{flex:none;width:min(56vw,640px);padding:0 9%}
+.hero-unfold h2{margin:0 0 18px;font:400 clamp(34px,3vw,54px)/1.32 "Noto Serif KR",serif;letter-spacing:-.06em;color:#fff}
+.hero-unfold .unfold-english{margin:0 0 8px;font:500 11px "DM Mono",monospace;letter-spacing:.16em;color:#ffe233}
+.hero-unfold .unfold-intro{margin:0;font-size:15px;line-height:1.8;color:#ccc}
+@media(max-width:1000px){.hero-unfold{display:none}.hero-art.is-revealed{transform:rotate(1.5deg)!important;box-shadow:15px 12px 0 #ffe233}}
+@media(prefers-reduced-motion:reduce){.hero-unfold{display:none}.hero-art{transition:none}}
