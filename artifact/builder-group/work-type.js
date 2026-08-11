@@ -45,7 +45,7 @@ const spotlightCovers = [
 ];
 
 function renderSpotlight(builder) {
-  spotlight.innerHTML = `<p class="spotlight-name"><b>${builder.name}</b> 빌더</p><p class="spotlight-summary">${builder.summary}</p><button class="spotlight-more" type="button">더 알아보기 ↗</button><div class="spotlight-portfolio">${spotlightCovers.map((c) => `<i style="background-position:${c.pos}" aria-label="${builder.title} · ${c.label}"></i>`).join('')}</div>`;
+  spotlight.innerHTML = `<div class="spotlight-top"><div class="spotlight-copy"><p class="spotlight-name"><b>${builder.name}</b> 빌더</p><p class="spotlight-summary">${builder.summary}</p></div><button class="spotlight-more" type="button">더 알아보기 ↗</button></div><div class="spotlight-portfolio">${spotlightCovers.map((c) => `<i style="background-position:${c.pos}" aria-label="${builder.title} · ${c.label}"></i>`).join('')}</div>`;
   spotlight.querySelector('.spotlight-more').addEventListener('click', () => builder.card.click());
 }
 
