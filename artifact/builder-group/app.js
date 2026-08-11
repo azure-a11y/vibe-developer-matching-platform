@@ -1,11 +1,11 @@
 const dialog = document.querySelector('#project-modal');
-document.querySelectorAll('.project').forEach((project) => {
-  project.addEventListener('click', () => {
-    document.querySelector('#modal-meta').textContent = `${project.dataset.builder} 빌더 · ${project.dataset.date} · ${project.dataset.field}`;
-    document.querySelector('#modal-title').textContent = project.dataset.project;
-    document.querySelector('#modal-copy').textContent = project.dataset.summary;
-    dialog.showModal();
-  });
+document.addEventListener('click', (event) => {
+  const project = event.target.closest('.project');
+  if (!project) return;
+  document.querySelector('#modal-meta').textContent = `${project.dataset.builder} 빌더 · ${project.dataset.date} · ${project.dataset.field}`;
+  document.querySelector('#modal-title').textContent = project.dataset.project;
+  document.querySelector('#modal-copy').textContent = project.dataset.summary;
+  dialog.showModal();
 });
 document.querySelector('.close').addEventListener('click', () => dialog.close());
 dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
