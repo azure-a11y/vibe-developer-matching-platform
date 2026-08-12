@@ -58,6 +58,23 @@ const spotlightBuilders = collectBuilders();
 let spotlightIndex = 0;
 if (spotlightBuilders[0]) renderSpotlight(spotlightBuilders[0]);
 
+// Pin the yellow spotlight panel to exactly one right-grid row's height, measured live,
+// since the two rows no longer force a fixed aspect-ratio and can drift with content.
+let spotlightResizeTimer;
+function syncSpotlightHeight() {
+  const referenceCard = document.querySelector('.project-grid .project');
+  if (!referenceCard) return;
+  mosaicCopy.style.height = `${referenceCard.getBoundingClientRect().height}px`;
+}
+syncSpotlightHeight();
+window.addEventListener('load', syncSpotlightHeight);
+window.setTimeout(syncSpotlightHeight, 500);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncSpotlightHeight);
+window.addEventListener('resize', () => {
+  window.clearTimeout(spotlightResizeTimer);
+  spotlightResizeTimer = window.setTimeout(syncSpotlightHeight, 150);
+});
+
 if (spotlightBuilders.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const advanceSpotlight = () => {
     spotlight.classList.add('is-swapping');
