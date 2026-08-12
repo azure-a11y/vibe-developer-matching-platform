@@ -58,13 +58,18 @@ const spotlightBuilders = collectBuilders();
 let spotlightIndex = 0;
 if (spotlightBuilders[0]) renderSpotlight(spotlightBuilders[0]);
 
-// Pin the yellow spotlight panel to exactly one right-grid row's height, measured live,
-// since the two rows no longer force a fixed aspect-ratio and can drift with content.
+// Pin the yellow spotlight panel AND the two left builder cards to exactly one
+// right-grid row's height, measured live, since the rows no longer force a fixed
+// aspect-ratio and can drift apart from each other with content.
 let spotlightResizeTimer;
 function syncSpotlightHeight() {
   const referenceCard = document.querySelector('.project-grid .project');
   if (!referenceCard) return;
-  mosaicCopy.style.height = `${referenceCard.getBoundingClientRect().height}px`;
+  const targetHeight = `${referenceCard.getBoundingClientRect().height}px`;
+  mosaicCopy.style.height = targetHeight;
+  document.querySelectorAll('.builder-pair .project-left-builder').forEach((card) => {
+    card.style.height = targetHeight;
+  });
 }
 syncSpotlightHeight();
 window.addEventListener('load', syncSpotlightHeight);
