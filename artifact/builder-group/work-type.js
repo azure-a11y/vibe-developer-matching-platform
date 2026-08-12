@@ -67,6 +67,7 @@ function syncSpotlightHeight() {
   if (!referenceCard) return;
   const targetHeight = `${referenceCard.getBoundingClientRect().height}px`;
   mosaicCopy.style.height = targetHeight;
+  builderPair.style.height = targetHeight;
   document.querySelectorAll('.builder-pair .project-left-builder').forEach((card) => {
     card.style.height = targetHeight;
   });
