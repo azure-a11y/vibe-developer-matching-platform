@@ -12,7 +12,7 @@ mosaicTitle.prepend(mosaicCopy);
 // Simple builder search sitting in the panel's top-right, unused space next to the label.
 const spotlightSearch = document.createElement('form');
 spotlightSearch.className = 'spotlight-search';
-spotlightSearch.innerHTML = `<input type="search" name="q" placeholder="빌더 검색" aria-label="빌더 이름으로 검색" /><button type="submit" aria-label="검색">↗</button>`;
+spotlightSearch.innerHTML = `<input type="search" name="q" placeholder="빌더 검색" aria-label="빌더 이름으로 검색" /><button type="submit" aria-label="검색"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="6" /><line x1="13.2" y1="13.2" x2="18" y2="18" /></svg></button>`;
 mosaicCopy.append(spotlightSearch);
 
 const rightBuilderNames = ['조유리','최성훈','한도균','홍영준'];
