@@ -1,4 +1,12 @@
 .work-mosaic{gap:30px}
+.mosaic-copy{position:relative}
+.spotlight-search{position:absolute;top:40px;right:40px;display:flex;align-items:center;gap:6px}
+.spotlight-search input{width:120px;border:0;border-bottom:1px solid rgba(17,17,17,.4);background:none;padding:0 0 4px;font:12px "DM Mono",monospace;color:#111}
+.spotlight-search input::placeholder{color:rgba(17,17,17,.5)}
+.spotlight-search input:focus{outline:none;border-bottom-color:#111}
+.spotlight-search button{flex:none;border:0;background:none;padding:0 0 4px;border-bottom:1px solid rgba(17,17,17,.4);font:700 12px "DM Mono",monospace;color:#111;cursor:pointer}
+.spotlight-search button:hover{border-bottom-color:#111}
+@media(max-width:600px){.spotlight-search{display:none}}
 .mosaic-spotlight{display:flex;flex-direction:column;flex:1;min-height:0;transition:opacity .4s ease}
 .mosaic-spotlight.is-swapping{opacity:0}
 .spotlight-top{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:6px 0 0}

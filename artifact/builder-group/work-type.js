@@ -9,6 +9,12 @@ mosaicCopy.className = 'mosaic-copy';
 mosaicCopy.append(mosaicSmall);
 mosaicTitle.prepend(mosaicCopy);
 
+// Simple builder search sitting in the panel's top-right, unused space next to the label.
+const spotlightSearch = document.createElement('form');
+spotlightSearch.className = 'spotlight-search';
+spotlightSearch.innerHTML = `<input type="search" name="q" placeholder="빌더 검색" aria-label="빌더 이름으로 검색" /><button type="submit" aria-label="검색">↗</button>`;
+mosaicCopy.append(spotlightSearch);
+
 const rightBuilderNames = ['조유리','최성훈','한도균','홍영준'];
 document.querySelectorAll('.project-grid .project').forEach((project, index) => {
   const name = rightBuilderNames[index];
@@ -81,19 +87,36 @@ window.addEventListener('resize', () => {
   spotlightResizeTimer = window.setTimeout(syncSpotlightHeight, 150);
 });
 
+let spotlightInterval;
+const showSpotlight = (builder) => {
+  spotlight.classList.add('is-swapping');
+  window.setTimeout(() => {
+    renderSpotlight(builder);
+    spotlight.classList.remove('is-swapping');
+  }, 400);
+};
+
 if (spotlightBuilders.length > 1 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const advanceSpotlight = () => {
-    spotlight.classList.add('is-swapping');
-    window.setTimeout(() => {
-      spotlightIndex = (spotlightIndex + 1) % spotlightBuilders.length;
-      renderSpotlight(spotlightBuilders[spotlightIndex]);
-      spotlight.classList.remove('is-swapping');
-    }, 400);
+    spotlightIndex = (spotlightIndex + 1) % spotlightBuilders.length;
+    showSpotlight(spotlightBuilders[spotlightIndex]);
   };
   new IntersectionObserver((entries, observer) => {
     if (entries[0].isIntersecting) {
-      window.setInterval(advanceSpotlight, 4200);
+      spotlightInterval = window.setInterval(advanceSpotlight, 4200);
       observer.unobserve(entries[0].target);
     }
   }, {threshold: .4}).observe(mosaicTitle);
 }
+
+// Searching a builder by name hands control over from the auto-rotation to the visitor.
+spotlightSearch.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const query = spotlightSearch.querySelector('input').value.trim();
+  if (!query) return;
+  const match = spotlightBuilders.find((b) => b.name.includes(query));
+  if (!match) return;
+  window.clearInterval(spotlightInterval);
+  spotlightIndex = spotlightBuilders.indexOf(match);
+  showSpotlight(match);
+});
