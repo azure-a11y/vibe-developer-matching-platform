@@ -1,4 +1,4 @@
-import type { BuilderStatus, PostStatus } from '@orca/content';
+import type { BuilderStatus, PostStatus, WorkStatus } from '@orca/content';
 
 const STYLES: Record<PostStatus, string> = {
   draft: 'bg-neutral-100 text-neutral-700',
@@ -38,6 +38,26 @@ export function BuilderStatusBadge({ status }: { status: BuilderStatus }) {
   return (
     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${BUILDER_STYLES[status]}`}>
       {BUILDER_LABELS[status]}
+    </span>
+  );
+}
+
+const WORK_STYLES: Record<WorkStatus, string> = {
+  pending_review: 'bg-amber-100 text-amber-800',
+  published: 'bg-emerald-100 text-emerald-800',
+  archived: 'bg-neutral-200 text-neutral-500',
+};
+
+const WORK_LABELS: Record<WorkStatus, string> = {
+  pending_review: '승인 대기',
+  published: '공개',
+  archived: '보관',
+};
+
+export function WorkStatusBadge({ status }: { status: WorkStatus }) {
+  return (
+    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${WORK_STYLES[status]}`}>
+      {WORK_LABELS[status]}
     </span>
   );
 }

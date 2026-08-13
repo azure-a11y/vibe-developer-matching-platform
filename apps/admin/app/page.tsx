@@ -1,20 +1,18 @@
 import Link from 'next/link';
-import { getBuilderRepository, getRepository } from '@orca/content';
+import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
 
 import { StatusBadge } from '@/components/StatusBadge';
 
 export const dynamic = 'force-dynamic';
 
 /** Sections without a data model yet (see docs/project/06_데이터모델.md) — placeholder counts only. */
-const PENDING_DOMAINS = [
-  { href: '/work', label: 'Work' },
-  { href: '/inquiry', label: 'Inquiry' },
-] as const;
+const PENDING_DOMAINS = [{ href: '/inquiry', label: 'Inquiry' }] as const;
 
 export default async function DashboardPage() {
-  const [{ posts, errors }, { builders }] = await Promise.all([
+  const [{ posts, errors }, { builders }, { works }] = await Promise.all([
     getRepository().getAll(),
     getBuilderRepository().getAll(),
+    getWorkRepository().getAll(),
   ]);
 
   const counts = {
@@ -30,13 +28,19 @@ export default async function DashboardPage() {
     active: builders.filter((b) => b.status === 'active').length,
   };
 
+  const workCounts = {
+    total: works.length,
+    pendingReview: works.filter((w) => w.status === 'pending_review').length,
+    published: works.filter((w) => w.status === 'published').length,
+  };
+
   const recent = [...posts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 5);
 
   return (
     <div className="space-y-8">
       <header>
         <p className="mt-1 text-sm text-neutral-500">
-          운영 현황 개요. Work · Inquiry는 데이터 모델이 아직 없어 준비 중입니다
+          운영 현황 개요. Inquiry는 데이터 모델이 아직 없어 준비 중입니다
           (<code className="font-mono text-xs">docs/project/06_데이터모델.md</code> 참조).
         </p>
       </header>
@@ -67,6 +71,13 @@ export default async function DashboardPage() {
           <p className="mt-2 text-3xl font-bold tabular-nums">{builderCounts.total}</p>
           <p className="mt-1 text-xs text-neutral-500">
             검증 대기 {builderCounts.pending} · 활성 {builderCounts.active}
+          </p>
+        </Link>
+        <Link href="/work" className="card block transition-colors hover:border-neutral-300">
+          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Work</p>
+          <p className="mt-2 text-3xl font-bold tabular-nums">{workCounts.total}</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            승인 대기 {workCounts.pendingReview} · 공개 {workCounts.published}
           </p>
         </Link>
         {PENDING_DOMAINS.map((domain) => (

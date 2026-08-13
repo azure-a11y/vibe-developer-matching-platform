@@ -1,11 +1,11 @@
 import { describeStatus, isSupabaseConfigured } from '@orca/supabase';
 
-import { builderFileRepository, fileRepository } from './file.ts';
+import { builderFileRepository, fileRepository, workFileRepository } from './file.ts';
 import { supabaseRepository } from './supabase.ts';
-import type { BuilderRepository, ContentRepository } from './types.ts';
+import type { BuilderRepository, ContentRepository, WorkRepository } from './types.ts';
 
 export * from './types.ts';
-export { builderFileRepository, fileRepository } from './file.ts';
+export { builderFileRepository, fileRepository, workFileRepository } from './file.ts';
 export { supabaseRepository } from './supabase.ts';
 
 /**
@@ -31,6 +31,11 @@ export function getRepository(): ContentRepository {
  */
 export function getBuilderRepository(): BuilderRepository {
   return builderFileRepository;
+}
+
+/** Work domain entry point. File driver only for now — same note as above. */
+export function getWorkRepository(): WorkRepository {
+  return workFileRepository;
 }
 
 /** Human-readable backend status for the admin banner and `pnpm check`. */

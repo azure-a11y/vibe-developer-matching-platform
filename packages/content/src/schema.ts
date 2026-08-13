@@ -242,3 +242,43 @@ export interface Builder extends BuilderFrontmatter {
   bio: string;
   filePath: string;
 }
+
+/**
+ * Work domain (docs/project/06_데이터모델.md §3.3).
+ *
+ * No `scheduled` state — Work only has an approval gate, not a publish
+ * calendar (docs/project/04_정책정의.md §3.3): every Work lands in
+ * `pending_review` until an admin flips it to `published`.
+ */
+export const WorkStatus = z.enum(['pending_review', 'published', 'archived']);
+export type WorkStatus = z.infer<typeof WorkStatus>;
+
+export const WorkFrontmatterSchema = z.object({
+  title: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  summary: z.string().default(''),
+  scope: z.string().default(''),
+  builderRole: z.string().default(''),
+  period: z.string().default(''),
+  techStack: z.array(z.string()).default([]),
+  problem: z.string().default(''),
+  solution: z.string().default(''),
+  result: z.string().default(''),
+  assets: z.array(ImageSchema).default([]),
+  /** Participating builders — N:M, resolved against Builder.slug at read time. */
+  builderIds: z.array(z.string()).default([]),
+  status: WorkStatus.default('pending_review'),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type WorkFrontmatter = z.infer<typeof WorkFrontmatterSchema>;
+
+export type WorkFrontmatterInput = z.input<typeof WorkFrontmatterSchema>;
+
+export interface Work extends WorkFrontmatter {
+  filePath: string;
+}

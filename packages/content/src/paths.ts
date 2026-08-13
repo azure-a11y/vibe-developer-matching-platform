@@ -39,6 +39,14 @@ export function builderPath(slug: string): string {
   return path.join(buildersDir(), `${slug}.md`);
 }
 
+export function worksDir(): string {
+  return path.join(contentDir(), 'works');
+}
+
+export function workPath(slug: string): string {
+  return path.join(worksDir(), `${slug}.md`);
+}
+
 /** Directory generated cover images are written to, from repo root. */
 export function imageOutputDir(): string {
   const configured = process.env.IMAGE_OUTPUT_DIR ?? 'apps/web/public/images/posts';

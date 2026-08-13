@@ -1,4 +1,11 @@
-import type { Builder, BuilderFrontmatterInput, Post, PostFrontmatterInput } from '../schema.ts';
+import type {
+  Builder,
+  BuilderFrontmatterInput,
+  Post,
+  PostFrontmatterInput,
+  Work,
+  WorkFrontmatterInput,
+} from '../schema.ts';
 
 /**
  * Storage-agnostic content API.
@@ -44,6 +51,25 @@ export interface BuilderRepository {
   getBySlug(slug: string): Promise<Builder | null>;
 
   save(frontmatter: BuilderFrontmatterInput, bio: string): Promise<string>;
+
+  remove(slug: string): Promise<boolean>;
+}
+
+/**
+ * Same shape again, for the Work domain (docs/project/06_데이터모델.md §3.3).
+ * File driver only — same Phase 3 note as `BuilderRepository`.
+ */
+export interface WorkRepository {
+  readonly driver: 'file';
+
+  getAll(): Promise<{ works: Work[]; errors: string[] }>;
+
+  /** Work the public site may render: `published` only. */
+  getPublished(): Promise<Work[]>;
+
+  getBySlug(slug: string): Promise<Work | null>;
+
+  save(frontmatter: WorkFrontmatterInput): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
 }

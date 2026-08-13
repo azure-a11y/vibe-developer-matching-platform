@@ -12,8 +12,9 @@ import {
   getPublishedPosts,
   writePost,
 } from '../posts.ts';
-import type { BuilderFrontmatterInput, PostFrontmatterInput } from '../schema.ts';
-import type { BuilderRepository, ContentRepository } from './types.ts';
+import type { BuilderFrontmatterInput, PostFrontmatterInput, WorkFrontmatterInput } from '../schema.ts';
+import { deleteWork, getAllWorks, getPublishedWorks, getWorkBySlug, writeWork } from '../works.ts';
+import type { BuilderRepository, ContentRepository, WorkRepository } from './types.ts';
 
 /**
  * Markdown-on-disk driver. The default, and the one the template ships with.
@@ -68,5 +69,30 @@ export const builderFileRepository: BuilderRepository = {
 
   async remove(slug: string) {
     return deleteBuilder(slug);
+  },
+};
+
+export const workFileRepository: WorkRepository = {
+  driver: 'file',
+
+  async getAll() {
+    return getAllWorks();
+  },
+
+  async getPublished() {
+    return getPublishedWorks();
+  },
+
+  async getBySlug(slug: string) {
+    return getWorkBySlug(slug);
+  },
+
+  async save(frontmatter: WorkFrontmatterInput) {
+    writeWork(frontmatter);
+    return frontmatter.slug;
+  },
+
+  async remove(slug: string) {
+    return deleteWork(slug);
   },
 };
