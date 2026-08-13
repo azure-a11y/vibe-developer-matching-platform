@@ -66,6 +66,25 @@ export function getPostBySlug(slug: string): Post | null {
   return fs.existsSync(file) ? parsePost(file) : null;
 }
 
+/**
+ * Drop own properties whose value is `undefined`, recursively.
+ *
+ * zod's `.optional()` output keeps the key with value `undefined` rather than
+ * omitting it, and js-yaml's dumper (used by `matter.stringify`) throws on a
+ * literal `undefined` instead of skipping it like `JSON.stringify` would.
+ */
+function stripUndefined<T>(value: T): T {
+  if (Array.isArray(value)) return value.map(stripUndefined) as T;
+  if (value !== null && typeof value === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, v] of Object.entries(value)) {
+      if (v !== undefined) result[key] = stripUndefined(v);
+    }
+    return result as T;
+  }
+  return value;
+}
+
 /** Serialize frontmatter + body back to disk. Used by the admin editor. */
 export function writePost(frontmatter: PostFrontmatterInput, body: string): string {
   const validated = PostFrontmatterSchema.parse({
@@ -77,7 +96,7 @@ export function writePost(frontmatter: PostFrontmatterInput, body: string): stri
   fs.mkdirSync(dir, { recursive: true });
 
   const file = postPath(validated.slug);
-  fs.writeFileSync(file, matter.stringify(`\n${body.trim()}\n`, validated), 'utf8');
+  fs.writeFileSync(file, matter.stringify(`\n${body.trim()}\n`, stripUndefined(validated)), 'utf8');
   return file;
 }
 
@@ -93,7 +112,7 @@ export function deletePost(slug: string): boolean {
  *
  * Non-ASCII is deliberately preserved: keeping the target keyword in the URL
  * is a real ranking and click-through signal, and a Korean reader seeing
- * `/blog/캐시-컴포넌트` beats `/blog/kaesi-keomponeonteu`. Browsers
+ * `/insight/캐시-컴포넌트` beats `/insight/kaesi-keomponeonteu`. Browsers
  * percent-encode on the wire and display it decoded.
  *
  * Truncation happens before hyphen-trimming so a cut never leaves a trailing

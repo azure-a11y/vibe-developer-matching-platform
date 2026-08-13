@@ -33,7 +33,7 @@ export async function GET(): Promise<Response> {
         .map((post) => {
           const summary = post.geo.answerSummary ?? post.seo.description ?? post.description;
           const oneLine = summary.replace(/\s+/g, ' ').trim();
-          return `- [${post.title}](${siteUrl}/blog/${encodeURIComponent(post.slug)}): ${oneLine}`;
+          return `- [${post.title}](${siteUrl}/insight/${encodeURIComponent(post.slug)}): ${oneLine}`;
         })
         .join('\n');
       return `## ${category}\n\n${items}`;
@@ -49,7 +49,7 @@ export async function GET(): Promise<Response> {
 
 ## 주요 링크
 
-- [글 목록](${siteUrl}/blog): 발행된 전체 글
+- [Insight 목록](${siteUrl}/insight): 발행된 전체 글
 - [소개](${siteUrl}/about): 이 사이트의 운영 방식
 - [RSS](${siteUrl}/rss.xml): 구독 피드
 - [사이트맵](${siteUrl}/sitemap.xml): 전체 URL 목록

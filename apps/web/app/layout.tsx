@@ -72,8 +72,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {siteName}
             </Link>
             <div className="flex gap-6 text-sm text-[var(--color-muted)]">
-              <Link href="/blog" className="hover:text-[var(--color-accent)]">
-                글
+              <Link href="/insight" className="hover:text-[var(--color-accent)]">
+                Insight
               </Link>
               <Link href="/about" className="hover:text-[var(--color-accent)]">
                 소개

@@ -186,7 +186,7 @@ export default async function PostPage({ params }: Params) {
           {post.tags.map((tag) => (
             <Link
               key={tag}
-              href={`/blog?tag=${encodeURIComponent(tag)}`}
+              href={`/insight?tag=${encodeURIComponent(tag)}`}
               className="rounded-full border border-neutral-200 px-3 py-1 text-sm dark:border-neutral-800"
             >
               #{tag}

@@ -22,7 +22,7 @@ export default async function HomePage() {
             최신 글
           </h2>
           <article className="rounded-2xl border border-neutral-200 p-6 dark:border-neutral-800">
-            <Link href={`/blog/${encodeURIComponent(featured.slug)}`} className="block space-y-3">
+            <Link href={`/insight/${encodeURIComponent(featured.slug)}`} className="block space-y-3">
               <h3 className="text-2xl font-semibold tracking-tight">{featured.title}</h3>
               <p className="leading-7 text-[var(--color-muted)]">{featured.description}</p>
               <p className="text-sm text-[var(--color-muted)]">
@@ -49,7 +49,7 @@ export default async function HomePage() {
           <ul className="divide-y divide-neutral-200 dark:divide-neutral-800">
             {rest.map((post) => (
               <li key={post.slug} className="py-5">
-                <Link href={`/blog/${encodeURIComponent(post.slug)}`} className="group block space-y-1">
+                <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="group block space-y-1">
                   <h3 className="font-semibold group-hover:text-[var(--color-accent)]">{post.title}</h3>
                   <p className="line-clamp-2 text-sm leading-6 text-[var(--color-muted)]">{post.description}</p>
                   <p className="text-xs text-[var(--color-muted)]">{formatDate(post.publishedAt)}</p>

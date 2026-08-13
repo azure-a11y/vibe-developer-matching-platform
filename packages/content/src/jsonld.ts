@@ -5,7 +5,7 @@ function siteUrl(): string {
 }
 
 export function postUrl(slug: string): string {
-  return `${siteUrl()}/blog/${slug}`;
+  return `${siteUrl()}/insight/${slug}`;
 }
 
 /**

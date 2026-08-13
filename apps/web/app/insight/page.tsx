@@ -5,7 +5,7 @@ import { getAllTags, getRepository } from '@orca/content';
 import { formatDate } from '@/lib/markdown';
 
 export const metadata: Metadata = {
-  title: '글 목록',
+  title: 'Insight',
   description: '발행된 모든 글.',
 };
 
@@ -23,7 +23,7 @@ export default async function BlogIndexPage({
   return (
     <div className="space-y-10">
       <header className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">글 목록</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Insight</h1>
         <p className="text-[var(--color-muted)]">
           {tag ? `#${tag} · ` : ''}
           {posts.length}개의 글
@@ -33,7 +33,7 @@ export default async function BlogIndexPage({
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           <Link
-            href="/blog"
+            href="/insight"
             className={`rounded-full border px-3 py-1 text-sm ${
               tag ? 'border-neutral-200 dark:border-neutral-800' : 'border-[var(--color-accent)] text-[var(--color-accent)]'
             }`}
@@ -43,7 +43,7 @@ export default async function BlogIndexPage({
           {tags.map(({ tag: name, count }) => (
             <Link
               key={name}
-              href={`/blog?tag=${encodeURIComponent(name)}`}
+              href={`/insight?tag=${encodeURIComponent(name)}`}
               className={`rounded-full border px-3 py-1 text-sm ${
                 tag === name
                   ? 'border-[var(--color-accent)] text-[var(--color-accent)]'
@@ -59,7 +59,7 @@ export default async function BlogIndexPage({
       <ul className="divide-y divide-neutral-200 dark:divide-neutral-800">
         {posts.map((post) => (
           <li key={post.slug} className="py-6">
-            <Link href={`/blog/${encodeURIComponent(post.slug)}`} className="group block space-y-2">
+            <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="group block space-y-2">
               <h2 className="text-xl font-semibold tracking-tight group-hover:text-[var(--color-accent)]">
                 {post.title}
               </h2>

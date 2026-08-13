@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getRepository().getPublished();
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${siteUrl}/blog/${encodeURIComponent(post.slug)}`,
+    url: `${siteUrl}/insight/${encodeURIComponent(post.slug)}`,
     lastModified: new Date(post.updatedAt),
     changeFrequency: post.seo.changefreq,
     priority: post.seo.priority,
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: siteUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
-    { url: `${siteUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${siteUrl}/insight`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${siteUrl}/about`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
     ...postEntries,
   ];
