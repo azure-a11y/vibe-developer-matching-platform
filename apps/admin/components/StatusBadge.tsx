@@ -1,4 +1,4 @@
-import type { PostStatus } from '@orca/content';
+import type { BuilderStatus, PostStatus } from '@orca/content';
 
 const STYLES: Record<PostStatus, string> = {
   draft: 'bg-neutral-100 text-neutral-700',
@@ -19,6 +19,26 @@ const LABELS: Record<PostStatus, string> = {
 export function StatusBadge({ status }: { status: PostStatus }) {
   return (
     <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STYLES[status]}`}>{LABELS[status]}</span>
+  );
+}
+
+const BUILDER_STYLES: Record<BuilderStatus, string> = {
+  pending: 'bg-amber-100 text-amber-800',
+  active: 'bg-emerald-100 text-emerald-800',
+  inactive: 'bg-neutral-200 text-neutral-500',
+};
+
+const BUILDER_LABELS: Record<BuilderStatus, string> = {
+  pending: '검증 대기',
+  active: '활성',
+  inactive: '비활성',
+};
+
+export function BuilderStatusBadge({ status }: { status: BuilderStatus }) {
+  return (
+    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${BUILDER_STYLES[status]}`}>
+      {BUILDER_LABELS[status]}
+    </span>
   );
 }
 

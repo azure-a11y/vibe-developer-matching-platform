@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getRepository } from '@orca/content';
+import { getBuilderRepository, getRepository } from '@orca/content';
 
 import { StatusBadge } from '@/components/StatusBadge';
 
@@ -7,13 +7,15 @@ export const dynamic = 'force-dynamic';
 
 /** Sections without a data model yet (see docs/project/06_데이터모델.md) — placeholder counts only. */
 const PENDING_DOMAINS = [
-  { href: '/builder', label: 'Builder' },
   { href: '/work', label: 'Work' },
   { href: '/inquiry', label: 'Inquiry' },
 ] as const;
 
 export default async function DashboardPage() {
-  const { posts, errors } = await getRepository().getAll();
+  const [{ posts, errors }, { builders }] = await Promise.all([
+    getRepository().getAll(),
+    getBuilderRepository().getAll(),
+  ]);
 
   const counts = {
     total: posts.length,
@@ -22,13 +24,19 @@ export default async function DashboardPage() {
     published: posts.filter((p) => p.status === 'published').length,
   };
 
+  const builderCounts = {
+    total: builders.length,
+    pending: builders.filter((b) => b.status === 'pending').length,
+    active: builders.filter((b) => b.status === 'active').length,
+  };
+
   const recent = [...posts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 5);
 
   return (
     <div className="space-y-8">
       <header>
         <p className="mt-1 text-sm text-neutral-500">
-          운영 현황 개요. Builder · Work · Inquiry는 데이터 모델이 아직 없어 준비 중입니다
+          운영 현황 개요. Work · Inquiry는 데이터 모델이 아직 없어 준비 중입니다
           (<code className="font-mono text-xs">docs/project/06_데이터모델.md</code> 참조).
         </p>
       </header>
@@ -52,6 +60,13 @@ export default async function DashboardPage() {
           <p className="mt-2 text-3xl font-bold tabular-nums">{counts.total}</p>
           <p className="mt-1 text-xs text-neutral-500">
             초안 {counts.draft} · 검수 중 {counts.inReview} · 발행 {counts.published}
+          </p>
+        </Link>
+        <Link href="/builder" className="card block transition-colors hover:border-neutral-300">
+          <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Builder</p>
+          <p className="mt-2 text-3xl font-bold tabular-nums">{builderCounts.total}</p>
+          <p className="mt-1 text-xs text-neutral-500">
+            검증 대기 {builderCounts.pending} · 활성 {builderCounts.active}
           </p>
         </Link>
         {PENDING_DOMAINS.map((domain) => (

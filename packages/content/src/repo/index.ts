@@ -1,11 +1,11 @@
 import { describeStatus, isSupabaseConfigured } from '@orca/supabase';
 
-import { fileRepository } from './file.ts';
+import { builderFileRepository, fileRepository } from './file.ts';
 import { supabaseRepository } from './supabase.ts';
-import type { ContentRepository } from './types.ts';
+import type { BuilderRepository, ContentRepository } from './types.ts';
 
 export * from './types.ts';
-export { fileRepository } from './file.ts';
+export { builderFileRepository, fileRepository } from './file.ts';
 export { supabaseRepository } from './supabase.ts';
 
 /**
@@ -23,6 +23,14 @@ export function getRepository(): ContentRepository {
   if (forced === 'file') return fileRepository;
   if (forced === 'supabase') return supabaseRepository;
   return isSupabaseConfigured() ? supabaseRepository : fileRepository;
+}
+
+/**
+ * Builder domain entry point. File driver only for now — Supabase support is
+ * Phase 3 (docs/planning/AI빌더그룹_프로젝트전환계획.md §7).
+ */
+export function getBuilderRepository(): BuilderRepository {
+  return builderFileRepository;
 }
 
 /** Human-readable backend status for the admin banner and `pnpm check`. */

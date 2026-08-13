@@ -192,3 +192,53 @@ export interface Post extends PostFrontmatter {
   filePath: string;
   readingTimeMinutes: number;
 }
+
+/**
+ * Builder domain (docs/project/06_데이터모델.md §3.2).
+ *
+ * Status mirrors the approval flow described in the policy doc
+ * (docs/project/04_정책정의.md §3.3): a builder signs up `pending`, an admin
+ * flips them to `active` before they're surfaced anywhere public.
+ */
+export const BuilderStatus = z.enum(['pending', 'active', 'inactive']);
+export type BuilderStatus = z.infer<typeof BuilderStatus>;
+
+/**
+ * Per-builder Insight permissions. Defaults are all `false` — an admin grants
+ * each individually (docs/project/04_정책정의.md §4.2). Work upload is not a
+ * toggle here: every builder may submit Work, it just always lands in
+ * `pending_review` regardless of these flags.
+ */
+export const BuilderPermissionsSchema = z.object({
+  canWriteInsight: z.boolean().default(false),
+  canEditInsight: z.boolean().default(false),
+  canDeleteInsight: z.boolean().default(false),
+});
+export type BuilderPermissions = z.infer<typeof BuilderPermissionsSchema>;
+
+export const BuilderFrontmatterSchema = z.object({
+  displayName: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  avatar: ImageSchema.optional(),
+  specialties: z.array(z.string()).default([]),
+  education: z.array(z.string()).default([]),
+  communityActivity: z.array(z.string()).default([]),
+  verifications: z.array(z.string()).default([]),
+  status: BuilderStatus.default('pending'),
+  permissions: BuilderPermissionsSchema.prefault({}),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type BuilderFrontmatter = z.infer<typeof BuilderFrontmatterSchema>;
+
+export type BuilderFrontmatterInput = z.input<typeof BuilderFrontmatterSchema>;
+
+export interface Builder extends BuilderFrontmatter {
+  /** Bio, markdown, frontmatter stripped — same split as Post. */
+  bio: string;
+  filePath: string;
+}

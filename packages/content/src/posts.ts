@@ -73,7 +73,7 @@ export function getPostBySlug(slug: string): Post | null {
  * omitting it, and js-yaml's dumper (used by `matter.stringify`) throws on a
  * literal `undefined` instead of skipping it like `JSON.stringify` would.
  */
-function stripUndefined<T>(value: T): T {
+export function stripUndefined<T>(value: T): T {
   if (Array.isArray(value)) return value.map(stripUndefined) as T;
   if (value !== null && typeof value === 'object') {
     const result: Record<string, unknown> = {};
