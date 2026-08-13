@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI Builder Group — Admin (시안)</title>
+<link rel="icon" type="image/svg+xml" href="../builder-group/favicon.svg" />
+<link rel="stylesheet" href="styles.css?v=4" />
+</head>
+<body>
+  <div class="draft-banner">디자인 시안(목업) — 실제 데이터 저장/연동 없음 · CLAUDE.md 관리자 시스템 + PRD FR-5·FR-6·FR-9·FR-10 기준 · 2026-08-13</div>
+
+  <!-- ============ 로그인 화면 ============ -->
+  <section class="login-screen" id="login-screen">
+    <form class="login-card" id="login-form">
+      <a class="brand brand-login" href="#top"><b>AI</b><span>AI Builder Group<small>ADMIN</small></span></a>
+      <h1>관리자 로그인</h1>
+      <p class="login-sub">계정 정보로 로그인하세요.</p>
+      <div class="field">
+        <label>로그인 유형</label>
+        <div class="role-select">
+          <label class="role-option">관리자 <input type="radio" name="login-role" value="admin" id="role-admin" /></label>
+          <label class="role-option">빌더 <input type="radio" name="login-role" value="builder" id="role-builder-radio" /></label>
+        </div>
+      </div>
+      <div class="field"><label>이메일</label><input type="email" id="login-email" placeholder="name@aibuildergroup.co" /></div>
+      <div class="field"><label>비밀번호</label><input type="password" id="login-password" placeholder="비밀번호" /></div>
+      <p class="login-note">시안 단계입니다 — 관리자 또는 빌더를 선택하면 바로 로그인됩니다(이메일을 입력했다면 등록된 계정을 찾아 그 이름·등급으로 표시하고, 없으면 이메일 앞부분을 이름으로 사용합니다).</p>
+      <p class="login-foot">비밀번호를 잊으셨나요? <button type="button" class="btn-text" id="login-forgot">재설정 안내</button></p>
+    </form>
+  </section>
+
+  <div class="shell is-hidden" id="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard"><b>AI</b><span>AI Builder Group<small>ADMIN</small></span></a>
+      <nav class="side-nav">
+        <button class="side-link is-active" data-view="dashboard"><i>①</i>대시보드</button>
+        <button class="side-link" data-view="builders"><i>②</i>Builder<em id="count-builders-pending">3</em></button>
+        <button class="side-link" data-view="work"><i>③</i>Work / Portfolio<em id="count-work-pending">2</em></button>
+        <button class="side-link" data-view="process"><i>④</i>Work Process</button>
+        <button class="side-link" data-view="insight"><i>⑤</i>Insight<em id="count-insight-pending">1</em></button>
+        <button class="side-link" data-view="settings"><i>⑥</i>설정</button>
+        <button class="side-link" data-view="permissions"><i>⑦</i>계정 · 권한</button>
+      </nav>
+      <div class="side-foot">
+        <button class="current-account" id="btn-account-settings">
+          <span class="current-account-name" id="current-admin-name">-</span>
+          <span class="badge" id="current-admin-role">-</span>
+        </button>
+        <button class="btn btn-text side-logout" id="btn-logout">로그아웃</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <header class="topbar">
+        <h1 id="view-title">대시보드</h1>
+        <div class="topbar-actions">
+          <span class="pill pill-amber">검수 대기 4건</span>
+          <button class="btn btn-ghost" disabled title="시안 단계 — 비활성">알림</button>
+        </div>
+      </header>
+
+      <!-- ============ 대시보드 ============ -->
+      <section class="view is-active" data-view="dashboard">
+        <div class="stat-grid">
+          <div class="stat"><b>6</b><span>공개된 Builder</span><small>전체 7명 중</small></div>
+          <div class="stat stat-amber"><b>2</b><span>승인 대기 Work</span><small>Builder 업로드분</small></div>
+          <div class="stat"><b>3 / 1 / 5</b><span>Insight — 초안 / 검수 / 발행</span><small>발행 전환은 사람만(하드 룰 2)</small></div>
+          <div class="stat stat-warn"><b>임시</b><span>문의 폼(pluug) 연동 상태</span><small>임시 계정 — §설정</small></div>
+        </div>
+
+        <div class="dash-grid">
+          <div class="panel">
+            <div class="panel-head"><h2>검수 · 승인 대기</h2><span class="muted">클릭하면 상세로 이동</span></div>
+            <table class="table">
+              <thead><tr><th>유형</th><th>제목</th><th>담당</th><th>제출일</th><th>상태</th></tr></thead>
+              <tbody>
+                <tr class="row-clickable" data-goto="work" data-id="flowdesk"><td>Work</td><td>Flowdesk</td><td>조유리</td><td>2026.08.10</td><td><span class="badge badge-amber">승인 대기</span></td></tr>
+                <tr class="row-clickable" data-goto="work" data-id="fieldnote"><td>Work</td><td>Fieldnote</td><td>송인선</td><td>2026.08.11</td><td><span class="badge badge-amber">승인 대기</span></td></tr>
+                <tr class="row-clickable" data-goto="insight" data-id="landing-cta"><td>Insight</td><td>전환을 확인하는 랜딩페이지 설계</td><td>이준호</td><td>2026.08.09</td><td><span class="badge badge-blue">검수 중</span></td></tr>
+                <tr class="row-clickable" data-goto="builders" data-id="myeong"><td>Builder</td><td>명지홍 — 검증 서류</td><td>-</td><td>2026.08.08</td><td><span class="badge badge-amber">검증 대기</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2>최근 활동</h2></div>
+            <ul class="timeline">
+              <li><b>2026.08.12</b> 한도균 님이 Work <em>Fieldnote</em>를 업로드 — 승인 대기로 등록</li>
+              <li><b>2026.08.11</b> 운영 관리자가 Insight <em>고객 인터뷰를 제품 언어로 바꾸는 법</em> 발행</li>
+              <li><b>2026.08.09</b> 조유리 님이 Builder 프로필 소개문 수정</li>
+              <li><b>2026.08.07</b> Work Process — "품질 검증 방식" 섹션 갱신</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Builder ============ -->
+      <section class="view" data-view="builders">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Builder 관리</h2>
+            <div class="panel-actions"><input class="search" placeholder="이름·전문분야 검색" disabled /><button class="btn btn-primary" disabled>+ Builder 추가</button></div>
+          </div>
+          <table class="table" id="table-builders">
+            <thead><tr><th>이름</th><th>전문 분야</th><th>참여 프로젝트</th><th>검증 상태</th><th>공개 여부</th><th></th></tr></thead>
+            <tbody>
+              <tr data-id="jo"><td><b>조유리</b></td><td>B2B Product</td><td>1건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="choi"><td><b>최성훈</b></td><td>Education UX</td><td>1건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="han"><td><b>한도균</b></td><td>Commerce Platform</td><td>1건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="hong"><td><b>홍영준</b></td><td>Healthcare Service</td><td>1건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="song"><td><b>송인선</b></td><td>Product Builder</td><td>1건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="myeong"><td><b>명지홍</b></td><td>Experience Builder</td><td>1건</td><td><span class="badge badge-amber">검증 대기</span></td><td><span class="toggle"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="kimsg"><td><b>김상규</b></td><td>Backend Builder</td><td>0건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="kimsm"><td><b>김성미</b></td><td>Frontend Builder</td><td>0건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="kimwg"><td><b>김웅기</b></td><td>Full-stack Builder</td><td>0건</td><td><span class="badge badge-amber">검증 대기</span></td><td><span class="toggle"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="kwonjy"><td><b>권지연</b></td><td>Design Builder</td><td>0건</td><td><span class="badge badge-green">검증완료</span></td><td><span class="toggle is-on"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+              <tr data-id="parkjs"><td><b>박진선</b></td><td>Growth Builder</td><td>0건</td><td><span class="badge badge-amber">검증 대기</span></td><td><span class="toggle"></span></td><td><button class="btn btn-text" data-open="builders">편집</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ Work ============ -->
+      <section class="view" data-view="work">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Work / Portfolio 관리</h2>
+            <div class="panel-actions"><input class="search" placeholder="프로젝트명 검색" disabled /><button class="btn btn-primary" disabled>+ Work 추가</button></div>
+          </div>
+          <table class="table" id="table-work">
+            <thead><tr><th>프로젝트명</th><th>참여 빌더</th><th>작업 기간</th><th>상태</th><th></th></tr></thead>
+            <tbody>
+              <tr data-id="flowdesk"><td><b>Flowdesk</b></td><td>조유리</td><td>2026.05–2026.06</td><td><span class="badge badge-amber">승인 대기</span></td><td><button class="btn btn-text" data-open="work">편집</button></td></tr>
+              <tr data-id="classroom"><td><b>Classroom OS</b></td><td>최성훈</td><td>2026.03–2026.04</td><td><span class="badge badge-green">공개</span></td><td><button class="btn btn-text" data-open="work">편집</button></td></tr>
+              <tr data-id="localtable"><td><b>Local Table</b></td><td>한도균</td><td>2026.01–2026.02</td><td><span class="badge badge-green">공개</span></td><td><button class="btn btn-text" data-open="work">편집</button></td></tr>
+              <tr data-id="morrow"><td><b>Morrow Care</b></td><td>홍영준</td><td>2025.11–2025.12</td><td><span class="badge badge-green">공개</span></td><td><button class="btn btn-text" data-open="work">편집</button></td></tr>
+              <tr data-id="fieldnote"><td><b>Fieldnote</b></td><td>송인선</td><td>2026.06–2026.07</td><td><span class="badge badge-amber">승인 대기</span></td><td><button class="btn btn-text" data-open="work">편집</button></td></tr>
+            </tbody>
+          </table>
+          <p class="hint">⚠️ PRD FR-2 AC-2.5: 위 데이터는 전부 목업 샘플이다. AC-2.1(실제 수행 프로젝트만 노출) 요건 충족을 위해 실데이터 투입 전에는 "공개" 전환을 하지 않는다.</p>
+        </div>
+      </section>
+
+      <!-- ============ Work Process (싱글톤) ============ -->
+      <section class="view" data-view="process">
+        <div class="panel">
+          <div class="panel-head"><h2>Work Process</h2><span class="muted">목록이 아닌 단일 소개 페이지 — 최종 수정 2026.08.07</span></div>
+          <div class="process-grid">
+            <div class="field"><label>프로젝트 진행 방식</label><textarea rows="4">요구사항을 비즈니스 목표와 사용자 여정으로 먼저 번역한 뒤, 분야·기술·일정을 검증해 빌더를 매칭합니다.</textarea></div>
+            <div class="field"><label>협업 방식</label><textarea rows="4">단일 커뮤니케이션 채널로 진행 상황을 기록하고, 질문은 모아서 정기적으로 전달·회신합니다.</textarea></div>
+            <div class="field"><label>개발 프로세스</label><textarea rows="4">AI 네이티브 빌드 루틴으로 속도와 완성도를 함께 확보하고, 단계별 검토 지점을 둡니다.</textarea></div>
+            <div class="field"><label>품질 검증 방식</label><textarea rows="4">출시 전 리뷰, 전환 이벤트 검증, 콘텐츠·리드·빌더 운영 인수인계까지 확인합니다.</textarea></div>
+          </div>
+          <div class="panel-foot"><button class="btn btn-primary" disabled>변경사항 저장</button></div>
+        </div>
+      </section>
+
+      <!-- ============ Insight ============ -->
+      <section class="view" data-view="insight">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Insight 관리</h2>
+            <div class="panel-actions"><input class="search" placeholder="제목·작성자 검색" disabled /><button class="btn btn-primary" disabled>+ 새 글</button></div>
+          </div>
+          <div id="builder-scope-note"></div>
+          <table class="table" id="table-insight">
+            <thead><tr><th>제목</th><th>작성자</th><th>카테고리</th><th>상태</th><th>발행일</th><th></th></tr></thead>
+            <tbody>
+              <tr data-id="interview"><td><b>고객 인터뷰를 제품 언어로 바꾸는 법</b></td><td>김도윤</td><td>일하는 방식</td><td><span class="badge badge-green">발행</span></td><td>2026.08.08</td><td><button class="btn btn-text" data-open="insight">편집</button></td></tr>
+              <tr data-id="designsystem"><td><b>AI와 함께 만드는 디자인 시스템</b></td><td>박서연</td><td>빌더가 쓴 글</td><td><span class="badge badge-green">발행</span></td><td>2026.08.05</td><td><button class="btn btn-text" data-open="insight">편집</button></td></tr>
+              <tr data-id="landing-cta"><td><b>전환을 확인하는 랜딩페이지 설계</b></td><td>이준호</td><td>일하는 방식</td><td><span class="badge badge-blue">검수 중</span></td><td>—</td><td><button class="btn btn-text" data-open="insight">편집</button></td></tr>
+              <tr data-id="mvp"><td><b>일주일 안에 MVP 범위 정하기</b></td><td>최하늘</td><td>AI 활용 공유회</td><td><span class="badge badge-gray">초안</span></td><td>—</td><td><button class="btn btn-text" data-open="insight">편집</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ============ 설정 ============ -->
+      <section class="view" data-view="settings">
+        <div class="panel">
+          <div class="panel-head"><h2>문의 폼(pluug) 연동</h2><span class="badge badge-amber">임시 연동</span></div>
+          <p class="hint">2차 미팅(2026-08-12) 결정 반영 — PRD FR-4 AC-4.6 / FR-5 AC-5.3: 지금은 임시 pluug 계정으로 폼을 연동해 두고, 아래 링크만 교체하면 공개 사이트("문의하기" 진입점 전체)에 즉시 반영되도록 설계한다. 정식 프로덕션 계정 연동은 클라이언트가 추후 처리한다.</p>
+          <div class="field"><label>pluug 폼 링크(URL)</label><input type="text" value="https://pluug.example.com/forms/ai-builder-group-temp" /></div>
+          <div class="panel-foot"><button class="btn btn-primary" disabled>링크 저장 · 즉시 반영</button><button class="btn btn-ghost" disabled>미리보기</button></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>사이트 기본 정보</h2><span class="badge badge-amber">확인 필요</span></div>
+          <p class="hint">⚠️ PRD §8 Q12: 아래 값은 목업 푸터에 표기된 값을 그대로 옮긴 것으로, 실제 확정된 사업자 정보인지 검증되지 않았다. 배포 전 반드시 확인한다.</p>
+          <div class="kv-grid">
+            <div><label>브랜드명</label><span>AI Builder Group <em class="muted">(§8 Q1 최종 확정 필요)</em></span></div>
+            <div><label>회사명</label><span>그림에도불구하고</span></div>
+            <div><label>대표자</label><span>김동화</span></div>
+            <div><label>사업자등록번호</label><span>194-38-01608</span></div>
+            <div><label>운영주체</label><span>똑똑한개발자</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>검색엔진 · GA4</h2></div>
+          <p class="hint">GA4 · 구글/네이버 서치콘솔 소유확인 태그는 환경변수(env) 기반이라 이 화면에서 직접 편집하지 않는다(wiki/08-technical-seo.md). 2차 미팅 결정에 따라 클라이언트가 이메일 계정 2개를 전달하면 등록을 진행한다(PRD §11 #5).</p>
+        </div>
+      </section>
+
+      <!-- ============ 계정 · 권한 ============ -->
+      <section class="view" data-view="permissions">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>관리자 계정</h2>
+            <div class="panel-actions"><button class="btn btn-primary" id="btn-create-admin">+ 관리자 생성</button></div>
+          </div>
+          <table class="table">
+            <thead><tr><th>이름</th><th>이메일</th><th>등급</th><th>상태</th><th>최근 로그인</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><b>조유리</b></td><td>yuri@aibuildergroup.co</td><td><span class="badge badge-green">최종 관리자</span></td><td><span class="badge badge-green">활성</span></td><td>2026.08.13</td><td><button class="btn btn-text" disabled>편집</button> · <button class="btn btn-text" disabled>비밀번호 초기화</button></td></tr>
+              <tr><td><b>한도균</b></td><td>dogyun@aibuildergroup.co</td><td><span class="badge badge-green">최종 관리자</span></td><td><span class="badge badge-green">활성</span></td><td>2026.08.12</td><td><button class="btn btn-text" disabled>편집</button> · <button class="btn btn-text" disabled>비밀번호 초기화</button></td></tr>
+              <tr><td><b>운영 담당자</b></td><td>ops@aibuildergroup.co</td><td><span class="badge badge-blue">콘텐츠 관리자</span></td><td><span class="badge badge-green">활성</span></td><td>2026.08.11</td><td><button class="btn btn-text" disabled>편집</button> · <button class="btn btn-text" disabled>비밀번호 초기화</button></td></tr>
+              <tr><td><b>검수 담당자</b></td><td>review@aibuildergroup.co</td><td><span class="badge badge-gray">검수 담당</span></td><td><span class="badge badge-amber">초대됨</span></td><td>—</td><td><button class="btn btn-text" disabled>편집</button> · <button class="btn btn-text" disabled>비밀번호 초기화</button></td></tr>
+            </tbody>
+          </table>
+          <p class="hint">⚠️ PRD §8 Q10(개발자 선택 주체·검수 담당·관리자 권한 구분)에 대한 제안 시안입니다. "비밀번호 초기화"는 최종 관리자만 다른 계정에 수행할 수 있는 조작입니다(PRD FR-10 AC-10.5). 실제 인증·초대 플로우는 apps/admin에 아직 구현되지 않았습니다(현재 :3001 전체 무인증 상태 — WO-3 참고).</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>등급별 메뉴 접근 권한</h2><span class="muted">전체 / 편집·승인 / 조회 / 접근불가</span></div>
+          <table class="table perm-matrix">
+            <thead><tr><th>메뉴</th><th>최종 관리자</th><th>콘텐츠 관리자</th><th>검수 담당</th></tr></thead>
+            <tbody>
+              <tr><td>대시보드</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-view">조회</span></td><td><span class="perm perm-view">조회</span></td></tr>
+              <tr><td>Builder</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-edit">편집</span></td><td><span class="perm perm-view">조회</span></td></tr>
+              <tr><td>Work / Portfolio</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-edit">편집</span></td><td><span class="perm perm-edit">승인·반려</span></td></tr>
+              <tr><td>Work Process</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-edit">편집</span></td><td><span class="perm perm-none">—</span></td></tr>
+              <tr><td>Insight</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-edit">편집</span></td><td><span class="perm perm-edit">승인·반려</span></td></tr>
+              <tr><td>설정</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+              <tr><td>계정 · 권한</td><td><span class="perm perm-full">전체</span></td><td><span class="perm perm-none">—</span></td><td><span class="perm perm-none">—</span></td></tr>
+            </tbody>
+          </table>
+          <p class="hint">등급 이름·개수(최종 관리자/콘텐츠 관리자/검수 담당)와 메뉴별 세부 권한은 시안 예시입니다 — 클라이언트 확인 후 확정합니다.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h2>빌더 로그인 권한</h2><span class="muted">빌더 계정별로 개별 부여 — 로그인 후 접근 가능한 메뉴만 제한적으로 노출</span></div>
+          <table class="table" id="table-builder-perms">
+            <thead><tr><th>빌더</th><th>로그인</th><th>본인 Work 업로드</th><th>Insight 작성</th><th>Insight 수정</th><th>Insight 삭제</th></tr></thead>
+            <tbody>
+              <tr><td><b>조유리</b></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle"></span></td></tr>
+              <tr><td><b>한도균</b></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle"></span></td></tr>
+              <tr><td><b>최성훈</b></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td></tr>
+              <tr><td><b>송인선</b></td><td><span class="toggle is-on"></span></td><td><span class="toggle is-on"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td></tr>
+              <tr><td><b>명지홍</b></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td><td><span class="toggle"></span></td></tr>
+            </tbody>
+          </table>
+          <p class="hint">기본값은 "본인 Work 업로드"만 허용이며(FR-6), Insight 작성·수정·삭제 권한은 관리자가 빌더별로 개별 부여합니다. 삭제 권한은 기본 비활성 — 최종 관리자만 부여를 권장합니다. 빌더가 업로드한 Work·Insight는 상태와 무관하게 항상 "승인 대기/검수 중"으로 등록되며 공개 전환은 관리자 권한이 있어야만 가능합니다(하드 룰 2와 동일한 원칙).</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ 상세 드로어 ============ -->
+  <div class="drawer-backdrop" id="drawer-backdrop"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <h2 id="drawer-title">상세</h2>
+      <button class="btn btn-icon" id="drawer-close" aria-label="닫기">×</button>
+    </div>
+    <div class="drawer-body" id="drawer-body"></div>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
