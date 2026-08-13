@@ -1,0 +1,12 @@
+.nav-account{position:relative}
+.nav-account-toggle{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:5px 14px 5px 5px;background:none;cursor:pointer;font:600 13px Arial,"Noto Sans KR",sans-serif;color:#111}
+.nav-account-toggle:hover{border-color:#111}
+.nav-account-avatar{flex:none;width:26px;height:26px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font:700 11px "DM Mono",monospace;color:#111}
+.nav-account-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:170px;background:#fff;border:1px solid var(--line);box-shadow:0 16px 32px rgba(0,0,0,.12);z-index:110}
+.nav-account-menu[hidden]{display:none}
+.nav-account-menu button{display:block;width:100%;padding:12px 16px;border:0;border-top:1px solid var(--line);background:none;text-align:left;font:12px "DM Mono",monospace;color:#111;cursor:pointer}
+.nav-account-menu button:first-child{border-top:0}
+.nav-account-menu button:hover{background:#f5f5f2}
+.nav-account-menu button.is-active{color:var(--muted);cursor:default}
+.nav-account-menu button.is-active:hover{background:none}
+@media(max-width:1000px){.nav-account-label{display:none}.nav-account-toggle{padding:5px}}
