@@ -30,14 +30,14 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
     <div className="space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
             ← 목록
           </Link>
           <h1 className="text-xl font-bold tracking-tight">검수: {post.title}</h1>
           <StatusBadge status={post.status} />
           <ScoreBadge score={audit.score} />
         </div>
-        <Link href={`/posts/${encodeURIComponent(post.slug)}`} className="btn-secondary">
+        <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="btn-secondary">
           편집으로
         </Link>
       </header>

@@ -81,7 +81,8 @@ export async function createPostAction(formData: FormData) {
   );
 
   revalidatePath('/');
-  redirect(`/posts/${encodeURIComponent(slug)}`);
+  revalidatePath('/insight');
+  redirect(`/insight/${encodeURIComponent(slug)}`);
 }
 
 export async function savePostAction(formData: FormData) {
@@ -158,8 +159,9 @@ export async function savePostAction(formData: FormData) {
   await repo.save(frontmatter, text(formData, 'body'));
 
   revalidatePath('/');
-  revalidatePath(`/posts/${slug}`);
-  revalidatePath(`/review/${slug}`);
+  revalidatePath('/insight');
+  revalidatePath(`/insight/${slug}`);
+  revalidatePath(`/insight/${slug}/review`);
 }
 
 export async function saveReviewAction(formData: FormData) {
@@ -194,11 +196,13 @@ export async function saveReviewAction(formData: FormData) {
   );
 
   revalidatePath('/');
-  revalidatePath(`/review/${slug}`);
+  revalidatePath('/insight');
+  revalidatePath(`/insight/${slug}/review`);
 }
 
 export async function deletePostAction(formData: FormData) {
   await getRepository().remove(text(formData, 'slug'));
   revalidatePath('/');
-  redirect('/');
+  revalidatePath('/insight');
+  redirect('/insight');
 }

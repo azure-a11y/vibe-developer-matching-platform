@@ -53,7 +53,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
             ← 목록
           </Link>
           <h1 className="text-xl font-bold tracking-tight">{post.title}</h1>
@@ -61,7 +61,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
           <ScoreBadge score={audit.score} />
         </div>
         <div className="flex items-center gap-2">
-          <Link href={`/review/${encodeURIComponent(post.slug)}`} className="btn-secondary">
+          <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="btn-secondary">
             검수 화면
           </Link>
           <button type="submit" className="btn-primary">

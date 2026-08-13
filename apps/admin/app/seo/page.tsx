@@ -27,7 +27,10 @@ export default async function SeoOverviewPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">SEO / GEO 상태</h1>
+        <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
+          ← Insight 목록
+        </Link>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight">SEO / GEO 상태</h1>
         <p className="mt-1 text-sm text-neutral-500">
           GEO는 Generative Engine Optimization — 답변 엔진이 인용할 수 있는 구조화 신호를 뜻합니다.
         </p>
@@ -47,7 +50,7 @@ export default async function SeoOverviewPage() {
         {audits.map(({ post, audit }) => (
           <div key={post.slug} className="card space-y-3">
             <div className="flex items-center justify-between gap-4">
-              <Link href={`/posts/${encodeURIComponent(post.slug)}`} className="font-semibold hover:text-[var(--color-accent)]">
+              <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="font-semibold hover:text-[var(--color-accent)]">
                 {post.title}
               </Link>
               <div className="flex items-center gap-3">
