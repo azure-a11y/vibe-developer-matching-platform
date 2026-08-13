@@ -2,11 +2,21 @@
 .nav-account-toggle{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:30px;padding:5px 14px 5px 5px;background:none;cursor:pointer;font:600 13px Arial,"Noto Sans KR",sans-serif;color:#111}
 .nav-account-toggle:hover{border-color:#111}
 .nav-account-avatar{flex:none;width:26px;height:26px;border-radius:50%;background:var(--yellow);display:grid;place-items:center;font:700 11px "DM Mono",monospace;color:#111}
-.nav-account-menu{position:absolute;top:calc(100% + 10px);right:0;min-width:170px;background:#fff;border:1px solid var(--line);box-shadow:0 16px 32px rgba(0,0,0,.12);z-index:110}
-.nav-account-menu[hidden]{display:none}
-.nav-account-menu button{display:block;width:100%;padding:12px 16px;border:0;border-top:1px solid var(--line);background:none;text-align:left;font:12px "DM Mono",monospace;color:#111;cursor:pointer}
-.nav-account-menu button:first-child{border-top:0}
-.nav-account-menu button:hover{background:#f5f5f2}
-.nav-account-menu button.is-active{color:var(--muted);cursor:default}
-.nav-account-menu button.is-active:hover{background:none}
 @media(max-width:1000px){.nav-account-label{display:none}.nav-account-toggle{padding:5px}}
+
+.login-dialog{width:min(420px,calc(100vw - 32px));margin:auto;border:0;padding:0;background:#151515;color:#fff;box-shadow:0 32px 90px rgba(0,0,0,.5)}
+.login-dialog::backdrop{background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+.login-wrap{position:relative;padding:44px}
+.login-close{position:absolute;top:16px;right:16px;border:0;background:none;color:#fff;font-size:24px;cursor:pointer}
+.login-wrap small{font:500 11px "DM Mono",monospace;letter-spacing:.16em;color:var(--yellow)}
+.login-wrap h2{margin:16px 0 24px;font:400 clamp(28px,3vw,36px)/1.15 "Noto Serif KR",serif;letter-spacing:-.05em;color:#fff}
+.login-role{display:flex;gap:8px;margin-bottom:24px}
+.login-role-option{flex:1;border:1px solid #555;background:none;color:#bbb;padding:12px;cursor:pointer;font:700 12px "DM Mono",monospace;letter-spacing:.06em}
+.login-role-option.is-active{border-color:var(--yellow);background:var(--yellow);color:#111}
+.login-form{display:flex;flex-direction:column;gap:14px}
+.login-field{display:flex;flex-direction:column;gap:8px}
+.login-field label{font:500 10px "DM Mono",monospace;letter-spacing:.12em;color:#bbb}
+.login-field input{width:100%;border:1px solid #555;background:#242424;color:#fff;padding:14px;font:14px Arial,"Noto Sans KR",sans-serif;box-sizing:border-box}
+.login-field input:focus{outline:2px solid var(--yellow);outline-offset:0;border-color:var(--yellow)}
+.login-form button{margin-top:6px;border:0;background:var(--yellow);color:#111;padding:16px;cursor:pointer;font:700 12px "DM Mono",monospace;letter-spacing:.08em}
+@media(max-width:600px){.login-wrap{padding:32px 22px}}
