@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getBuilderRepository } from '@orca/content';
 
 import { deleteBuilderAction, saveBuilderAction } from '@/app/builder/actions';
+import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
 import { Select } from '@/components/Select';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
@@ -30,10 +31,10 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/builder" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/builder" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
             ← 목록
           </Link>
-          <h1 className="text-xl font-bold tracking-tight">{builder.displayName}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">{builder.displayName}</h1>
           <BuilderStatusBadge status={builder.status} />
         </div>
         {canWrite && (
@@ -59,29 +60,35 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
               <label className="label" htmlFor="specialties">전문 분야 (쉼표 구분)</label>
               <input id="specialties" name="specialties" className="field" defaultValue={builder.specialties.join(', ')} />
             </div>
-            <div>
-              <label className="label" htmlFor="education">교육 이력 (쉼표 구분)</label>
-              <input id="education" name="education" className="field" defaultValue={builder.education.join(', ')} />
-            </div>
-            <div>
-              <label className="label" htmlFor="communityActivity">커뮤니티 활동 (쉼표 구분)</label>
-              <input
-                id="communityActivity"
-                name="communityActivity"
-                className="field"
-                defaultValue={builder.communityActivity.join(', ')}
-              />
-            </div>
-            <div>
-              <label className="label" htmlFor="verifications">검증 정보 (쉼표 구분)</label>
-              <input id="verifications" name="verifications" className="field" defaultValue={builder.verifications.join(', ')} />
+
+            <div className="space-y-4 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <SubHeading>이력</SubHeading>
+              <div>
+                <label className="label" htmlFor="education">교육 이력 (쉼표 구분)</label>
+                <input id="education" name="education" className="field" defaultValue={builder.education.join(', ')} />
+              </div>
+              <div>
+                <label className="label" htmlFor="communityActivity">커뮤니티 활동 (쉼표 구분)</label>
+                <input
+                  id="communityActivity"
+                  name="communityActivity"
+                  className="field"
+                  defaultValue={builder.communityActivity.join(', ')}
+                />
+              </div>
+              <div>
+                <label className="label" htmlFor="verifications">검증 정보 (쉼표 구분)</label>
+                <input id="verifications" name="verifications" className="field" defaultValue={builder.verifications.join(', ')} />
+              </div>
             </div>
           </section>
 
           <section className="card space-y-4">
             <div>
               <h2 className="font-semibold">아바타</h2>
-              <p className="mt-1 text-xs text-neutral-500">본인 업로드만 허용됩니다 — 이미지 생성 금지(하드 룰 1).</p>
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+                본인 업로드만 허용됩니다 — 이미지 생성 금지(하드 룰 1).
+              </p>
             </div>
             <div>
               <label className="label" htmlFor="avatarSrc">경로</label>
@@ -116,56 +123,48 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
             </div>
             <div>
               <span className="label">슬러그</span>
-              <p className="rounded-lg bg-neutral-50 px-3 py-2 font-mono text-xs break-all">{builder.slug}</p>
+              <p className="rounded-lg px-3 py-2 font-mono text-xs break-all" style={{ background: 'var(--color-surface-sunken)', color: 'var(--color-ink-muted)' }}>
+                {builder.slug}
+              </p>
             </div>
           </section>
 
           <section className="card space-y-3">
             <div>
               <h2 className="font-semibold">Insight 권한</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
                 기본값은 전부 비활성입니다. 업로드한 Work·Insight는 이 권한과 무관하게 항상 검수 대기로
                 등록됩니다(정책정의 §3.3).
               </p>
             </div>
-            <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-              <input
-                type="checkbox"
-                name="permWriteInsight"
-                defaultChecked={builder.permissions.canWriteInsight}
-                className="mt-0.5 size-4"
-              />
-              <span>Insight 작성</span>
-            </label>
-            <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-              <input
-                type="checkbox"
-                name="permEditInsight"
-                defaultChecked={builder.permissions.canEditInsight}
-                className="mt-0.5 size-4"
-              />
-              <span>Insight 수정</span>
-            </label>
-            <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-              <input
-                type="checkbox"
-                name="permDeleteInsight"
-                defaultChecked={builder.permissions.canDeleteInsight}
-                className="mt-0.5 size-4"
-              />
-              <span>
-                Insight 삭제 <span className="block text-xs text-neutral-400">기본 비활성 권장</span>
-              </span>
-            </label>
+            <CheckboxRow
+              name="permWriteInsight"
+              defaultChecked={builder.permissions.canWriteInsight}
+              title="Insight 작성"
+              description="새 글 초안을 만들 수 있습니다."
+            />
+            <CheckboxRow
+              name="permEditInsight"
+              defaultChecked={builder.permissions.canEditInsight}
+              title="Insight 수정"
+              description="기존 글을 편집할 수 있습니다."
+            />
+            <CheckboxRow
+              name="permDeleteInsight"
+              defaultChecked={builder.permissions.canDeleteInsight}
+              title="Insight 삭제"
+              description="기본 비활성 권장."
+            />
           </section>
 
           {canDelete && (
-            <section className="card space-y-3">
-              <h2 className="font-semibold text-red-700">위험 구역</h2>
+            <section className="card space-y-3" style={{ borderColor: 'var(--color-danger-bg)' }}>
+              <h2 className="font-semibold" style={{ color: 'var(--color-danger)' }}>위험 구역</h2>
               <button
                 type="submit"
                 formAction={deleteBuilderAction}
-                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                className="btn w-full"
+                style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}
               >
                 이 빌더 삭제
               </button>

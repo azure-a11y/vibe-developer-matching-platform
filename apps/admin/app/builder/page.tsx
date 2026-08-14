@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { getBuilderRepository } from '@orca/content';
 
 import { createBuilderAction } from '@/app/builder/actions';
+import { TableHeadRow } from '@/components/AdminTable';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
@@ -22,14 +23,14 @@ export default async function BuilderListPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Builder</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="text-2xl font-semibold tracking-tight">Builder</h1>
+        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
           전체 {counts.total} · 검증 대기 {counts.pending} · 활성 {counts.active}
         </p>
       </header>
 
       {errors.length > 0 && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-xl p-4 text-sm" style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
           <p className="font-semibold">프론트매터 오류가 있는 파일이 있습니다:</p>
           <ul className="mt-2 list-disc space-y-1 pl-5">
             {errors.map((error) => (
@@ -61,36 +62,29 @@ export default async function BuilderListPage() {
         </form>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
+      <div className="overflow-x-auto rounded-xl" style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
         <table className="w-full text-sm">
-          <thead className="border-b border-neutral-200 bg-neutral-50 text-left text-xs uppercase tracking-wide text-neutral-500">
-            <tr>
-              <th className="px-5 py-3 font-semibold">이름</th>
-              <th className="px-5 py-3 font-semibold">전문 분야</th>
-              <th className="px-5 py-3 font-semibold">상태</th>
-              <th className="px-5 py-3 font-semibold">Insight 권한</th>
-              <th className="px-5 py-3 font-semibold">수정일</th>
-            </tr>
+          <thead>
+            <TableHeadRow labels={['이름', '전문 분야', '상태', 'Insight 권한', '수정일']} />
           </thead>
-          <tbody className="divide-y divide-neutral-100">
+          <tbody className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
             {builders.map((builder) => (
-              <tr key={builder.slug} className="hover:bg-neutral-50">
+              <tr key={builder.slug} className="transition-colors hover:bg-[var(--color-surface-sunken)]">
                 <td className="px-5 py-4">
-                  <Link
-                    href={`/builder/${encodeURIComponent(builder.slug)}`}
-                    className="font-medium hover:text-[var(--color-accent)]"
-                  >
+                  <Link href={`/builder/${encodeURIComponent(builder.slug)}`} className="font-medium hover:underline">
                     {builder.displayName}
                   </Link>
-                  <p className="mt-0.5 font-mono text-xs text-neutral-400">{builder.slug}</p>
+                  <p className="mt-0.5 font-mono text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                    {builder.slug}
+                  </p>
                 </td>
-                <td className="px-5 py-4 text-neutral-600">
+                <td className="px-5 py-4" style={{ color: 'var(--color-ink-muted)' }}>
                   {builder.specialties.length > 0 ? builder.specialties.join(', ') : '—'}
                 </td>
                 <td className="px-5 py-4">
                   <BuilderStatusBadge status={builder.status} />
                 </td>
-                <td className="px-5 py-4 text-neutral-600">
+                <td className="px-5 py-4" style={{ color: 'var(--color-ink-muted)' }}>
                   {[
                     builder.permissions.canWriteInsight && '작성',
                     builder.permissions.canEditInsight && '수정',
@@ -99,12 +93,14 @@ export default async function BuilderListPage() {
                     .filter(Boolean)
                     .join(' · ') || '없음'}
                 </td>
-                <td className="px-5 py-4 text-neutral-500 tabular-nums">{builder.updatedAt.slice(0, 10)}</td>
+                <td className="px-5 py-4 tabular-nums" style={{ color: 'var(--color-ink-faint)' }}>
+                  {builder.updatedAt.slice(0, 10)}
+                </td>
               </tr>
             ))}
             {builders.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-neutral-500">
+                <td colSpan={5} className="px-5 py-10 text-center text-sm" style={{ color: 'var(--color-ink-muted)' }}>
                   아직 등록된 빌더가 없습니다. 위에서 추가해 보세요.
                 </td>
               </tr>

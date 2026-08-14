@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { getBuilderRepository, getWorkRepository } from '@orca/content';
 
 import { deleteWorkAction, saveWorkAction } from '@/app/work/actions';
+import { BuilderStatusBadge, WorkStatusBadge } from '@/components/StatusBadge';
+import { SubHeading } from '@/components/FormPrimitives';
 import { Select } from '@/components/Select';
-import { WorkStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -35,10 +36,10 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/work" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/work" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
             ← 목록
           </Link>
-          <h1 className="text-xl font-bold tracking-tight">{work.title}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">{work.title}</h1>
           <WorkStatusBadge status={work.status} />
         </div>
         {canWrite && (
@@ -82,33 +83,52 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
             </div>
           </section>
 
-          <section className="card space-y-4">
+          {/* 문제 → 해결 → 결과는 순서가 곧 서사다. 세로로 번호를 매겨 읽는
+              순서를 시각적으로도 강제한다 — 세 필드가 나란한 카드가 아니라
+              하나의 흐름으로 읽히게. */}
+          <section className="card space-y-5">
             <h2 className="font-semibold">문제 · 해결 · 결과</h2>
-            <div>
-              <label className="label" htmlFor="problem">문제</label>
-              <textarea id="problem" name="problem" rows={3} className="field" defaultValue={work.problem} />
-            </div>
-            <div>
-              <label className="label" htmlFor="solution">해결 과정</label>
-              <textarea id="solution" name="solution" rows={3} className="field" defaultValue={work.solution} />
-            </div>
-            <div>
-              <label className="label" htmlFor="result">결과</label>
-              <textarea id="result" name="result" rows={3} className="field" defaultValue={work.result} />
-            </div>
+            {[
+              { n: '1', name: 'problem', label: '문제', value: work.problem, placeholder: '클라이언트가 겪던 문제 상황' },
+              { n: '2', name: 'solution', label: '해결 과정', value: work.solution, placeholder: '어떻게 접근하고 무엇을 만들었는지' },
+              { n: '3', name: 'result', label: '결과', value: work.result, placeholder: '수치·정성적 성과' },
+            ].map((step, i, arr) => (
+              <div key={step.name} className="flex gap-3">
+                <div className="flex flex-col items-center pt-1">
+                  <span
+                    className="flex size-6 shrink-0 items-center justify-center rounded-full font-mono text-xs font-semibold"
+                    style={{ background: 'var(--color-accent-soft)', color: 'var(--color-accent-soft-text)' }}
+                  >
+                    {step.n}
+                  </span>
+                  {i < arr.length - 1 && <span className="mt-1 w-px flex-1" style={{ background: 'var(--color-border)' }} />}
+                </div>
+                <div className="min-w-0 flex-1 pb-1">
+                  <label className="label" htmlFor={step.name}>{step.label}</label>
+                  <textarea
+                    id={step.name}
+                    name={step.name}
+                    rows={3}
+                    className="field"
+                    defaultValue={step.value}
+                    placeholder={step.placeholder}
+                  />
+                </div>
+              </div>
+            ))}
           </section>
 
           <section className="card space-y-3">
             <div>
               <h2 className="font-semibold">참여 빌더</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
                 Builder 메뉴에 등록된 빌더 중에서 이 프로젝트에 참여한 사람을 선택합니다(N:M).
               </p>
             </div>
             {builders.length === 0 ? (
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
                 아직 등록된 빌더가 없습니다.{' '}
-                <Link href="/builder" className="text-[var(--color-accent)] hover:underline">
+                <Link href="/builder" className="hover:underline" style={{ color: 'var(--color-accent)' }}>
                   Builder에서 먼저 추가하세요.
                 </Link>
               </p>
@@ -117,16 +137,17 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
                 {builders.map((builder) => (
                   <label
                     key={builder.slug}
-                    className="flex items-center gap-2 rounded-lg border border-neutral-200 p-3 text-sm"
+                    className="flex items-center gap-2.5 rounded-lg border border-[var(--color-border)] p-3 text-sm transition-colors has-checked:border-[var(--color-accent)] has-checked:bg-[var(--color-accent-soft)]"
                   >
                     <input
                       type="checkbox"
                       name="builderIds"
                       value={builder.slug}
                       defaultChecked={selectedBuilders.has(builder.slug)}
-                      className="size-4"
+                      className="size-4 accent-[var(--color-accent)]"
                     />
-                    <span>{builder.displayName}</span>
+                    <span className="min-w-0 flex-1 truncate">{builder.displayName}</span>
+                    <BuilderStatusBadge status={builder.status} />
                   </label>
                 ))}
               </div>
@@ -143,17 +164,40 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <span className="label">슬러그</span>
-              <p className="rounded-lg bg-neutral-50 px-3 py-2 font-mono text-xs break-all">{work.slug}</p>
+              <p className="rounded-lg px-3 py-2 font-mono text-xs break-all" style={{ background: 'var(--color-surface-sunken)', color: 'var(--color-ink-muted)' }}>
+                {work.slug}
+              </p>
             </div>
           </section>
 
+          <section className="card space-y-3">
+            <SubHeading>참여 빌더 요약</SubHeading>
+            {work.builderIds.length === 0 ? (
+              <p className="text-sm" style={{ color: 'var(--color-ink-faint)' }}>
+                아직 선택된 빌더가 없습니다.
+              </p>
+            ) : (
+              <ul className="space-y-1.5">
+                {work.builderIds.map((id) => {
+                  const b = builders.find((builder) => builder.slug === id);
+                  return (
+                    <li key={id} className="text-sm" style={{ color: 'var(--color-ink)' }}>
+                      {b?.displayName ?? id}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+
           {canDelete && (
-            <section className="card space-y-3">
-              <h2 className="font-semibold text-red-700">위험 구역</h2>
+            <section className="card space-y-3" style={{ borderColor: 'var(--color-danger-bg)' }}>
+              <h2 className="font-semibold" style={{ color: 'var(--color-danger)' }}>위험 구역</h2>
               <button
                 type="submit"
                 formAction={deleteWorkAction}
-                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                className="btn w-full"
+                style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}
               >
                 이 Work 삭제
               </button>

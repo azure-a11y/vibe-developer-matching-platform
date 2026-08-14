@@ -4,6 +4,7 @@ import { auditPost, getRepository } from '@orca/content';
 
 import { deletePostAction, savePostAction } from '@/app/actions';
 import { Editor } from '@/components/Editor';
+import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
 import { Select } from '@/components/Select';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
@@ -31,42 +32,6 @@ const PRIORITY_OPTIONS = [
   { value: '0.5', label: '0.5', description: '보조 · 아카이브' },
   { value: '0.3', label: '0.3', description: '낮은 우선순위' },
 ];
-
-/** Small section heading used to break up long field groups (SEO block especially). */
-function SubHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--color-ink-faint)' }}>
-      {children}
-    </p>
-  );
-}
-
-function CheckboxRow({
-  name,
-  defaultChecked,
-  title,
-  description,
-}: {
-  name: string;
-  defaultChecked: boolean;
-  title: string;
-  description: string;
-}) {
-  return (
-    <label
-      className="flex items-start gap-2 rounded-lg p-3 text-sm"
-      style={{ border: '1px solid var(--color-border)' }}
-    >
-      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="mt-0.5 size-4 accent-[var(--color-accent)]" />
-      <span>
-        <span className="font-medium">{title}</span>
-        <span className="block text-xs" style={{ color: 'var(--color-ink-muted)' }}>
-          {description}
-        </span>
-      </span>
-    </label>
-  );
-}
 
 export default async function PostEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const account = await requireMenuPermission('insight', 'view');

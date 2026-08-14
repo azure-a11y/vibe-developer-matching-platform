@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { auditPost, getRepository } from '@orca/content';
 
 import { createPostAction } from '@/app/actions';
+import { TableHeadRow } from '@/components/AdminTable';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
@@ -79,18 +80,7 @@ export default async function InsightListPage() {
       <div className="overflow-x-auto rounded-xl" style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface-sunken)' }}>
-              {['제목', '상태', '점수', '작성자', '수정일'].map((label) => (
-                <th
-                  key={label}
-                  className="whitespace-nowrap px-5 py-3 text-left font-mono text-[11px] font-semibold uppercase tracking-wide"
-                  style={{ color: 'var(--color-ink-faint)' }}
-                >
-                  {label}
-                </th>
-              ))}
-              <th className="px-5 py-3" />
-            </tr>
+            <TableHeadRow labels={['제목', '상태', '점수', '작성자', '수정일']} actionsColumn />
           </thead>
           <tbody className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
             {posts.map((post) => {
