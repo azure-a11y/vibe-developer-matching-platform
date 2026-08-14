@@ -5,6 +5,8 @@ import type {
   BuilderFrontmatterInput,
   Post,
   PostFrontmatterInput,
+  SiteSettings,
+  SiteSettingsFrontmatterInput,
   Work,
   WorkFrontmatterInput,
 } from '../schema.ts';
@@ -92,4 +94,16 @@ export interface AdminAccountRepository {
   save(frontmatter: AdminAccountFrontmatterInput): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
+}
+
+/**
+ * Site settings (docs/project/06_데이터모델.md §3.7) — singleton, so this
+ * shape is `get`/`save` rather than list/getBySlug/remove. File driver only.
+ */
+export interface SiteSettingsRepository {
+  readonly driver: 'file';
+
+  get(): Promise<{ settings: SiteSettings; error: string | null }>;
+
+  save(frontmatter: SiteSettingsFrontmatterInput): Promise<void>;
 }

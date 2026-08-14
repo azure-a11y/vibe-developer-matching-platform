@@ -23,10 +23,18 @@ import type {
   AdminAccountFrontmatterInput,
   BuilderFrontmatterInput,
   PostFrontmatterInput,
+  SiteSettingsFrontmatterInput,
   WorkFrontmatterInput,
 } from '../schema.ts';
+import { getSiteSettings, writeSiteSettings } from '../site-settings.ts';
 import { deleteWork, getAllWorks, getPublishedWorks, getWorkBySlug, writeWork } from '../works.ts';
-import type { AdminAccountRepository, BuilderRepository, ContentRepository, WorkRepository } from './types.ts';
+import type {
+  AdminAccountRepository,
+  BuilderRepository,
+  ContentRepository,
+  SiteSettingsRepository,
+  WorkRepository,
+} from './types.ts';
 
 /**
  * Markdown-on-disk driver. The default, and the one the template ships with.
@@ -131,5 +139,17 @@ export const adminAccountFileRepository: AdminAccountRepository = {
 
   async remove(slug: string) {
     return deleteAdminAccount(slug);
+  },
+};
+
+export const siteSettingsFileRepository: SiteSettingsRepository = {
+  driver: 'file',
+
+  async get() {
+    return getSiteSettings();
+  },
+
+  async save(frontmatter: SiteSettingsFrontmatterInput) {
+    writeSiteSettings(frontmatter);
   },
 };

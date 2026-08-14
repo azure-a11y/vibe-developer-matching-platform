@@ -55,6 +55,11 @@ export function adminAccountPath(slug: string): string {
   return path.join(adminAccountsDir(), `${slug}.md`);
 }
 
+/** Singleton — one file, not a directory. */
+export function siteSettingsPath(): string {
+  return path.join(contentDir(), 'site-settings.md');
+}
+
 /** Directory generated cover images are written to, from repo root. */
 export function imageOutputDir(): string {
   const configured = process.env.IMAGE_OUTPUT_DIR ?? 'apps/web/public/images/posts';

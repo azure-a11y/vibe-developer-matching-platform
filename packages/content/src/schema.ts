@@ -341,3 +341,36 @@ export type AdminAccountFrontmatterInput = z.input<typeof AdminAccountFrontmatte
 export interface AdminAccount extends AdminAccountFrontmatter {
   filePath: string;
 }
+
+/**
+ * Site settings (docs/project/06_데이터모델.md §3.7) — a singleton, not a
+ * list. Exists so values that keep coming up as unconfirmed (brand name Q1,
+ * domain Q3, pluug form link Q7/Q20) never get hardcoded into app code; the
+ * admin edits them here and the public site reads them at render time.
+ *
+ * Company/footer fields track PRD §8 Q12 — flagged there as *unverified*
+ * facts copied from the mockup, not confirmed legal info. Never generate or
+ * guess a value for these; leave blank until a human enters the real one.
+ *
+ * No secrets here: env vars stay in .env (PLUUG_ADMIN_URL, ADMIN_SESSION_SECRET,
+ * etc.) — this schema only holds values that are safe to read from a public
+ * page.
+ */
+export const SiteSettingsFrontmatterSchema = z.object({
+  brandName: z.string().default(''),
+  domain: z.string().default(''),
+  /** Public "문의하기" form link (FR-5 AC-5.3) — distinct from PLUUG_ADMIN_URL (admin-only, env var). */
+  pluugFormUrl: z.string().default(''),
+  companyName: z.string().default(''),
+  ceoName: z.string().default(''),
+  businessRegistrationNumber: z.string().default(''),
+  operatedBy: z.string().default(''),
+  updatedAt: z.string(),
+});
+export type SiteSettingsFrontmatter = z.infer<typeof SiteSettingsFrontmatterSchema>;
+
+export type SiteSettingsFrontmatterInput = z.input<typeof SiteSettingsFrontmatterSchema>;
+
+export interface SiteSettings extends SiteSettingsFrontmatter {
+  filePath: string;
+}

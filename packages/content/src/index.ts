@@ -4,6 +4,7 @@ export * from './posts.ts';
 export * from './builders.ts';
 export * from './works.ts';
 export * from './admin-accounts.ts';
+export * from './site-settings.ts';
 export * from './audit.ts';
 export * from './jsonld.ts';
 export * from './repo/index.ts';
