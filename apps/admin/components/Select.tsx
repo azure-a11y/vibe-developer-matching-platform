@@ -49,10 +49,10 @@ export function Select({
       <RadixSelect.Trigger
         id={selectId}
         aria-label={rest['aria-label']}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-neutral-300 bg-white px-3 py-2 text-left text-sm outline-none transition-colors hover:border-neutral-400 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20 data-[placeholder]:text-neutral-400"
+        className="flex w-full items-center justify-between gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-left text-sm text-[var(--color-ink)] outline-none transition-colors hover:border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)] data-[placeholder]:text-[var(--color-ink-faint)]"
       >
         <RadixSelect.Value placeholder={placeholder} />
-        <RadixSelect.Icon className="text-neutral-400">
+        <RadixSelect.Icon className="text-[var(--color-ink-faint)]">
           <ChevronDown />
         </RadixSelect.Icon>
       </RadixSelect.Trigger>
@@ -61,9 +61,9 @@ export function Select({
         <RadixSelect.Content
           position="popper"
           sideOffset={6}
-          className="z-50 max-h-72 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg shadow-neutral-900/5"
+          className="z-50 max-h-72 w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] shadow-lg shadow-neutral-900/5"
         >
-          <RadixSelect.ScrollUpButton className="flex justify-center py-1 text-neutral-400">
+          <RadixSelect.ScrollUpButton className="flex justify-center py-1 text-[var(--color-ink-faint)]">
             <ChevronUp />
           </RadixSelect.ScrollUpButton>
 
@@ -73,11 +73,11 @@ export function Select({
                 key={option.value}
                 value={option.value}
                 disabled={option.disabled}
-                className="relative flex cursor-pointer select-none flex-col gap-0.5 rounded-lg px-3 py-2 pr-8 text-sm outline-none data-[disabled]:cursor-not-allowed data-[highlighted]:bg-neutral-100 data-[disabled]:opacity-40"
+                className="relative flex cursor-pointer select-none flex-col gap-0.5 rounded-lg px-3 py-2 pr-8 text-sm text-[var(--color-ink)] outline-none data-[disabled]:cursor-not-allowed data-[highlighted]:bg-[var(--color-surface-sunken)] data-[disabled]:opacity-40"
               >
                 <RadixSelect.ItemText>{option.label}</RadixSelect.ItemText>
                 {option.description && (
-                  <span className="text-xs text-neutral-500">{option.description}</span>
+                  <span className="text-xs text-[var(--color-ink-faint)]">{option.description}</span>
                 )}
                 <RadixSelect.ItemIndicator className="absolute right-3 top-2.5 text-[var(--color-accent)]">
                   <Check />
@@ -86,7 +86,7 @@ export function Select({
             ))}
           </RadixSelect.Viewport>
 
-          <RadixSelect.ScrollDownButton className="flex justify-center py-1 text-neutral-400">
+          <RadixSelect.ScrollDownButton className="flex justify-center py-1 text-[var(--color-ink-faint)]">
             <ChevronDown />
           </RadixSelect.ScrollDownButton>
         </RadixSelect.Content>

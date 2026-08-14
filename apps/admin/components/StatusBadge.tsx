@@ -1,11 +1,11 @@
 import type { BuilderStatus, PostStatus, WorkStatus } from '@orca/content';
 
 const STYLES: Record<PostStatus, string> = {
-  draft: 'bg-neutral-100 text-neutral-700',
-  in_review: 'bg-amber-100 text-amber-800',
-  scheduled: 'bg-blue-100 text-blue-800',
-  published: 'bg-emerald-100 text-emerald-800',
-  archived: 'bg-neutral-200 text-neutral-500',
+  draft: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+  in_review: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
+  scheduled: 'bg-[var(--color-accent-soft)] text-[var(--color-accent-soft-text)]',
+  published: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
+  archived: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
 };
 
 const LABELS: Record<PostStatus, string> = {
@@ -17,15 +17,13 @@ const LABELS: Record<PostStatus, string> = {
 };
 
 export function StatusBadge({ status }: { status: PostStatus }) {
-  return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STYLES[status]}`}>{LABELS[status]}</span>
-  );
+  return <span className={`badge ${STYLES[status]}`}>{LABELS[status]}</span>;
 }
 
 const BUILDER_STYLES: Record<BuilderStatus, string> = {
-  pending: 'bg-amber-100 text-amber-800',
-  active: 'bg-emerald-100 text-emerald-800',
-  inactive: 'bg-neutral-200 text-neutral-500',
+  pending: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
+  active: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
+  inactive: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
 };
 
 const BUILDER_LABELS: Record<BuilderStatus, string> = {
@@ -35,17 +33,13 @@ const BUILDER_LABELS: Record<BuilderStatus, string> = {
 };
 
 export function BuilderStatusBadge({ status }: { status: BuilderStatus }) {
-  return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${BUILDER_STYLES[status]}`}>
-      {BUILDER_LABELS[status]}
-    </span>
-  );
+  return <span className={`badge ${BUILDER_STYLES[status]}`}>{BUILDER_LABELS[status]}</span>;
 }
 
 const WORK_STYLES: Record<WorkStatus, string> = {
-  pending_review: 'bg-amber-100 text-amber-800',
-  published: 'bg-emerald-100 text-emerald-800',
-  archived: 'bg-neutral-200 text-neutral-500',
+  pending_review: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
+  published: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
+  archived: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
 };
 
 const WORK_LABELS: Record<WorkStatus, string> = {
@@ -55,15 +49,15 @@ const WORK_LABELS: Record<WorkStatus, string> = {
 };
 
 export function WorkStatusBadge({ status }: { status: WorkStatus }) {
-  return (
-    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${WORK_STYLES[status]}`}>
-      {WORK_LABELS[status]}
-    </span>
-  );
+  return <span className={`badge ${WORK_STYLES[status]}`}>{WORK_LABELS[status]}</span>;
 }
 
 export function ScoreBadge({ score }: { score: number }) {
   const tone =
-    score >= 85 ? 'bg-emerald-100 text-emerald-800' : score >= 60 ? 'bg-amber-100 text-amber-800' : 'bg-red-100 text-red-800';
-  return <span className={`rounded-full px-2.5 py-1 text-xs font-semibold tabular-nums ${tone}`}>{score}</span>;
+    score >= 85
+      ? 'bg-[var(--color-success-bg)] text-[var(--color-success)]'
+      : score >= 60
+        ? 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]'
+        : 'bg-[var(--color-danger-bg)] text-[var(--color-danger)]';
+  return <span className={`badge tabular-nums ${tone}`}>{score}</span>;
 }

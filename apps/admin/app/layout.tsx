@@ -22,11 +22,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* The demo state is a supported state, not a warning — but it must be
             visible so nobody assumes writes are hitting a database. */}
         <div
-          className={`px-6 py-2 text-center text-xs ${
+          className="px-6 py-2 text-center font-mono text-[11px] tracking-wide"
+          style={
             backend.driver === 'supabase'
-              ? 'bg-emerald-50 text-emerald-800'
-              : 'bg-amber-50 text-amber-900'
-          }`}
+              ? { background: 'var(--color-success-bg)', color: 'var(--color-success)' }
+              : { background: 'var(--color-warning-bg)', color: 'var(--color-warning)' }
+          }
         >
           <strong>{backend.driver === 'supabase' ? 'Supabase' : '파일 기반'}</strong> · {backend.message}
         </div>

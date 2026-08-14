@@ -1,27 +1,92 @@
 @import 'tailwindcss';
 
+/*
+ * Admin design tokens.
+ *
+ * Deep blue/indigo accent, charcoal-navy sidebar, cool-tinted neutrals
+ * (not pure gray/black) — a back-office tool, not the marketing site.
+ * Every screen pulls from these tokens rather than ad hoc Tailwind color
+ * utilities, so Builder/Work/Insight/etc. inherit this system automatically
+ * once they're restyled in a later pass.
+ */
 @theme {
-  --color-panel: oklch(0.98 0.003 260);
-  --color-line: oklch(0.9 0.005 260);
-  --color-accent: oklch(0.58 0.16 255);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', 'Apple SD Gothic Neo',
+    'Noto Sans KR', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* Accent — deep blue/indigo */
+  --color-accent: oklch(0.47 0.17 264);
+  --color-accent-hover: oklch(0.4 0.18 264);
+  --color-accent-soft: oklch(0.95 0.025 264);
+  --color-accent-soft-text: oklch(0.42 0.15 264);
+
+  /* Surfaces — cool-tinted neutrals, not pure white/gray */
+  --color-bg: oklch(0.984 0.003 264);
+  --color-surface: oklch(1 0 0);
+  --color-surface-sunken: oklch(0.968 0.004 264);
+  --color-border: oklch(0.9 0.006 264);
+  --color-border-strong: oklch(0.8 0.008 264);
+
+  /* Text */
+  --color-ink: oklch(0.2 0.014 264);
+  --color-ink-muted: oklch(0.48 0.012 264);
+  --color-ink-faint: oklch(0.62 0.01 264);
+
+  /* Sidebar — dark charcoal-navy, not pure black */
+  --color-sidebar-bg: oklch(0.18 0.02 264);
+  --color-sidebar-border: oklch(0.27 0.02 264);
+  --color-sidebar-text: oklch(0.68 0.014 264);
+  --color-sidebar-text-hover: oklch(0.93 0.005 264);
+  --color-sidebar-active-bg: oklch(0.28 0.06 264);
+  --color-sidebar-active-text: oklch(0.97 0.01 264);
+
+  /* Semantic status — 4 colors, used consistently everywhere */
+  --color-success: oklch(0.5 0.13 155);
+  --color-success-bg: oklch(0.95 0.045 155);
+  --color-warning: oklch(0.55 0.14 70);
+  --color-warning-bg: oklch(0.95 0.05 75);
+  --color-danger: oklch(0.53 0.19 25);
+  --color-danger-bg: oklch(0.95 0.045 22);
+  --color-neutral-badge: oklch(0.48 0.01 264);
+  --color-neutral-badge-bg: oklch(0.93 0.005 264);
 }
 
 body {
-  @apply bg-neutral-50 text-neutral-900 antialiased;
+  @apply font-sans antialiased;
+  background: var(--color-bg);
+  color: var(--color-ink);
 }
 
 /* Long unbroken strings (URLs, slugs, JSON values) must wrap rather than
    widen their container. Individual scroll regions opt back out. */
 .card {
-  @apply break-words;
+  @apply break-words rounded-xl p-6;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .field {
-  @apply w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20;
+  @apply w-full rounded-lg px-3 py-2 text-sm outline-none transition-colors;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+}
+.field:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+.field[readonly] {
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+}
+.field::placeholder {
+  color: var(--color-ink-faint);
 }
 
 .label {
-  @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-neutral-500;
+  @apply mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-wide;
+  color: var(--color-ink-faint);
+  letter-spacing: 0.04em;
 }
 
 /* Tailwind 4 cannot `@apply` a class defined in this same file, so the
@@ -31,15 +96,27 @@ body {
 }
 
 .btn-primary {
-  @apply btn bg-neutral-900 text-white hover:bg-neutral-700;
+  @apply btn text-white;
+  background: var(--color-accent);
+}
+.btn-primary:hover {
+  background: var(--color-accent-hover);
 }
 
 .btn-secondary {
-  @apply btn border border-neutral-300 bg-white hover:bg-neutral-100;
+  @apply btn;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-ink);
+}
+.btn-secondary:hover {
+  background: var(--color-surface-sunken);
 }
 
-.card {
-  @apply rounded-2xl border border-neutral-200 bg-white p-6;
+/* Shared badge shell — StatusBadge/BuilderStatusBadge/WorkStatusBadge/ScoreBadge
+   set only the color pair via arbitrary-value classes on top of this. */
+@utility badge {
+  @apply inline-flex shrink-0 items-center whitespace-nowrap rounded-full px-2.5 py-1 font-mono text-[11px] font-semibold tracking-wide;
 }
 
 /* ── tiptap editor surface ──────────────────────────────────

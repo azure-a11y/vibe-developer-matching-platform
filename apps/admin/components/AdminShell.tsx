@@ -39,14 +39,23 @@ export function AdminShell({ children, account }: AdminShellProps) {
   const visibleItems = NAV_ITEMS.filter(
     (item) => item.menuKey === 'dashboard' || !account || account.menuPermissions[item.menuKey] !== 'none',
   );
+  const initial = account?.name.trim().charAt(0).toUpperCase() || '?';
 
   return (
-    <div className="flex min-h-dvh">
-      <aside className="flex w-60 shrink-0 flex-col border-r border-neutral-200 bg-white">
-        <Link href="/" className="flex items-center gap-2 px-6 py-5 font-semibold tracking-tight">
-          Orca <span className="text-neutral-400">Admin</span>
+    <div className="flex min-h-dvh flex-col lg:flex-row">
+      <aside
+        className="flex shrink-0 flex-col lg:w-64"
+        style={{ background: 'var(--color-sidebar-bg)', borderColor: 'var(--color-sidebar-border)' }}
+      >
+        <Link
+          href="/"
+          className="flex items-center gap-2 px-6 py-5 text-sm font-semibold tracking-tight"
+          style={{ color: 'var(--color-sidebar-text-hover)' }}
+        >
+          Orca <span style={{ color: 'var(--color-sidebar-text)' }}>Admin</span>
         </Link>
-        <nav className="flex flex-1 flex-col gap-0.5 px-3">
+
+        <nav className="flex flex-1 flex-wrap gap-0.5 px-3 lg:flex-col lg:flex-nowrap">
           {visibleItems.map((item) => {
             const active = isActive(pathname, item.href);
             return (
@@ -54,26 +63,51 @@ export function AdminShell({ children, account }: AdminShellProps) {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                className="rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                style={
                   active
-                    ? 'bg-neutral-900 text-white'
-                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
-                }`}
+                    ? { background: 'var(--color-sidebar-active-bg)', color: 'var(--color-sidebar-active-text)' }
+                    : { color: 'var(--color-sidebar-text)' }
+                }
+                onMouseEnter={(e) => {
+                  if (!active) e.currentTarget.style.color = 'var(--color-sidebar-text-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!active) e.currentTarget.style.color = 'var(--color-sidebar-text)';
+                }}
               >
                 {item.label}
               </Link>
             );
           })}
         </nav>
-        <div className="space-y-3 border-t border-neutral-200 p-4">
+
+        <div
+          className="mt-auto hidden flex-col gap-3 border-t p-4 lg:flex"
+          style={{ borderColor: 'var(--color-sidebar-border)' }}
+        >
           {account && (
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{account.name}</p>
-                <p className="truncate text-xs text-neutral-400">{account.grade}</p>
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                style={{ background: 'var(--color-sidebar-active-bg)', color: 'var(--color-sidebar-active-text)' }}
+              >
+                {initial}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium" style={{ color: 'var(--color-sidebar-text-hover)' }}>
+                  {account.name}
+                </p>
+                <p className="truncate text-xs" style={{ color: 'var(--color-sidebar-text)' }}>
+                  {account.grade}
+                </p>
               </div>
               <form action={logoutAction}>
-                <button type="submit" className="shrink-0 text-xs text-neutral-500 hover:text-neutral-900">
+                <button
+                  type="submit"
+                  className="shrink-0 text-xs font-medium transition-colors hover:underline"
+                  style={{ color: 'var(--color-sidebar-text)' }}
+                >
                   로그아웃
                 </button>
               </form>
@@ -83,7 +117,8 @@ export function AdminShell({ children, account }: AdminShellProps) {
             href="http://localhost:3000"
             target="_blank"
             rel="noopener noreferrer"
-            className="block text-xs text-neutral-500 hover:text-neutral-900"
+            className="text-xs transition-colors hover:underline"
+            style={{ color: 'var(--color-sidebar-text)' }}
           >
             사이트 보기 ↗
           </a>
@@ -91,10 +126,13 @@ export function AdminShell({ children, account }: AdminShellProps) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="border-b border-neutral-200 bg-white px-8 py-4">
+        <header
+          className="flex items-center justify-between px-6 py-4 lg:px-10"
+          style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface)' }}
+        >
           <h1 className="text-lg font-semibold tracking-tight">{current?.label ?? 'Admin'}</h1>
         </header>
-        <main className="min-w-0 flex-1 px-8 py-8">{children}</main>
+        <main className="min-w-0 flex-1 px-6 py-8 lg:px-10">{children}</main>
       </div>
     </div>
   );
