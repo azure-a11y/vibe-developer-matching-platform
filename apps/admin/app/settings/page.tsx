@@ -1,6 +1,9 @@
+import Link from 'next/link';
 import { getSiteSettingsRepository } from '@orca/content';
 
 import { saveSiteSettingsAction } from '@/app/settings/actions';
+import { TbdNote } from '@/components/FormPrimitives';
+import { SaveButton } from '@/components/SaveButton';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -14,12 +17,19 @@ export default async function SettingsPage() {
   return (
     <div className="max-w-2xl space-y-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm text-neutral-500">사이트 전역 설정 — 여기서 바꾸면 공개 사이트에 즉시 반영됩니다.</p>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
+          사이트 전역 설정 — 여기서 바꾸면 공개 사이트에 즉시 반영됩니다.
+        </p>
+        {!canWrite && (
+          <p className="mt-2 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+            조회 권한만 있어 값을 볼 수만 있습니다. 수정하려면 관리자에게 편집 권한을 요청하세요.
+          </p>
+        )}
       </header>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+        <div className="rounded-xl p-4 text-sm" style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
           <p className="font-semibold">저장된 설정 파일에 오류가 있습니다:</p>
           <p className="mt-2 whitespace-pre-wrap font-mono text-xs">{error}</p>
         </div>
@@ -29,7 +39,7 @@ export default async function SettingsPage() {
         <section className="card space-y-4">
           <div>
             <h2 className="font-semibold">사이트 기본</h2>
-            <p className="mt-1 text-xs text-neutral-500">
+            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
               브랜드명·도메인이 아직 확정되지 않았다면(§8 Q1/Q3) 비워두세요 — 코드에는 이 값이 하드코딩되지
               않습니다.
             </p>
@@ -55,16 +65,18 @@ export default async function SettingsPage() {
               placeholder="예: aibuildergroup.co (미확정)"
               readOnly={!canWrite}
             />
+            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+              프로토콜 없이 도메인만 입력합니다.
+            </p>
           </div>
         </section>
 
         <section className="card space-y-4">
           <div>
             <h2 className="font-semibold">문의 폼 (pluug)</h2>
-            <p className="mt-1 text-xs text-neutral-500">
-              공개 사이트 "문의하기"가 여는 pluug 폼 링크입니다(FR-5 AC-5.3). 여기서 바꾸면 문의하기
-              진입점 전체에 즉시 반영됩니다. pluug 관리자 화면 자체로 이동하는 링크는 Inquiry 메뉴에
-              별도로 있습니다(환경변수 <code className="font-mono text-xs">PLUUG_ADMIN_URL</code>).
+            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+              공개 사이트 "문의하기"가 여는 pluug 폼 링크입니다(FR-5 AC-5.3). 여기서 바꾸면 문의하기 진입점
+              전체에 즉시 반영됩니다.
             </p>
           </div>
           <div>
@@ -78,16 +90,38 @@ export default async function SettingsPage() {
               readOnly={!canWrite}
             />
           </div>
+          <dl className="space-y-2 rounded-lg p-3 text-xs" style={{ background: 'var(--color-surface-sunken)' }}>
+            <div className="flex items-start gap-2">
+              <dt className="badge shrink-0 bg-[var(--color-accent-soft)] text-[var(--color-accent-soft-text)]">
+                pluugFormUrl
+              </dt>
+              <dd style={{ color: 'var(--color-ink-muted)' }}>
+                여기서 설정 — 방문자가 누르는 공개 사이트 "문의하기" 버튼이 여는 입력 폼.
+              </dd>
+            </div>
+            <div className="flex items-start gap-2">
+              <dt className="badge shrink-0 bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]">
+                PLUUG_ADMIN_URL
+              </dt>
+              <dd style={{ color: 'var(--color-ink-muted)' }}>
+                환경변수로 설정 — 관리자가 접수된 문의를 확인하는 pluug 자체 관리 화면.{' '}
+                <Link href="/inquiry" className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                  Inquiry 메뉴
+                </Link>
+                에서 이동합니다.
+              </dd>
+            </div>
+          </dl>
         </section>
 
         <section className="card space-y-4">
           <div>
             <h2 className="font-semibold">회사 정보 (푸터)</h2>
-            <p className="mt-1 text-xs text-neutral-500">
-              ⚠️ PRD §8 Q12 — 아래 값은 아직 사실 확인되지 않았습니다. 실제 확정된 사업자 정보를 확인하기
-              전에는 비워두거나 추측으로 채우지 마세요.
-            </p>
           </div>
+          <TbdNote title="PRD §8 Q12 — 사실 확인 전">
+            아래 값은 아직 확정된 사업자 정보로 검증되지 않았습니다. 실제 값을 확인하기 전에는 비워두거나
+            추측으로 채우지 마세요.
+          </TbdNote>
           <div>
             <label className="label" htmlFor="companyName">회사명</label>
             <input id="companyName" name="companyName" className="field" defaultValue={settings.companyName} readOnly={!canWrite} />
@@ -112,11 +146,7 @@ export default async function SettingsPage() {
           </div>
         </section>
 
-        {canWrite && (
-          <button type="submit" className="btn-primary">
-            저장
-          </button>
-        )}
+        {canWrite && <SaveButton />}
       </form>
     </div>
   );
