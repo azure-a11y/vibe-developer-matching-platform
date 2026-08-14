@@ -3,10 +3,13 @@ import { auditPost, getRepository } from '@orca/content';
 
 import { createPostAction } from '@/app/actions';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function InsightListPage() {
+  await requireMenuPermission('insight', 'view');
+
   const { posts, errors } = await getRepository().getAll();
   const audits = new Map(posts.map((post) => [post.slug, auditPost(post)]));
 

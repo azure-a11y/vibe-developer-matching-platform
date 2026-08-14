@@ -282,3 +282,62 @@ export type WorkFrontmatterInput = z.input<typeof WorkFrontmatterSchema>;
 export interface Work extends WorkFrontmatter {
   filePath: string;
 }
+
+/**
+ * Admin auth domain (docs/project/06_데이터모델.md §3.6, 04_정책정의.md §4).
+ *
+ * `full` > `edit_approve` > `view` > `none` — the four levels the admin
+ * mockup used. `edit_approve` covers create/edit/status-change; only `full`
+ * may delete (04_정책정의.md doesn't define a separate delete tier, so this
+ * is the minimal reading, not an invented one).
+ */
+export const PermissionLevel = z.enum(['full', 'edit_approve', 'view', 'none']);
+export type PermissionLevel = z.infer<typeof PermissionLevel>;
+
+/**
+ * One entry per admin nav item (components/AdminShell.tsx). Defaults are
+ * `view` on the dashboard only — every other menu starts `none` so a fresh
+ * account can't touch anything until explicitly granted.
+ */
+export const AdminMenuPermissionsSchema = z.object({
+  dashboard: PermissionLevel.default('view'),
+  builder: PermissionLevel.default('none'),
+  work: PermissionLevel.default('none'),
+  insight: PermissionLevel.default('none'),
+  inquiry: PermissionLevel.default('none'),
+  settings: PermissionLevel.default('none'),
+  accountPermission: PermissionLevel.default('none'),
+});
+export type AdminMenuPermissions = z.infer<typeof AdminMenuPermissionsSchema>;
+export type MenuKey = keyof AdminMenuPermissions;
+
+export const AdminAccountStatus = z.enum(['active', 'inactive']);
+export type AdminAccountStatus = z.infer<typeof AdminAccountStatus>;
+
+export const AdminAccountFrontmatterSchema = z.object({
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  email: z.string().email(),
+  name: z.string().min(1),
+  /**
+   * Free text, not an enum — grade names/count are unconfirmed (Q21,
+   * 06_데이터모델.md §6). Authorization reads `menuPermissions` directly,
+   * never this field, so an unconfirmed label can't accidentally gate access.
+   */
+  grade: z.string().default('미지정'),
+  passwordHash: z.string().min(1),
+  menuPermissions: AdminMenuPermissionsSchema.prefault({}),
+  status: AdminAccountStatus.default('active'),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type AdminAccountFrontmatter = z.infer<typeof AdminAccountFrontmatterSchema>;
+
+export type AdminAccountFrontmatterInput = z.input<typeof AdminAccountFrontmatterSchema>;
+
+export interface AdminAccount extends AdminAccountFrontmatter {
+  filePath: string;
+}

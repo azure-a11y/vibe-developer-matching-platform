@@ -10,6 +10,8 @@ import {
   slugify,
 } from '@orca/content';
 
+import { requireMenuPermission } from '@/lib/permissions';
+
 function text(form: FormData, key: string): string {
   return String(form.get(key) ?? '').trim();
 }
@@ -58,6 +60,8 @@ function alternateList(form: FormData) {
 }
 
 export async function createPostAction(formData: FormData) {
+  await requireMenuPermission('insight', 'edit_approve');
+
   const title = text(formData, 'title');
   if (!title) throw new Error('제목은 필수입니다.');
 
@@ -86,6 +90,8 @@ export async function createPostAction(formData: FormData) {
 }
 
 export async function savePostAction(formData: FormData) {
+  await requireMenuPermission('insight', 'edit_approve');
+
   const repo = getRepository();
   const slug = text(formData, 'slug');
   const existing = await repo.getBySlug(slug);
@@ -165,6 +171,8 @@ export async function savePostAction(formData: FormData) {
 }
 
 export async function saveReviewAction(formData: FormData) {
+  await requireMenuPermission('insight', 'edit_approve');
+
   const repo = getRepository();
   const slug = text(formData, 'slug');
   const post = await repo.getBySlug(slug);
@@ -201,6 +209,8 @@ export async function saveReviewAction(formData: FormData) {
 }
 
 export async function deletePostAction(formData: FormData) {
+  await requireMenuPermission('insight', 'full');
+
   await getRepository().remove(text(formData, 'slug'));
   revalidatePath('/');
   revalidatePath('/insight');

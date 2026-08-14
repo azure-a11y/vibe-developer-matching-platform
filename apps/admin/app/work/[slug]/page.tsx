@@ -5,6 +5,7 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 import { deleteWorkAction, saveWorkAction } from '@/app/work/actions';
 import { Select } from '@/components/Select';
 import { WorkStatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,8 @@ const STATUS_OPTIONS = [
 ];
 
 export default async function WorkEditorPage({ params }: { params: Promise<{ slug: string }> }) {
+  await requireMenuPermission('work', 'view');
+
   const { slug } = await params;
   const [work, { builders }] = await Promise.all([
     getWorkRepository().getBySlug(decodeURIComponent(slug)),

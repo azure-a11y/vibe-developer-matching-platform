@@ -1,4 +1,11 @@
 import {
+  deleteAdminAccount,
+  getAdminAccountByEmail,
+  getAdminAccountBySlug,
+  getAllAdminAccounts,
+  writeAdminAccount,
+} from '../admin-accounts.ts';
+import {
   deleteBuilder,
   getActiveBuilders,
   getAllBuilders,
@@ -12,9 +19,14 @@ import {
   getPublishedPosts,
   writePost,
 } from '../posts.ts';
-import type { BuilderFrontmatterInput, PostFrontmatterInput, WorkFrontmatterInput } from '../schema.ts';
+import type {
+  AdminAccountFrontmatterInput,
+  BuilderFrontmatterInput,
+  PostFrontmatterInput,
+  WorkFrontmatterInput,
+} from '../schema.ts';
 import { deleteWork, getAllWorks, getPublishedWorks, getWorkBySlug, writeWork } from '../works.ts';
-import type { BuilderRepository, ContentRepository, WorkRepository } from './types.ts';
+import type { AdminAccountRepository, BuilderRepository, ContentRepository, WorkRepository } from './types.ts';
 
 /**
  * Markdown-on-disk driver. The default, and the one the template ships with.
@@ -94,5 +106,30 @@ export const workFileRepository: WorkRepository = {
 
   async remove(slug: string) {
     return deleteWork(slug);
+  },
+};
+
+export const adminAccountFileRepository: AdminAccountRepository = {
+  driver: 'file',
+
+  async getAll() {
+    return getAllAdminAccounts();
+  },
+
+  async getBySlug(slug: string) {
+    return getAdminAccountBySlug(slug);
+  },
+
+  async getByEmail(email: string) {
+    return getAdminAccountByEmail(email);
+  },
+
+  async save(frontmatter: AdminAccountFrontmatterInput) {
+    writeAdminAccount(frontmatter);
+    return frontmatter.slug;
+  },
+
+  async remove(slug: string) {
+    return deleteAdminAccount(slug);
   },
 };

@@ -1,6 +1,11 @@
 import { ComingSoon } from '@/components/ComingSoon';
+import { requireMenuPermission } from '@/lib/permissions';
 
-export default function SettingsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function SettingsPage() {
+  await requireMenuPermission('settings', 'view');
+
   return (
     <ComingSoon
       title="Settings"

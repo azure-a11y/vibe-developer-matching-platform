@@ -3,10 +3,13 @@ import { getBuilderRepository } from '@orca/content';
 
 import { createBuilderAction } from '@/app/builder/actions';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function BuilderListPage() {
+  await requireMenuPermission('builder', 'view');
+
   const { builders, errors } = await getBuilderRepository().getAll();
 
   const counts = {

@@ -10,6 +10,8 @@ import {
   slugify,
 } from '@orca/content';
 
+import { requireMenuPermission } from '@/lib/permissions';
+
 function text(form: FormData, key: string): string {
   return String(form.get(key) ?? '').trim();
 }
@@ -27,6 +29,8 @@ function bool(form: FormData, key: string): boolean {
 }
 
 export async function createBuilderAction(formData: FormData) {
+  await requireMenuPermission('builder', 'edit_approve');
+
   const displayName = text(formData, 'displayName');
   if (!displayName) throw new Error('이름은 필수입니다.');
 
@@ -52,6 +56,8 @@ export async function createBuilderAction(formData: FormData) {
 }
 
 export async function saveBuilderAction(formData: FormData) {
+  await requireMenuPermission('builder', 'edit_approve');
+
   const repo = getBuilderRepository();
   const slug = text(formData, 'slug');
   const existing = await repo.getBySlug(slug);
@@ -89,6 +95,8 @@ export async function saveBuilderAction(formData: FormData) {
 }
 
 export async function deleteBuilderAction(formData: FormData) {
+  await requireMenuPermission('builder', 'full');
+
   await getBuilderRepository().remove(text(formData, 'slug'));
   revalidatePath('/');
   revalidatePath('/builder');

@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { type WorkFrontmatterInput, type WorkStatus, getWorkRepository, slugify } from '@orca/content';
 
+import { requireMenuPermission } from '@/lib/permissions';
+
 function text(form: FormData, key: string): string {
   return String(form.get(key) ?? '').trim();
 }
@@ -16,6 +18,8 @@ function list(form: FormData, key: string): string[] {
 }
 
 export async function createWorkAction(formData: FormData) {
+  await requireMenuPermission('work', 'edit_approve');
+
   const title = text(formData, 'title');
   if (!title) throw new Error('프로젝트명은 필수입니다.');
 
@@ -38,6 +42,8 @@ export async function createWorkAction(formData: FormData) {
 }
 
 export async function saveWorkAction(formData: FormData) {
+  await requireMenuPermission('work', 'edit_approve');
+
   const repo = getWorkRepository();
   const slug = text(formData, 'slug');
   const existing = await repo.getBySlug(slug);
@@ -66,6 +72,8 @@ export async function saveWorkAction(formData: FormData) {
 }
 
 export async function deleteWorkAction(formData: FormData) {
+  await requireMenuPermission('work', 'full');
+
   await getWorkRepository().remove(text(formData, 'slug'));
   revalidatePath('/');
   revalidatePath('/work');

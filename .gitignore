@@ -31,3 +31,6 @@ wiki/memory/short-term/*.local.md
 
 # Generated images land in the repo, but codex scratch does not
 .codex-tmp/
+
+# Admin account passwordHash values are credentials, not content — never commit
+content/admin-accounts/

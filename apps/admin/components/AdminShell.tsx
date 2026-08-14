@@ -2,16 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { AdminAccount, MenuKey } from '@orca/content';
 
-const NAV_ITEMS = [
-  { href: '/', label: 'Dashboard' },
-  { href: '/builder', label: 'Builder' },
-  { href: '/work', label: 'Work' },
-  { href: '/insight', label: 'Insight' },
-  { href: '/inquiry', label: 'Inquiry' },
-  { href: '/settings', label: 'Settings' },
-  { href: '/permissions', label: '계정 · 권한' },
-] as const;
+import { logoutAction } from '@/lib/auth-actions';
+
+const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey }[] = [
+  { href: '/', label: 'Dashboard', menuKey: 'dashboard' },
+  { href: '/builder', label: 'Builder', menuKey: 'builder' },
+  { href: '/work', label: 'Work', menuKey: 'work' },
+  { href: '/insight', label: 'Insight', menuKey: 'insight' },
+  { href: '/inquiry', label: 'Inquiry', menuKey: 'inquiry' },
+  { href: '/settings', label: 'Settings', menuKey: 'settings' },
+  { href: '/permissions', label: '계정 · 권한', menuKey: 'accountPermission' },
+];
 
 /** `/` only matches the dashboard itself; every other item matches its subtree. */
 function isActive(pathname: string, href: string): boolean {
@@ -19,9 +22,23 @@ function isActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+interface AdminShellProps {
+  children: React.ReactNode;
+  /** `null` when nobody is signed in (only reachable on `/login` — middleware blocks everywhere else). */
+  account: AdminAccount | null;
+}
+
+export function AdminShell({ children, account }: AdminShellProps) {
   const pathname = usePathname();
+
+  // The login screen has no sidebar/topbar chrome — it isn't behind auth yet.
+  if (pathname === '/login') return <>{children}</>;
+
   const current = NAV_ITEMS.find((item) => isActive(pathname, item.href));
+  // Dashboard always shows; every other item hides once its permission is `none`.
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => item.menuKey === 'dashboard' || !account || account.menuPermissions[item.menuKey] !== 'none',
+  );
 
   return (
     <div className="flex min-h-dvh">
@@ -30,7 +47,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           Orca <span className="text-neutral-400">Admin</span>
         </Link>
         <nav className="flex flex-1 flex-col gap-0.5 px-3">
-          {NAV_ITEMS.map((item) => {
+          {visibleItems.map((item) => {
             const active = isActive(pathname, item.href);
             return (
               <Link
@@ -48,8 +65,20 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <div className="space-y-2 border-t border-neutral-200 p-4">
-          <p className="text-xs text-neutral-400">인증 미구현 — 계정·권한(FR-10)은 다음 단계</p>
+        <div className="space-y-3 border-t border-neutral-200 p-4">
+          {account && (
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium">{account.name}</p>
+                <p className="truncate text-xs text-neutral-400">{account.grade}</p>
+              </div>
+              <form action={logoutAction}>
+                <button type="submit" className="shrink-0 text-xs text-neutral-500 hover:text-neutral-900">
+                  로그아웃
+                </button>
+              </form>
+            </div>
+          )}
           <a
             href="http://localhost:3000"
             target="_blank"

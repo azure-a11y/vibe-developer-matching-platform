@@ -1,14 +1,27 @@
 import Link from 'next/link';
 import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
+import type { MenuKey } from '@orca/content';
 
 import { StatusBadge } from '@/components/StatusBadge';
 
 export const dynamic = 'force-dynamic';
 
-/** Sections without a data model yet (see docs/project/06_데이터모델.md) — placeholder counts only. */
-const PENDING_DOMAINS = [{ href: '/inquiry', label: 'Inquiry' }] as const;
+const MENU_LABELS: Record<MenuKey, string> = {
+  dashboard: 'Dashboard',
+  builder: 'Builder',
+  work: 'Work',
+  insight: 'Insight',
+  inquiry: 'Inquiry',
+  settings: 'Settings',
+  accountPermission: '계정 · 권한',
+};
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ denied?: string }>;
+}) {
+  const { denied } = await searchParams;
   const [{ posts, errors }, { builders }, { works }] = await Promise.all([
     getRepository().getAll(),
     getBuilderRepository().getAll(),
@@ -39,11 +52,15 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       <header>
-        <p className="mt-1 text-sm text-neutral-500">
-          운영 현황 개요. Inquiry는 데이터 모델이 아직 없어 준비 중입니다
-          (<code className="font-mono text-xs">docs/project/06_데이터모델.md</code> 참조).
-        </p>
+        <p className="mt-1 text-sm text-neutral-500">운영 현황 개요.</p>
       </header>
+
+      {denied && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong>{MENU_LABELS[denied as MenuKey] ?? denied}</strong> 메뉴에 접근할 권한이 없습니다. 필요하면
+          계정·권한 관리자에게 요청하세요.
+        </div>
+      )}
 
       {errors.length > 0 && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
@@ -80,13 +97,6 @@ export default async function DashboardPage() {
             승인 대기 {workCounts.pendingReview} · 공개 {workCounts.published}
           </p>
         </Link>
-        {PENDING_DOMAINS.map((domain) => (
-          <Link key={domain.href} href={domain.href} className="card block transition-colors hover:border-neutral-300">
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{domain.label}</p>
-            <p className="mt-2 text-3xl font-bold text-neutral-300">—</p>
-            <p className="mt-1 text-xs text-neutral-500">준비 중</p>
-          </Link>
-        ))}
       </div>
 
       <div className="card space-y-4">

@@ -47,6 +47,14 @@ export function workPath(slug: string): string {
   return path.join(worksDir(), `${slug}.md`);
 }
 
+export function adminAccountsDir(): string {
+  return path.join(contentDir(), 'admin-accounts');
+}
+
+export function adminAccountPath(slug: string): string {
+  return path.join(adminAccountsDir(), `${slug}.md`);
+}
+
 /** Directory generated cover images are written to, from repo root. */
 export function imageOutputDir(): string {
   const configured = process.env.IMAGE_OUTPUT_DIR ?? 'apps/web/public/images/posts';

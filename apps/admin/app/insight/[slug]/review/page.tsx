@@ -5,6 +5,7 @@ import { auditPost, blogPostingJsonLd, faqJsonLd, getRepository } from '@orca/co
 import { saveReviewAction } from '@/app/actions';
 import { Select } from '@/components/Select';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,8 @@ const CHECKLIST = [
 ] as const;
 
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
+  await requireMenuPermission('insight', 'view');
+
   const { slug } = await params;
   const post = await getRepository().getBySlug(decodeURIComponent(slug));
   if (!post) notFound();

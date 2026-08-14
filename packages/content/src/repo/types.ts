@@ -1,4 +1,6 @@
 import type {
+  AdminAccount,
+  AdminAccountFrontmatterInput,
   Builder,
   BuilderFrontmatterInput,
   Post,
@@ -70,6 +72,24 @@ export interface WorkRepository {
   getBySlug(slug: string): Promise<Work | null>;
 
   save(frontmatter: WorkFrontmatterInput): Promise<string>;
+
+  remove(slug: string): Promise<boolean>;
+}
+
+/**
+ * Admin auth domain (docs/project/06_데이터모델.md §3.6). File driver only —
+ * same Phase 3 note as `BuilderRepository`.
+ */
+export interface AdminAccountRepository {
+  readonly driver: 'file';
+
+  getAll(): Promise<{ accounts: AdminAccount[]; errors: string[] }>;
+
+  getBySlug(slug: string): Promise<AdminAccount | null>;
+
+  getByEmail(email: string): Promise<AdminAccount | null>;
+
+  save(frontmatter: AdminAccountFrontmatterInput): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
 }

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { auditPost, getRepository } from '@orca/content';
 
 import { ScoreBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,8 @@ const LANE_LABEL = {
 } as const;
 
 export default async function SeoOverviewPage() {
+  await requireMenuPermission('insight', 'view');
+
   const { posts } = await getRepository().getAll();
   const audits = posts.map((post) => ({ post, audit: auditPost(post) }));
 

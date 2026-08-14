@@ -3,10 +3,13 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 
 import { createWorkAction } from '@/app/work/actions';
 import { WorkStatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function WorkListPage() {
+  await requireMenuPermission('work', 'view');
+
   const [{ works, errors }, { builders }] = await Promise.all([
     getWorkRepository().getAll(),
     getBuilderRepository().getAll(),

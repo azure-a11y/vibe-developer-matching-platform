@@ -5,6 +5,7 @@ import { getBuilderRepository } from '@orca/content';
 import { deleteBuilderAction, saveBuilderAction } from '@/app/builder/actions';
 import { Select } from '@/components/Select';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
+import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,8 @@ const STATUS_OPTIONS = [
 ];
 
 export default async function BuilderEditorPage({ params }: { params: Promise<{ slug: string }> }) {
+  await requireMenuPermission('builder', 'view');
+
   const { slug } = await params;
   const builder = await getBuilderRepository().getBySlug(decodeURIComponent(slug));
   if (!builder) notFound();
