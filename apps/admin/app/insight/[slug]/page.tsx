@@ -32,6 +32,42 @@ const PRIORITY_OPTIONS = [
   { value: '0.3', label: '0.3', description: '낮은 우선순위' },
 ];
 
+/** Small section heading used to break up long field groups (SEO block especially). */
+function SubHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--color-ink-faint)' }}>
+      {children}
+    </p>
+  );
+}
+
+function CheckboxRow({
+  name,
+  defaultChecked,
+  title,
+  description,
+}: {
+  name: string;
+  defaultChecked: boolean;
+  title: string;
+  description: string;
+}) {
+  return (
+    <label
+      className="flex items-start gap-2 rounded-lg p-3 text-sm"
+      style={{ border: '1px solid var(--color-border)' }}
+    >
+      <input type="checkbox" name={name} defaultChecked={defaultChecked} className="mt-0.5 size-4 accent-[var(--color-accent)]" />
+      <span>
+        <span className="font-medium">{title}</span>
+        <span className="block text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+          {description}
+        </span>
+      </span>
+    </label>
+  );
+}
+
 export default async function PostEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const account = await requireMenuPermission('insight', 'view');
   const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
@@ -58,10 +94,10 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
             ← 목록
           </Link>
-          <h1 className="text-xl font-bold tracking-tight">{post.title}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">{post.title}</h1>
           <StatusBadge status={post.status} />
           <ScoreBadge score={audit.score} />
         </div>
@@ -103,7 +139,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
           <section className="card space-y-4">
             <div>
               <h2 className="font-semibold">GEO — 생성형 엔진 최적화</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
                 답변 엔진이 이 글을 인용할 때 추출하는 구조화 데이터입니다. FAQ는 JSON-LD로 렌더링됩니다.
               </p>
             </div>
@@ -145,32 +181,36 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
               />
             </div>
 
-            <div className="space-y-3">
-              <p className="label mb-0">FAQ</p>
-              {faqRows.map((row, index) => (
-                <div key={`faq-${index}`} className="grid gap-2 sm:grid-cols-[1fr_1.4fr]">
-                  <input name="faqQuestion" className="field" defaultValue={row.question} placeholder="질문" />
-                  <input name="faqAnswer" className="field" defaultValue={row.answer} placeholder="답변" />
-                </div>
-              ))}
+            <div className="space-y-2 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <SubHeading>FAQ</SubHeading>
+              <div className="space-y-2">
+                {faqRows.map((row, index) => (
+                  <div key={`faq-${index}`} className="grid gap-2 sm:grid-cols-[1fr_1.4fr]">
+                    <input name="faqQuestion" className="field" defaultValue={row.question} placeholder="질문" />
+                    <input name="faqAnswer" className="field" defaultValue={row.answer} placeholder="답변" />
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <p className="label mb-0">인용 출처</p>
-              {citationRows.map((row, index) => (
-                <div key={`cite-${index}`} className="grid gap-2 sm:grid-cols-[1fr_1.4fr]">
-                  <input name="citationTitle" className="field" defaultValue={row.title} placeholder="자료 제목" />
-                  <input name="citationUrl" className="field" defaultValue={row.url} placeholder="https://" />
-                </div>
-              ))}
+            <div className="space-y-2 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <SubHeading>인용 출처</SubHeading>
+              <div className="space-y-2">
+                {citationRows.map((row, index) => (
+                  <div key={`cite-${index}`} className="grid gap-2 sm:grid-cols-[1fr_1.4fr]">
+                    <input name="citationTitle" className="field" defaultValue={row.title} placeholder="자료 제목" />
+                    <input name="citationUrl" className="field" defaultValue={row.url} placeholder="https://" />
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 
           {/* ── Technical SEO ─────────────────────────────── */}
-          <section className="card space-y-4">
+          <section className="card space-y-5">
             <div>
               <h2 className="font-semibold">테크니컬 SEO</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
                 모두 크롤러가 실제로 읽는 값입니다 — 메타 태그, link rel, 사이트맵 필드, robots 지시어.
               </p>
             </div>
@@ -187,20 +227,8 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-                <input type="checkbox" name="seoNoindex" defaultChecked={post.seo.noindex} className="mt-0.5 size-4" />
-                <span>
-                  <span className="font-medium">noindex</span>
-                  <span className="block text-xs text-neutral-500">색인에서 제외</span>
-                </span>
-              </label>
-              <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-                <input type="checkbox" name="seoNofollow" defaultChecked={post.seo.nofollow} className="mt-0.5 size-4" />
-                <span>
-                  <span className="font-medium">nofollow</span>
-                  <span className="block text-xs text-neutral-500">링크를 따라가지 않음</span>
-                </span>
-              </label>
+              <CheckboxRow name="seoNoindex" defaultChecked={post.seo.noindex} title="noindex" description="색인에서 제외" />
+              <CheckboxRow name="seoNofollow" defaultChecked={post.seo.nofollow} title="nofollow" description="링크를 따라가지 않음" />
             </div>
 
             <div>
@@ -212,95 +240,97 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
                 defaultValue={post.seo.robotsDirectives.join(', ')}
                 placeholder="max-snippet:-1, max-image-preview:large, max-video-preview:-1"
               />
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
                 답변 엔진이 인용할 수 있는 분량을 제어합니다. GEO에 직접 영향을 줍니다.
               </p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label" htmlFor="seoOgType">og:type</label>
-                <Select
-                  id="seoOgType"
-                  name="seoOgType"
-                  defaultValue={post.seo.ogType}
-                  options={[
-                    { value: 'article', label: 'article', description: '블로그 글' },
-                    { value: 'website', label: 'website', description: '랜딩 · 목록' },
-                  ]}
-                />
-              </div>
-              <div>
-                <label className="label" htmlFor="seoTwitterCard">twitter:card</label>
-                <Select
-                  id="seoTwitterCard"
-                  name="seoTwitterCard"
-                  defaultValue={post.seo.twitterCard}
-                  options={[
-                    { value: 'summary_large_image', label: 'summary_large_image', description: '큰 이미지' },
-                    { value: 'summary', label: 'summary', description: '작은 썸네일' },
-                  ]}
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label" htmlFor="seoOgTitle">og:title</label>
-                <input id="seoOgTitle" name="seoOgTitle" className="field" defaultValue={post.seo.ogTitle ?? ''} placeholder="비우면 SEO 타이틀 사용" />
-              </div>
-              <div>
-                <label className="label" htmlFor="seoOgImage">og:image</label>
-                <input id="seoOgImage" name="seoOgImage" className="field" defaultValue={post.seo.ogImage ?? ''} placeholder="비우면 커버 이미지 사용" />
-              </div>
-            </div>
-
-            <div>
-              <label className="label" htmlFor="seoOgDescription">og:description</label>
-              <textarea id="seoOgDescription" name="seoOgDescription" rows={2} className="field" defaultValue={post.seo.ogDescription ?? ''} placeholder="비우면 메타 설명 사용" />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label" htmlFor="seoTwitterSite">twitter:site</label>
-                <input id="seoTwitterSite" name="seoTwitterSite" className="field" defaultValue={post.seo.twitterSite ?? ''} placeholder="@사이트계정" />
-              </div>
-              <div>
-                <label className="label" htmlFor="seoTwitterCreator">twitter:creator</label>
-                <input id="seoTwitterCreator" name="seoTwitterCreator" className="field" defaultValue={post.seo.twitterCreator ?? ''} placeholder="@작성자계정" />
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="label" htmlFor="seoChangefreq">사이트맵 changefreq</label>
-                <Select id="seoChangefreq" name="seoChangefreq" defaultValue={post.seo.changefreq} options={CHANGEFREQ_OPTIONS} />
-              </div>
-              <div>
-                <label className="label" htmlFor="seoPriority">사이트맵 priority</label>
-                <Select id="seoPriority" name="seoPriority" defaultValue={String(post.seo.priority)} options={PRIORITY_OPTIONS} />
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <p className="label mb-0">hreflang 대체 URL</p>
-              {alternateRows.map((row, index) => (
-                <div key={`alt-${index}`} className="grid gap-2 sm:grid-cols-[200px_1fr]">
-                  <input name="altHreflang" className="field" defaultValue={row.hreflang} placeholder="en · ko-KR · x-default" />
-                  <input name="altHref" className="field" defaultValue={row.href} placeholder="https://example.com/en/post" />
+            <div className="space-y-4 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <SubHeading>Open Graph · Twitter</SubHeading>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="label" htmlFor="seoOgType">og:type</label>
+                  <Select
+                    id="seoOgType"
+                    name="seoOgType"
+                    defaultValue={post.seo.ogType}
+                    options={[
+                      { value: 'article', label: 'article', description: '블로그 글' },
+                      { value: 'website', label: 'website', description: '랜딩 · 목록' },
+                    ]}
+                  />
                 </div>
-              ))}
+                <div>
+                  <label className="label" htmlFor="seoTwitterCard">twitter:card</label>
+                  <Select
+                    id="seoTwitterCard"
+                    name="seoTwitterCard"
+                    defaultValue={post.seo.twitterCard}
+                    options={[
+                      { value: 'summary_large_image', label: 'summary_large_image', description: '큰 이미지' },
+                      { value: 'summary', label: 'summary', description: '작은 썸네일' },
+                    ]}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="label" htmlFor="seoOgTitle">og:title</label>
+                  <input id="seoOgTitle" name="seoOgTitle" className="field" defaultValue={post.seo.ogTitle ?? ''} placeholder="비우면 SEO 타이틀 사용" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="seoOgImage">og:image</label>
+                  <input id="seoOgImage" name="seoOgImage" className="field" defaultValue={post.seo.ogImage ?? ''} placeholder="비우면 커버 이미지 사용" />
+                </div>
+              </div>
+
+              <div>
+                <label className="label" htmlFor="seoOgDescription">og:description</label>
+                <textarea id="seoOgDescription" name="seoOgDescription" rows={2} className="field" defaultValue={post.seo.ogDescription ?? ''} placeholder="비우면 메타 설명 사용" />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="label" htmlFor="seoTwitterSite">twitter:site</label>
+                  <input id="seoTwitterSite" name="seoTwitterSite" className="field" defaultValue={post.seo.twitterSite ?? ''} placeholder="@사이트계정" />
+                </div>
+                <div>
+                  <label className="label" htmlFor="seoTwitterCreator">twitter:creator</label>
+                  <input id="seoTwitterCreator" name="seoTwitterCreator" className="field" defaultValue={post.seo.twitterCreator ?? ''} placeholder="@작성자계정" />
+                </div>
+              </div>
             </div>
 
-            <label className="flex items-start gap-2 rounded-lg border border-neutral-200 p-3 text-sm">
-              <input type="checkbox" name="seoLlmsTxt" defaultChecked={post.seo.llmsTxt} className="mt-0.5 size-4" />
-              <span>
-                <span className="font-medium">llms.txt 에 포함</span>
-                <span className="block text-xs text-neutral-500">
-                  LLM이 사이트를 이해할 때 읽는 목록에 이 글을 넣습니다.
-                </span>
-              </span>
-            </label>
+            <div className="space-y-4 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <SubHeading>사이트맵 · hreflang</SubHeading>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="label" htmlFor="seoChangefreq">changefreq</label>
+                  <Select id="seoChangefreq" name="seoChangefreq" defaultValue={post.seo.changefreq} options={CHANGEFREQ_OPTIONS} />
+                </div>
+                <div>
+                  <label className="label" htmlFor="seoPriority">priority</label>
+                  <Select id="seoPriority" name="seoPriority" defaultValue={String(post.seo.priority)} options={PRIORITY_OPTIONS} />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {alternateRows.map((row, index) => (
+                  <div key={`alt-${index}`} className="grid gap-2 sm:grid-cols-[200px_1fr]">
+                    <input name="altHreflang" className="field" defaultValue={row.hreflang} placeholder="en · ko-KR · x-default" />
+                    <input name="altHref" className="field" defaultValue={row.href} placeholder="https://example.com/en/post" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <CheckboxRow
+              name="seoLlmsTxt"
+              defaultChecked={post.seo.llmsTxt}
+              title="llms.txt 에 포함"
+              description="LLM이 사이트를 이해할 때 읽는 목록에 이 글을 넣습니다."
+            />
           </section>
         </div>
 
@@ -326,8 +356,10 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <span className="label">슬러그</span>
-              <p className="rounded-lg bg-neutral-50 px-3 py-2 font-mono text-xs break-all">{post.slug}</p>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="rounded-lg px-3 py-2 font-mono text-xs break-all" style={{ background: 'var(--color-surface-sunken)', color: 'var(--color-ink-muted)' }}>
+                {post.slug}
+              </p>
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
                 URL에 키워드가 남도록 자연어 슬러그를 권장합니다. 변경하려면 새 글로 만드세요 —
                 기존 URL이 깨집니다.
               </p>
@@ -338,13 +370,13 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             <h2 className="font-semibold">검색 결과 표시</h2>
             <div>
               <label className="label" htmlFor="seoTitle">
-                타이틀 <span className="normal-case text-neutral-400">≤60자</span>
+                타이틀 <span className="normal-case" style={{ color: 'var(--color-ink-faint)' }}>≤60자</span>
               </label>
               <input id="seoTitle" name="seoTitle" className="field" defaultValue={post.seo.title ?? ''} />
             </div>
             <div>
               <label className="label" htmlFor="seoDescription">
-                메타 설명 <span className="normal-case text-neutral-400">≤160자</span>
+                메타 설명 <span className="normal-case" style={{ color: 'var(--color-ink-faint)' }}>≤160자</span>
               </label>
               <textarea
                 id="seoDescription"
@@ -363,7 +395,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
           <section className="card space-y-4">
             <div>
               <h2 className="font-semibold">커버 이미지</h2>
-              <p className="mt-1 text-xs text-neutral-500">
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
                 생성은 Codex <code className="font-mono">imagegen</code> 전용입니다.{' '}
                 <code className="font-mono">pnpm imagegen</code> 실행 후 경로가 자동으로 채워집니다.
                 본문 이미지는 에디터에서 직접 업로드하세요.
@@ -414,12 +446,13 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
           </section>
 
           {canDelete && (
-            <section className="card space-y-3">
-              <h2 className="font-semibold text-red-700">위험 구역</h2>
+            <section className="card space-y-3" style={{ borderColor: 'var(--color-danger-bg)' }}>
+              <h2 className="font-semibold" style={{ color: 'var(--color-danger)' }}>위험 구역</h2>
               <button
                 type="submit"
                 formAction={deletePostAction}
-                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                className="btn w-full"
+                style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}
               >
                 이 글 삭제
               </button>

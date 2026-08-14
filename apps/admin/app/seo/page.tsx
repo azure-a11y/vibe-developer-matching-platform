@@ -13,6 +13,12 @@ const LANE_LABEL = {
   editorial: '에디토리얼',
 } as const;
 
+const SEVERITY_STYLE: Record<'error' | 'warn' | 'info', string> = {
+  error: 'bg-[var(--color-danger-bg)] text-[var(--color-danger)]',
+  warn: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
+  info: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+};
+
 export default async function SeoOverviewPage() {
   await requireMenuPermission('insight', 'view');
 
@@ -30,21 +36,23 @@ export default async function SeoOverviewPage() {
   return (
     <div className="space-y-8">
       <header>
-        <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
+        <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
           ← Insight 목록
         </Link>
-        <h1 className="mt-2 text-2xl font-bold tracking-tight">SEO / GEO 상태</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">SEO / GEO 상태</h1>
+        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
           GEO는 Generative Engine Optimization — 답변 엔진이 인용할 수 있는 구조화 신호를 뜻합니다.
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        {(Object.keys(LANE_LABEL) as (keyof typeof LANE_LABEL)[]).map((lane) => (
-          <div key={lane} className="card">
-            <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">{LANE_LABEL[lane]}</p>
-            <p className="mt-2 text-3xl font-bold tabular-nums">{byLane.get(lane) ?? 0}</p>
-            <p className="mt-1 text-xs text-neutral-500">해결해야 할 항목</p>
+      <div className="card grid grid-cols-2 divide-x divide-y-0 sm:grid-cols-4" style={{ borderColor: 'var(--color-border)' }}>
+        {(Object.keys(LANE_LABEL) as (keyof typeof LANE_LABEL)[]).map((lane, i) => (
+          <div key={lane} className={i > 0 ? 'pl-4' : ''}>
+            <p className="label mb-0">{LANE_LABEL[lane]}</p>
+            <p className="mt-2 text-3xl font-semibold tabular-nums">{byLane.get(lane) ?? 0}</p>
+            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+              해결해야 할 항목
+            </p>
           </div>
         ))}
       </div>
@@ -53,35 +61,30 @@ export default async function SeoOverviewPage() {
         {audits.map(({ post, audit }) => (
           <div key={post.slug} className="card space-y-3">
             <div className="flex items-center justify-between gap-4">
-              <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="font-semibold hover:text-[var(--color-accent)]">
+              <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="font-semibold hover:underline">
                 {post.title}
               </Link>
               <div className="flex items-center gap-3">
-                <span className="text-xs text-neutral-500">
+                <span className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
                   FAQ {post.geo.faq.length} · 인용 {post.geo.citations.length} · 키워드 {post.seo.keywords.length}
                 </span>
                 <ScoreBadge score={audit.score} />
               </div>
             </div>
             {audit.issues.length === 0 ? (
-              <p className="text-sm text-emerald-700">문제 없음.</p>
+              <p className="text-sm" style={{ color: 'var(--color-success)' }}>
+                문제 없음.
+              </p>
             ) : (
               <ul className="space-y-1.5 text-sm">
                 {audit.issues.map((issue) => (
                   <li key={`${issue.field}-${issue.message}`} className="flex gap-2">
-                    <span
-                      className={`mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                        issue.severity === 'error'
-                          ? 'bg-red-100 text-red-700'
-                          : issue.severity === 'warn'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-neutral-100 text-neutral-600'
-                      }`}
-                    >
-                      {LANE_LABEL[issue.lane]}
-                    </span>
-                    <span className="text-neutral-700">
-                      <code className="font-mono text-xs text-neutral-500">{issue.field}</code> — {issue.message}
+                    <span className={`badge shrink-0 ${SEVERITY_STYLE[issue.severity]}`}>{LANE_LABEL[issue.lane]}</span>
+                    <span style={{ color: 'var(--color-ink)' }}>
+                      <code className="font-mono text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                        {issue.field}
+                      </code>{' '}
+                      — {issue.message}
                     </span>
                   </li>
                 ))}
@@ -89,7 +92,11 @@ export default async function SeoOverviewPage() {
             )}
           </div>
         ))}
-        {audits.length === 0 && <p className="text-neutral-500">분석할 글이 없습니다.</p>}
+        {audits.length === 0 && (
+          <p className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
+            분석할 글이 없습니다.
+          </p>
+        )}
       </div>
     </div>
   );

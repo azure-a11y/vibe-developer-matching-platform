@@ -42,7 +42,7 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
     editorProps: {
       attributes: {
         class:
-          'prose-editor min-h-[26rem] w-full rounded-b-lg border border-t-0 border-neutral-300 bg-white px-4 py-3 outline-none focus:border-[var(--color-accent)]',
+          'prose-editor min-h-[26rem] w-full rounded-b-lg border border-t-0 border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 outline-none focus:border-[var(--color-accent)]',
       },
     },
     onUpdate: ({ editor }) => setMarkdown(htmlToMarkdown(editor.getHTML())),
@@ -85,7 +85,7 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
 
   if (!editor) {
     return (
-      <div className="min-h-[30rem] animate-pulse rounded-lg border border-neutral-300 bg-neutral-50" />
+      <div className="min-h-[30rem] animate-pulse rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-sunken)]" />
     );
   }
 
@@ -93,7 +93,7 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
     <div>
       <input type="hidden" name={name} value={markdown} />
 
-      <div className="flex flex-wrap items-center gap-1 rounded-t-lg border border-neutral-300 bg-neutral-50 px-2 py-1.5">
+      <div className="flex flex-wrap items-center gap-1 rounded-t-lg border border-[var(--color-border)] bg-[var(--color-surface-sunken)] px-2 py-1.5">
         <ToolbarButton active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} label="굵게">
           <strong>B</strong>
         </ToolbarButton>
@@ -170,10 +170,12 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
       <EditorContent editor={editor} />
 
       {uploadError && (
-        <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{uploadError}</p>
+        <p className="mt-2 rounded-lg px-3 py-2 text-sm" style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
+          {uploadError}
+        </p>
       )}
 
-      <p className="mt-2 text-xs text-neutral-500">
+      <p className="mt-2 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
         저장 형식은 마크다운입니다. 업로드한 이미지는 <code className="font-mono">user-upload</code> 로
         기록됩니다 — 이미지 <strong>생성</strong>은 Codex imagegen 전용입니다.
       </p>
@@ -202,9 +204,12 @@ function ToolbarButton({
       aria-label={label}
       aria-pressed={active}
       disabled={disabled}
-      className={`rounded-md px-2 py-1 text-sm transition-colors disabled:opacity-40 ${
-        active ? 'bg-neutral-900 text-white' : 'text-neutral-700 hover:bg-neutral-200'
-      }`}
+      className="rounded-md px-2 py-1 text-sm transition-colors disabled:opacity-40"
+      style={
+        active
+          ? { background: 'var(--color-accent)', color: 'white' }
+          : { color: 'var(--color-ink-muted)' }
+      }
     >
       {children}
     </button>
@@ -212,5 +217,5 @@ function ToolbarButton({
 }
 
 function Divider() {
-  return <span className="mx-1 h-5 w-px bg-neutral-300" aria-hidden="true" />;
+  return <span className="mx-1 h-5 w-px" style={{ background: 'var(--color-border-strong)' }} aria-hidden="true" />;
 }

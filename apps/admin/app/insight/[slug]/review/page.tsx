@@ -18,6 +18,12 @@ const CHECKLIST = [
   { name: 'checkLinks', label: '링크 — 내부/외부 링크 동작 확인' },
 ] as const;
 
+const SEVERITY_STYLE: Record<'error' | 'warn' | 'info', string> = {
+  error: 'bg-[var(--color-danger-bg)] text-[var(--color-danger)]',
+  warn: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
+  info: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+};
+
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
   const account = await requireMenuPermission('insight', 'view');
   const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
@@ -34,10 +40,10 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
     <div className="space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/insight" className="text-sm text-neutral-500 hover:text-neutral-900">
+          <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
             ← 목록
           </Link>
-          <h1 className="text-xl font-bold tracking-tight">검수: {post.title}</h1>
+          <h1 className="text-xl font-semibold tracking-tight">검수: {post.title}</h1>
           <StatusBadge status={post.status} />
           <ScoreBadge score={audit.score} />
         </div>
@@ -53,35 +59,37 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
         <div className="min-w-0 space-y-6">
           <section className="card space-y-3">
             <h2 className="font-semibold">자동 검사</h2>
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>
               결정적 규칙 기반입니다. 사람과 <code className="font-mono">content-reviewer</code> 에이전트가 동일한
               결과를 봅니다.
             </p>
             {audit.issues.length === 0 ? (
-              <p className="text-sm text-emerald-700">통과 — 발견된 문제 없음.</p>
+              <p className="text-sm font-medium" style={{ color: 'var(--color-success)' }}>
+                통과 — 발견된 문제 없음.
+              </p>
             ) : (
               <ul className="space-y-2 text-sm">
                 {audit.issues.map((issue) => (
                   <li key={`${issue.field}-${issue.message}`} className="flex gap-2">
-                    <span
-                      className={`mt-0.5 shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
-                        issue.severity === 'error'
-                          ? 'bg-red-100 text-red-700'
-                          : issue.severity === 'warn'
-                            ? 'bg-amber-100 text-amber-700'
-                            : 'bg-neutral-100 text-neutral-600'
-                      }`}
-                    >
-                      {issue.severity}
-                    </span>
-                    <span className="text-neutral-700">
-                      <code className="font-mono text-xs text-neutral-500">{issue.field}</code> — {issue.message}
+                    <span className={`badge shrink-0 ${SEVERITY_STYLE[issue.severity]}`}>{issue.severity}</span>
+                    <span style={{ color: 'var(--color-ink)' }}>
+                      <code className="font-mono text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                        {issue.field}
+                      </code>{' '}
+                      — {issue.message}
                     </span>
                   </li>
                 ))}
               </ul>
             )}
-            <p className={`text-sm font-medium ${audit.publishable ? 'text-emerald-700' : 'text-red-700'}`}>
+            <p
+              className="rounded-lg px-3 py-2 text-sm font-medium"
+              style={
+                audit.publishable
+                  ? { background: 'var(--color-success-bg)', color: 'var(--color-success)' }
+                  : { background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }
+              }
+            >
               {audit.publishable ? '발행 가능 (error 없음)' : '발행 불가 — error를 먼저 해결하세요.'}
             </p>
           </section>
@@ -100,7 +108,10 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
 
           <section className="card space-y-3">
             <h2 className="font-semibold">본문 미리보기</h2>
-            <pre className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-lg bg-neutral-50 p-4 text-sm leading-6">
+            <pre
+              className="max-h-96 max-w-full overflow-auto whitespace-pre-wrap break-words rounded-lg p-4 text-sm leading-6"
+              style={{ background: 'var(--color-surface-sunken)' }}
+            >
               {post.body}
             </pre>
           </section>
@@ -118,9 +129,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
                     type="checkbox"
                     name={item.name}
                     defaultChecked={checks[item.name.replace('check', '').toLowerCase() as keyof typeof checks]}
-                    className="mt-0.5 size-4 shrink-0"
+                    className="mt-0.5 size-4 shrink-0 accent-[var(--color-accent)]"
                   />
-                  <span className="text-neutral-700">{item.label}</span>
+                  <span style={{ color: 'var(--color-ink)' }}>{item.label}</span>
                 </label>
               ))}
             </div>
@@ -157,7 +168,9 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
             </div>
 
             {post.review.reviewedAt && (
-              <p className="text-xs text-neutral-500">마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}</p>
+              <p className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}
+              </p>
             )}
 
             <button type="submit" className="btn-primary w-full">
@@ -167,15 +180,19 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
         ) : (
           <section className="card h-fit min-w-0 space-y-3">
             <h2 className="font-semibold">사람 검수</h2>
-            <p className="text-xs text-neutral-500">조회 권한만 있어 검수 결과를 편집할 수 없습니다.</p>
+            <p className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+              조회 권한만 있어 검수 결과를 편집할 수 없습니다.
+            </p>
             <p className="text-sm">
-              검수자: <span className="text-neutral-700">{post.review.reviewer || '—'}</span>
+              검수자: <span style={{ color: 'var(--color-ink)' }}>{post.review.reviewer || '—'}</span>
             </p>
             <p className="text-sm whitespace-pre-wrap">
-              메모: <span className="text-neutral-700">{post.review.notes || '—'}</span>
+              메모: <span style={{ color: 'var(--color-ink)' }}>{post.review.notes || '—'}</span>
             </p>
             {post.review.reviewedAt && (
-              <p className="text-xs text-neutral-500">마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}</p>
+              <p className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}
+              </p>
             )}
           </section>
         )}
