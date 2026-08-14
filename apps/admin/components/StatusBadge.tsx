@@ -1,4 +1,4 @@
-import type { BuilderStatus, PostStatus, WorkStatus } from '@orca/content';
+import type { AdminAccountStatus, BuilderStatus, PostStatus, WorkStatus } from '@orca/content';
 
 const STYLES: Record<PostStatus, string> = {
   draft: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
@@ -50,6 +50,25 @@ const WORK_LABELS: Record<WorkStatus, string> = {
 
 export function WorkStatusBadge({ status }: { status: WorkStatus }) {
   return <span className={`badge ${WORK_STYLES[status]}`}>{WORK_LABELS[status]}</span>;
+}
+
+const ACCOUNT_STYLES: Record<AdminAccountStatus, string> = {
+  active: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
+  inactive: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+};
+
+const ACCOUNT_LABELS: Record<AdminAccountStatus, string> = {
+  active: '활성',
+  inactive: '비활성',
+};
+
+export function AccountStatusBadge({ status }: { status: AdminAccountStatus }) {
+  return <span className={`badge ${ACCOUNT_STYLES[status]}`}>{ACCOUNT_LABELS[status]}</span>;
+}
+
+/** 등급은 04_정책정의.md §4.5 기준 표시용 자유 텍스트 — 실권한과 무관하므로 항상 중립 톤. */
+export function GradeBadge({ grade }: { grade: string }) {
+  return <span className="badge bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]">{grade}</span>;
 }
 
 export function ScoreBadge({ score }: { score: number }) {
