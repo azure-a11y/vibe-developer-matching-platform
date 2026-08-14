@@ -41,11 +41,10 @@ export interface ContentRepository {
 
 /**
  * Same shape as `ContentRepository`, for the Builder domain
- * (docs/project/06_데이터모델.md §3.2). Only a file driver exists so far —
- * Supabase support is Phase 3 (docs/planning/AI빌더그룹_프로젝트전환계획.md §7).
+ * (docs/project/06_데이터모델.md §3.2).
  */
 export interface BuilderRepository {
-  readonly driver: 'file';
+  readonly driver: 'file' | 'supabase';
 
   getAll(): Promise<{ builders: Builder[]; errors: string[] }>;
 
@@ -61,10 +60,9 @@ export interface BuilderRepository {
 
 /**
  * Same shape again, for the Work domain (docs/project/06_데이터모델.md §3.3).
- * File driver only — same Phase 3 note as `BuilderRepository`.
  */
 export interface WorkRepository {
-  readonly driver: 'file';
+  readonly driver: 'file' | 'supabase';
 
   getAll(): Promise<{ works: Work[]; errors: string[] }>;
 
@@ -79,11 +77,10 @@ export interface WorkRepository {
 }
 
 /**
- * Admin auth domain (docs/project/06_데이터모델.md §3.6). File driver only —
- * same Phase 3 note as `BuilderRepository`.
+ * Admin auth domain (docs/project/06_데이터모델.md §3.6).
  */
 export interface AdminAccountRepository {
-  readonly driver: 'file';
+  readonly driver: 'file' | 'supabase';
 
   getAll(): Promise<{ accounts: AdminAccount[]; errors: string[] }>;
 
@@ -98,10 +95,10 @@ export interface AdminAccountRepository {
 
 /**
  * Site settings (docs/project/06_데이터모델.md §3.7) — singleton, so this
- * shape is `get`/`save` rather than list/getBySlug/remove. File driver only.
+ * shape is `get`/`save` rather than list/getBySlug/remove.
  */
 export interface SiteSettingsRepository {
-  readonly driver: 'file';
+  readonly driver: 'file' | 'supabase';
 
   get(): Promise<{ settings: SiteSettings; error: string | null }>;
 

@@ -7,7 +7,13 @@ import {
   siteSettingsFileRepository,
   workFileRepository,
 } from './file.ts';
-import { supabaseRepository } from './supabase.ts';
+import {
+  adminAccountSupabaseRepository,
+  builderSupabaseRepository,
+  siteSettingsSupabaseRepository,
+  supabaseRepository,
+  workSupabaseRepository,
+} from './supabase.ts';
 import type {
   AdminAccountRepository,
   BuilderRepository,
@@ -24,7 +30,13 @@ export {
   siteSettingsFileRepository,
   workFileRepository,
 } from './file.ts';
-export { supabaseRepository } from './supabase.ts';
+export {
+  adminAccountSupabaseRepository,
+  builderSupabaseRepository,
+  siteSettingsSupabaseRepository,
+  supabaseRepository,
+  workSupabaseRepository,
+} from './supabase.ts';
 
 /**
  * Pick the active driver.
@@ -43,27 +55,36 @@ export function getRepository(): ContentRepository {
   return isSupabaseConfigured() ? supabaseRepository : fileRepository;
 }
 
-/**
- * Builder domain entry point. File driver only for now — Supabase support is
- * Phase 3 (docs/planning/AI빌더그룹_프로젝트전환계획.md §7).
- */
+/** Builder domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getBuilderRepository(): BuilderRepository {
-  return builderFileRepository;
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return builderFileRepository;
+  if (forced === 'supabase') return builderSupabaseRepository;
+  return isSupabaseConfigured() ? builderSupabaseRepository : builderFileRepository;
 }
 
-/** Work domain entry point. File driver only for now — same note as above. */
+/** Work domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getWorkRepository(): WorkRepository {
-  return workFileRepository;
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return workFileRepository;
+  if (forced === 'supabase') return workSupabaseRepository;
+  return isSupabaseConfigured() ? workSupabaseRepository : workFileRepository;
 }
 
-/** Admin auth domain entry point. File driver only — same note as above. */
+/** Admin auth domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getAdminAccountRepository(): AdminAccountRepository {
-  return adminAccountFileRepository;
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return adminAccountFileRepository;
+  if (forced === 'supabase') return adminAccountSupabaseRepository;
+  return isSupabaseConfigured() ? adminAccountSupabaseRepository : adminAccountFileRepository;
 }
 
-/** Site settings entry point. File driver only — same note as above. */
+/** Site settings entry point. Same driver-selection rule as `getRepository()`. */
 export function getSiteSettingsRepository(): SiteSettingsRepository {
-  return siteSettingsFileRepository;
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return siteSettingsFileRepository;
+  if (forced === 'supabase') return siteSettingsSupabaseRepository;
+  return isSupabaseConfigured() ? siteSettingsSupabaseRepository : siteSettingsFileRepository;
 }
 
 /** Human-readable backend status for the admin banner and `pnpm check`. */

@@ -9,4 +9,4 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$ROOT"
 
-exec node --experimental-strip-types --no-warnings packages/supabase/scripts/migrate-content.ts "$@"
+exec bash scripts/with-env.sh node --experimental-strip-types --no-warnings packages/supabase/scripts/migrate-content.ts "$@"

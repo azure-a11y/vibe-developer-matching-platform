@@ -39,6 +39,81 @@ export type PostRow = {
 
 export type PostInsert = Omit<PostRow, 'id'> & { id?: string };
 
+/** builders 테이블의 한 행. Builder 프론트매터 스키마와 1:1 대응됩니다. */
+export type BuilderRow = {
+  id: string;
+  slug: string;
+  display_name: string;
+  bio: string;
+  avatar: Record<string, unknown> | null;
+  specialties: string[];
+  education: string[];
+  community_activity: string[];
+  verifications: string[];
+  status: string;
+  permissions: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BuilderInsert = Omit<BuilderRow, 'id'> & { id?: string };
+
+/**
+ * works 테이블의 한 행. `builder_ids` 는 Builder.slug 배열이다 — 별도
+ * join 테이블이 아니라 file 드라이버(Work.builderIds)와 동일한 방식.
+ */
+export type WorkRow = {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  scope: string;
+  builder_role: string;
+  period: string;
+  tech_stack: string[];
+  problem: string;
+  solution: string;
+  result: string;
+  assets: Record<string, unknown>[];
+  builder_ids: string[];
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type WorkInsert = Omit<WorkRow, 'id'> & { id?: string };
+
+/** admin_accounts 테이블의 한 행. anon 키로는 절대 조회되지 않는다(RLS 정책 없음). */
+export type AdminAccountRow = {
+  id: string;
+  slug: string;
+  email: string;
+  name: string;
+  grade: string;
+  password_hash: string;
+  menu_permissions: Record<string, unknown>;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdminAccountInsert = Omit<AdminAccountRow, 'id'> & { id?: string };
+
+/** site_settings 테이블의 유일한 행 (id 는 항상 true). */
+export type SiteSettingsRow = {
+  id: boolean;
+  brand_name: string;
+  domain: string;
+  pluug_form_url: string;
+  company_name: string;
+  ceo_name: string;
+  business_registration_number: string;
+  operated_by: string;
+  updated_at: string;
+};
+
+export type SiteSettingsInsert = Partial<Omit<SiteSettingsRow, 'id'>> & { id?: boolean };
+
 /**
  * supabase-js checks this against its internal `GenericSchema`. Omitting
  * `Views` / `Functions` / `Enums` / `CompositeTypes` / `Relationships` makes
@@ -52,6 +127,30 @@ export type Database = {
         Row: PostRow;
         Insert: PostInsert;
         Update: Partial<PostInsert>;
+        Relationships: [];
+      };
+      builders: {
+        Row: BuilderRow;
+        Insert: BuilderInsert;
+        Update: Partial<BuilderInsert>;
+        Relationships: [];
+      };
+      works: {
+        Row: WorkRow;
+        Insert: WorkInsert;
+        Update: Partial<WorkInsert>;
+        Relationships: [];
+      };
+      admin_accounts: {
+        Row: AdminAccountRow;
+        Insert: AdminAccountInsert;
+        Update: Partial<AdminAccountInsert>;
+        Relationships: [];
+      };
+      site_settings: {
+        Row: SiteSettingsRow;
+        Insert: SiteSettingsInsert;
+        Update: Partial<SiteSettingsInsert>;
         Relationships: [];
       };
     };
