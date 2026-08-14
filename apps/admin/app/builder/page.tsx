@@ -3,12 +3,13 @@ import { getBuilderRepository } from '@orca/content';
 
 import { createBuilderAction } from '@/app/builder/actions';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function BuilderListPage() {
-  await requireMenuPermission('builder', 'view');
+  const account = await requireMenuPermission('builder', 'view');
+  const canWrite = hasPermission(account.menuPermissions.builder, 'edit_approve');
 
   const { builders, errors } = await getBuilderRepository().getAll();
 
@@ -40,23 +41,25 @@ export default async function BuilderListPage() {
         </div>
       )}
 
-      <form action={createBuilderAction} className="card flex flex-wrap items-end gap-3">
-        <div className="min-w-64 flex-1">
-          <label className="label" htmlFor="displayName">
-            이름
-          </label>
-          <input id="displayName" name="displayName" className="field" placeholder="예: 조유리" required />
-        </div>
-        <div className="w-48">
-          <label className="label" htmlFor="slug">
-            슬러그 (선택)
-          </label>
-          <input id="slug" name="slug" className="field" placeholder="자동 생성" />
-        </div>
-        <button type="submit" className="btn-primary">
-          빌더 추가
-        </button>
-      </form>
+      {canWrite && (
+        <form action={createBuilderAction} className="card flex flex-wrap items-end gap-3">
+          <div className="min-w-64 flex-1">
+            <label className="label" htmlFor="displayName">
+              이름
+            </label>
+            <input id="displayName" name="displayName" className="field" placeholder="예: 조유리" required />
+          </div>
+          <div className="w-48">
+            <label className="label" htmlFor="slug">
+              슬러그 (선택)
+            </label>
+            <input id="slug" name="slug" className="field" placeholder="자동 생성" />
+          </div>
+          <button type="submit" className="btn-primary">
+            빌더 추가
+          </button>
+        </form>
+      )}
 
       <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">

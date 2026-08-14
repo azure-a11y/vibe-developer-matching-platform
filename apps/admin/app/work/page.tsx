@@ -3,12 +3,13 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 
 import { createWorkAction } from '@/app/work/actions';
 import { WorkStatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function WorkListPage() {
-  await requireMenuPermission('work', 'view');
+  const account = await requireMenuPermission('work', 'view');
+  const canWrite = hasPermission(account.menuPermissions.work, 'edit_approve');
 
   const [{ works, errors }, { builders }] = await Promise.all([
     getWorkRepository().getAll(),
@@ -44,23 +45,25 @@ export default async function WorkListPage() {
         </div>
       )}
 
-      <form action={createWorkAction} className="card flex flex-wrap items-end gap-3">
-        <div className="min-w-64 flex-1">
-          <label className="label" htmlFor="title">
-            프로젝트명
-          </label>
-          <input id="title" name="title" className="field" placeholder="예: Flowdesk" required />
-        </div>
-        <div className="w-48">
-          <label className="label" htmlFor="slug">
-            슬러그 (선택)
-          </label>
-          <input id="slug" name="slug" className="field" placeholder="자동 생성" />
-        </div>
-        <button type="submit" className="btn-primary">
-          Work 추가
-        </button>
-      </form>
+      {canWrite && (
+        <form action={createWorkAction} className="card flex flex-wrap items-end gap-3">
+          <div className="min-w-64 flex-1">
+            <label className="label" htmlFor="title">
+              프로젝트명
+            </label>
+            <input id="title" name="title" className="field" placeholder="예: Flowdesk" required />
+          </div>
+          <div className="w-48">
+            <label className="label" htmlFor="slug">
+              슬러그 (선택)
+            </label>
+            <input id="slug" name="slug" className="field" placeholder="자동 생성" />
+          </div>
+          <button type="submit" className="btn-primary">
+            Work 추가
+          </button>
+        </form>
+      )}
 
       <div className="overflow-x-auto rounded-2xl border border-neutral-200 bg-white">
         <table className="w-full text-sm">

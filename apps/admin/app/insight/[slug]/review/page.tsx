@@ -5,7 +5,7 @@ import { auditPost, blogPostingJsonLd, faqJsonLd, getRepository } from '@orca/co
 import { saveReviewAction } from '@/app/actions';
 import { Select } from '@/components/Select';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +19,8 @@ const CHECKLIST = [
 ] as const;
 
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireMenuPermission('insight', 'view');
+  const account = await requireMenuPermission('insight', 'view');
+  const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
 
   const { slug } = await params;
   const post = await getRepository().getBySlug(decodeURIComponent(slug));
@@ -105,63 +106,79 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
           </section>
         </div>
 
-        <form action={saveReviewAction} className="card h-fit min-w-0 space-y-5">
-          <input type="hidden" name="slug" value={post.slug} />
-          <h2 className="font-semibold">사람 검수</h2>
+        {canWrite ? (
+          <form action={saveReviewAction} className="card h-fit min-w-0 space-y-5">
+            <input type="hidden" name="slug" value={post.slug} />
+            <h2 className="font-semibold">사람 검수</h2>
 
-          <div className="space-y-2.5">
-            {CHECKLIST.map((item) => (
-              <label key={item.name} className="flex items-start gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  name={item.name}
-                  defaultChecked={checks[item.name.replace('check', '').toLowerCase() as keyof typeof checks]}
-                  className="mt-0.5 size-4 shrink-0"
-                />
-                <span className="text-neutral-700">{item.label}</span>
-              </label>
-            ))}
-          </div>
+            <div className="space-y-2.5">
+              {CHECKLIST.map((item) => (
+                <label key={item.name} className="flex items-start gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    name={item.name}
+                    defaultChecked={checks[item.name.replace('check', '').toLowerCase() as keyof typeof checks]}
+                    className="mt-0.5 size-4 shrink-0"
+                  />
+                  <span className="text-neutral-700">{item.label}</span>
+                </label>
+              ))}
+            </div>
 
-          <div>
-            <label className="label" htmlFor="reviewer">검수자</label>
-            <input id="reviewer" name="reviewer" className="field" defaultValue={post.review.reviewer ?? ''} />
-          </div>
+            <div>
+              <label className="label" htmlFor="reviewer">검수자</label>
+              <input id="reviewer" name="reviewer" className="field" defaultValue={post.review.reviewer ?? ''} />
+            </div>
 
-          <div>
-            <label className="label" htmlFor="notes">메모</label>
-            <textarea id="notes" name="notes" rows={4} className="field" defaultValue={post.review.notes ?? ''} />
-          </div>
+            <div>
+              <label className="label" htmlFor="notes">메모</label>
+              <textarea id="notes" name="notes" rows={4} className="field" defaultValue={post.review.notes ?? ''} />
+            </div>
 
-          <div>
-            <label className="label" htmlFor="status">상태 변경</label>
-            <Select
-              id="status"
-              name="status"
-              defaultValue={post.status}
-              options={[
-                { value: 'draft', label: '초안으로 되돌리기' },
-                { value: 'in_review', label: '검수 중' },
-                { value: 'scheduled', label: '예약' },
-                {
-                  value: 'published',
-                  label: '발행',
-                  description: audit.publishable ? '공개 사이트에 노출' : 'error 해결 필요',
-                  disabled: !audit.publishable,
-                },
-                { value: 'archived', label: '보관' },
-              ]}
-            />
-          </div>
+            <div>
+              <label className="label" htmlFor="status">상태 변경</label>
+              <Select
+                id="status"
+                name="status"
+                defaultValue={post.status}
+                options={[
+                  { value: 'draft', label: '초안으로 되돌리기' },
+                  { value: 'in_review', label: '검수 중' },
+                  { value: 'scheduled', label: '예약' },
+                  {
+                    value: 'published',
+                    label: '발행',
+                    description: audit.publishable ? '공개 사이트에 노출' : 'error 해결 필요',
+                    disabled: !audit.publishable,
+                  },
+                  { value: 'archived', label: '보관' },
+                ]}
+              />
+            </div>
 
-          {post.review.reviewedAt && (
-            <p className="text-xs text-neutral-500">마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}</p>
-          )}
+            {post.review.reviewedAt && (
+              <p className="text-xs text-neutral-500">마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}</p>
+            )}
 
-          <button type="submit" className="btn-primary w-full">
-            검수 저장
-          </button>
-        </form>
+            <button type="submit" className="btn-primary w-full">
+              검수 저장
+            </button>
+          </form>
+        ) : (
+          <section className="card h-fit min-w-0 space-y-3">
+            <h2 className="font-semibold">사람 검수</h2>
+            <p className="text-xs text-neutral-500">조회 권한만 있어 검수 결과를 편집할 수 없습니다.</p>
+            <p className="text-sm">
+              검수자: <span className="text-neutral-700">{post.review.reviewer || '—'}</span>
+            </p>
+            <p className="text-sm whitespace-pre-wrap">
+              메모: <span className="text-neutral-700">{post.review.notes || '—'}</span>
+            </p>
+            {post.review.reviewedAt && (
+              <p className="text-xs text-neutral-500">마지막 검수: {post.review.reviewedAt.slice(0, 16).replace('T', ' ')}</p>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

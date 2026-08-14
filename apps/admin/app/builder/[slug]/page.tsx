@@ -5,7 +5,7 @@ import { getBuilderRepository } from '@orca/content';
 import { deleteBuilderAction, saveBuilderAction } from '@/app/builder/actions';
 import { Select } from '@/components/Select';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,9 @@ const STATUS_OPTIONS = [
 ];
 
 export default async function BuilderEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireMenuPermission('builder', 'view');
+  const account = await requireMenuPermission('builder', 'view');
+  const canWrite = hasPermission(account.menuPermissions.builder, 'edit_approve');
+  const canDelete = hasPermission(account.menuPermissions.builder, 'full');
 
   const { slug } = await params;
   const builder = await getBuilderRepository().getBySlug(decodeURIComponent(slug));
@@ -34,9 +36,11 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
           <h1 className="text-xl font-bold tracking-tight">{builder.displayName}</h1>
           <BuilderStatusBadge status={builder.status} />
         </div>
-        <button type="submit" className="btn-primary">
-          저장
-        </button>
+        {canWrite && (
+          <button type="submit" className="btn-primary">
+            저장
+          </button>
+        )}
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -155,16 +159,18 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
             </label>
           </section>
 
-          <section className="card space-y-3">
-            <h2 className="font-semibold text-red-700">위험 구역</h2>
-            <button
-              type="submit"
-              formAction={deleteBuilderAction}
-              className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-            >
-              이 빌더 삭제
-            </button>
-          </section>
+          {canDelete && (
+            <section className="card space-y-3">
+              <h2 className="font-semibold text-red-700">위험 구역</h2>
+              <button
+                type="submit"
+                formAction={deleteBuilderAction}
+                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+              >
+                이 빌더 삭제
+              </button>
+            </section>
+          )}
         </div>
       </div>
     </form>

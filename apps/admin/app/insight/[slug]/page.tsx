@@ -6,7 +6,7 @@ import { deletePostAction, savePostAction } from '@/app/actions';
 import { Editor } from '@/components/Editor';
 import { Select } from '@/components/Select';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,7 +33,9 @@ const PRIORITY_OPTIONS = [
 ];
 
 export default async function PostEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireMenuPermission('insight', 'view');
+  const account = await requireMenuPermission('insight', 'view');
+  const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
+  const canDelete = hasPermission(account.menuPermissions.insight, 'full');
 
   const { slug } = await params;
   const post = await getRepository().getBySlug(decodeURIComponent(slug));
@@ -67,9 +69,11 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
           <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="btn-secondary">
             검수 화면
           </Link>
-          <button type="submit" className="btn-primary">
-            저장
-          </button>
+          {canWrite && (
+            <button type="submit" className="btn-primary">
+              저장
+            </button>
+          )}
         </div>
       </header>
 
@@ -409,16 +413,18 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
           </section>
 
-          <section className="card space-y-3">
-            <h2 className="font-semibold text-red-700">위험 구역</h2>
-            <button
-              type="submit"
-              formAction={deletePostAction}
-              className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-            >
-              이 글 삭제
-            </button>
-          </section>
+          {canDelete && (
+            <section className="card space-y-3">
+              <h2 className="font-semibold text-red-700">위험 구역</h2>
+              <button
+                type="submit"
+                formAction={deletePostAction}
+                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+              >
+                이 글 삭제
+              </button>
+            </section>
+          )}
         </div>
       </div>
     </form>

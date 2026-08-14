@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getAdminAccountRepository } from '@orca/content';
 
 import { createAdminAccountAction } from '@/app/permissions/actions';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,7 +25,7 @@ const PERMISSION_OPTIONS = [
 
 export default async function PermissionsPage() {
   const account = await requireMenuPermission('accountPermission', 'view');
-  const canManage = account.menuPermissions.accountPermission === 'edit_approve' || account.menuPermissions.accountPermission === 'full';
+  const canManage = hasPermission(account.menuPermissions.accountPermission, 'edit_approve');
 
   const { accounts, errors } = await getAdminAccountRepository().getAll();
 
@@ -127,9 +127,11 @@ export default async function PermissionsPage() {
                   </span>
                 </td>
                 <td className="px-5 py-4 text-right">
-                  <Link href={`/permissions/${encodeURIComponent(a.slug)}`} className="text-[var(--color-accent)] hover:underline">
-                    편집
-                  </Link>
+                  {canManage && (
+                    <Link href={`/permissions/${encodeURIComponent(a.slug)}`} className="text-[var(--color-accent)] hover:underline">
+                      편집
+                    </Link>
+                  )}
                 </td>
               </tr>
             ))}

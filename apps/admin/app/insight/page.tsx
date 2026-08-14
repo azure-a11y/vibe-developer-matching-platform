@@ -3,12 +3,13 @@ import { auditPost, getRepository } from '@orca/content';
 
 import { createPostAction } from '@/app/actions';
 import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
 export default async function InsightListPage() {
-  await requireMenuPermission('insight', 'view');
+  const account = await requireMenuPermission('insight', 'view');
+  const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
 
   const { posts, errors } = await getRepository().getAll();
   const audits = new Map(posts.map((post) => [post.slug, auditPost(post)]));
@@ -47,29 +48,31 @@ export default async function InsightListPage() {
         </div>
       )}
 
-      <form action={createPostAction} className="card flex flex-wrap items-end gap-3">
-        <div className="min-w-64 flex-1">
-          <label className="label" htmlFor="title">
-            새 글 제목
-          </label>
-          <input id="title" name="title" className="field" placeholder="예: Next.js 16 캐시 컴포넌트 완전 정복" required />
-        </div>
-        <div className="w-48">
-          <label className="label" htmlFor="slug">
-            슬러그 (선택)
-          </label>
-          <input id="slug" name="slug" className="field" placeholder="자동 생성" />
-        </div>
-        <div className="w-48">
-          <label className="label" htmlFor="author">
-            작성자
-          </label>
-          <input id="author" name="author" className="field" defaultValue="blog-writer" />
-        </div>
-        <button type="submit" className="btn-primary">
-          초안 만들기
-        </button>
-      </form>
+      {canWrite && (
+        <form action={createPostAction} className="card flex flex-wrap items-end gap-3">
+          <div className="min-w-64 flex-1">
+            <label className="label" htmlFor="title">
+              새 글 제목
+            </label>
+            <input id="title" name="title" className="field" placeholder="예: Next.js 16 캐시 컴포넌트 완전 정복" required />
+          </div>
+          <div className="w-48">
+            <label className="label" htmlFor="slug">
+              슬러그 (선택)
+            </label>
+            <input id="slug" name="slug" className="field" placeholder="자동 생성" />
+          </div>
+          <div className="w-48">
+            <label className="label" htmlFor="author">
+              작성자
+            </label>
+            <input id="author" name="author" className="field" defaultValue="blog-writer" />
+          </div>
+          <button type="submit" className="btn-primary">
+            초안 만들기
+          </button>
+        </form>
+      )}
 
       {/* `overflow-x-auto`, not `overflow-hidden`: a wide table should scroll
           inside its container rather than have columns silently clipped. */}

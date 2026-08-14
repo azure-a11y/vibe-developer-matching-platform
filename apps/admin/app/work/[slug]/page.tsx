@@ -5,7 +5,7 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 import { deleteWorkAction, saveWorkAction } from '@/app/work/actions';
 import { Select } from '@/components/Select';
 import { WorkStatusBadge } from '@/components/StatusBadge';
-import { requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +16,9 @@ const STATUS_OPTIONS = [
 ];
 
 export default async function WorkEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  await requireMenuPermission('work', 'view');
+  const account = await requireMenuPermission('work', 'view');
+  const canWrite = hasPermission(account.menuPermissions.work, 'edit_approve');
+  const canDelete = hasPermission(account.menuPermissions.work, 'full');
 
   const { slug } = await params;
   const [work, { builders }] = await Promise.all([
@@ -39,9 +41,11 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
           <h1 className="text-xl font-bold tracking-tight">{work.title}</h1>
           <WorkStatusBadge status={work.status} />
         </div>
-        <button type="submit" className="btn-primary">
-          저장
-        </button>
+        {canWrite && (
+          <button type="submit" className="btn-primary">
+            저장
+          </button>
+        )}
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -143,16 +147,18 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
             </div>
           </section>
 
-          <section className="card space-y-3">
-            <h2 className="font-semibold text-red-700">위험 구역</h2>
-            <button
-              type="submit"
-              formAction={deleteWorkAction}
-              className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
-            >
-              이 Work 삭제
-            </button>
-          </section>
+          {canDelete && (
+            <section className="card space-y-3">
+              <h2 className="font-semibold text-red-700">위험 구역</h2>
+              <button
+                type="submit"
+                formAction={deleteWorkAction}
+                className="btn w-full border border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+              >
+                이 Work 삭제
+              </button>
+            </section>
+          )}
         </div>
       </div>
     </form>
