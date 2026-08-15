@@ -1,12 +1,20 @@
 import Link from 'next/link'
 
-export default function Footer() {
+type FooterProps = {
+  brandName?: string
+  companyName?: string
+  ceoName?: string
+  businessRegistrationNumber?: string
+  operatedBy?: string
+}
+
+export default function Footer({ brandName, companyName, ceoName, businessRegistrationNumber, operatedBy }: FooterProps = {}) {
   return (
     <footer>
       <div className="wrap">
         <div className="ft6">
           <div className="ft6__brand">
-            <Link className="logo" href="/"><em>✳</em>AI빌더그룹</Link>
+            <Link className="logo" href="/"><em>✳</em>{brandName || 'AI빌더그룹'}</Link>
             <p>AI 시대에 최적화된 바이브코딩 외주 전문 그룹</p>
           </div>
           <div className="col">
@@ -34,7 +42,19 @@ export default function Footer() {
           </div>
         </div>
         <p className="ft__legal">
-          <b>AI 빌더 그룹</b> · 사업자 정보는 사이트 오픈과 함께 게재됩니다.<br />
+          {companyName ? (
+            <>
+              <b>{companyName}</b>
+              {ceoName && ` · 대표 ${ceoName}`}
+              {businessRegistrationNumber && ` · 사업자등록번호 ${businessRegistrationNumber}`}
+              {operatedBy && ` · ${operatedBy}`}
+            </>
+          ) : (
+            <>
+              <b>{brandName || 'AI 빌더 그룹'}</b> · 사업자 정보는 사이트 오픈과 함께 게재됩니다.
+            </>
+          )}
+          <br />
           이메일 문의는 pluug 장애 대비 대체 경로입니다.
         </p>
         <div className="ft__bottom">

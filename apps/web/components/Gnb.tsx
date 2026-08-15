@@ -11,7 +11,7 @@ const NAV = [
   { href: '/content' as const, label: '콘텐츠', match: (p: string) => p.startsWith('/content') },
 ]
 
-export default function Gnb() {
+export default function Gnb({ brandName }: { brandName?: string } = {}) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
@@ -35,7 +35,7 @@ export default function Gnb() {
   return (
     <header className={`gnb${scrolled ? ' scrolled' : ''}${open ? ' menu-open' : ''}`}>
       <div className="gnb__in">
-        <Link className="logo" href="/"><em>✳</em>AI빌더그룹</Link>
+        <Link className="logo" href="/"><em>✳</em>{brandName || 'AI빌더그룹'}</Link>
         <button className="gnb__burger" aria-label="메뉴" onClick={() => setOpen(v => !v)}>
           {open ? '✕' : '☰'}
         </button>

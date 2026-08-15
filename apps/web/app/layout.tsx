@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getSiteSettingsRepository } from '@orca/content';
 
 import { Analytics } from '@/components/Analytics';
 import Footer from '@/components/Footer';
@@ -62,7 +63,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // 관리자 Settings에서 저장한 값. 미확정(빈 문자열)이면 각 컴포넌트가 기존 기본 표기를 그대로 쓴다.
+  const { settings } = await getSiteSettingsRepository().get();
+
   return (
     <html lang={siteLocale.split('-')[0]}>
       <head>
@@ -73,9 +77,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <a className="skip" href="#main">본문 바로가기</a>
-        <Gnb />
+        <Gnb brandName={settings.brandName} />
         {children}
-        <Footer />
+        <Footer
+          brandName={settings.brandName}
+          companyName={settings.companyName}
+          ceoName={settings.ceoName}
+          businessRegistrationNumber={settings.businessRegistrationNumber}
+          operatedBy={settings.operatedBy}
+        />
         <SiteFx />
         <Analytics />
       </body>
