@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { describeBackend } from '@orca/content';
+import { describeBackend, getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
 
 import { AdminShell } from '@/components/AdminShell';
 import { getCurrentAccount } from '@/lib/session';
@@ -8,6 +8,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Orca Admin',
+  icons: { icon: '/favicon.svg' },
   description: '콘텐츠 · SEO/GEO · 검수 대시보드',
   robots: { index: false, follow: false },
 };
@@ -15,6 +16,16 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const backend = describeBackend();
   const account = await getCurrentAccount();
+  const [{ posts }, { builders }, { works }] = await Promise.all([
+    getRepository().getAll(),
+    getBuilderRepository().getAll(),
+    getWorkRepository().getAll(),
+  ]);
+  const pendingCounts = {
+    builder: builders.filter((b) => b.status === 'pending').length,
+    work: works.filter((w) => w.status === 'pending_review').length,
+    insight: posts.filter((p) => p.status === 'in_review').length,
+  };
 
   return (
     <html lang="ko">
@@ -31,7 +42,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           <strong>{backend.driver === 'supabase' ? 'Supabase' : '파일 기반'}</strong> · {backend.message}
         </div>
-        <AdminShell account={account}>{children}</AdminShell>
+        <AdminShell account={account} pendingCounts={pendingCounts}>
+          {children}
+        </AdminShell>
       </body>
     </html>
   );

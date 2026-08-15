@@ -5,12 +5,13 @@ import { usePathname } from 'next/navigation';
 import type { AdminAccount, MenuKey } from '@orca/content';
 
 import { logoutAction } from '@/lib/auth-actions';
+type PendingCountKey = 'builder' | 'work' | 'insight';
 
-const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey }[] = [
+const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey; countKey?: PendingCountKey }[] = [
   { href: '/', label: 'Dashboard', menuKey: 'dashboard' },
-  { href: '/builder', label: 'Builder', menuKey: 'builder' },
-  { href: '/work', label: 'Work', menuKey: 'work' },
-  { href: '/insight', label: 'Insight', menuKey: 'insight' },
+  { href: '/builder', label: 'Builder', menuKey: 'builder', countKey: 'builder' },
+  { href: '/work', label: 'Work', menuKey: 'work', countKey: 'work' },
+  { href: '/insight', label: 'Insight', menuKey: 'insight', countKey: 'insight' },
   { href: '/inquiry', label: 'Inquiry', menuKey: 'inquiry' },
   { href: '/settings', label: 'Settings', menuKey: 'settings' },
   { href: '/permissions', label: '계정 · 권한', menuKey: 'accountPermission' },
@@ -26,9 +27,10 @@ interface AdminShellProps {
   children: React.ReactNode;
   /** `null` when nobody is signed in (only reachable on `/login` — middleware blocks everywhere else). */
   account: AdminAccount | null;
+  pendingCounts: Record<PendingCountKey, number>;
 }
 
-export function AdminShell({ children, account }: AdminShellProps) {
+export function AdminShell({ children, account, pendingCounts }: AdminShellProps) {
   const pathname = usePathname();
 
   // The login screen has no sidebar/topbar chrome — it isn't behind auth yet.
@@ -40,6 +42,7 @@ export function AdminShell({ children, account }: AdminShellProps) {
     (item) => item.menuKey === 'dashboard' || !account || account.menuPermissions[item.menuKey] !== 'none',
   );
   const initial = account?.name.trim().charAt(0).toUpperCase() || '?';
+  const totalPending = pendingCounts.builder + pendingCounts.work + pendingCounts.insight;
 
   return (
     <div className="flex min-h-dvh flex-col lg:flex-row">
@@ -58,6 +61,7 @@ export function AdminShell({ children, account }: AdminShellProps) {
         <nav className="flex flex-1 flex-wrap gap-0.5 px-3 lg:flex-col lg:flex-nowrap">
           {visibleItems.map((item) => {
             const active = isActive(pathname, item.href);
+            const count = item.countKey ? pendingCounts[item.countKey] : 0;
             return (
               <Link
                 key={item.href}
@@ -76,7 +80,8 @@ export function AdminShell({ children, account }: AdminShellProps) {
                   if (!active) e.currentTarget.style.color = 'var(--color-sidebar-text)';
                 }}
               >
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {count > 0 && <span className="alert-badge">{count}</span>}
               </Link>
             );
           })}
@@ -131,6 +136,11 @@ export function AdminShell({ children, account }: AdminShellProps) {
           style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface)' }}
         >
           <h1 className="text-lg font-semibold tracking-tight">{current?.label ?? 'Admin'}</h1>
+          {totalPending > 0 && (
+            <span className="alert-badge alert-badge-wide">
+              검수 대기 {totalPending}건
+            </span>
+          )}
         </header>
         <main className="min-w-0 flex-1 px-6 py-8 lg:px-10">{children}</main>
       </div>
