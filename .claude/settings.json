@@ -38,6 +38,8 @@
       "Bash(pnpm check)",
       "Bash(pnpm audit:content:*)",
       "Bash(pnpm agent --list)",
+      "Edit(content/posts/**)",
+      "Bash(node --experimental-strip-types:*)",
       "Bash(git status)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

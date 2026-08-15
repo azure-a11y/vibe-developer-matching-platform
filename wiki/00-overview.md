@@ -28,7 +28,7 @@ AI에게 프로젝트를 맡길 때 반복해서 무너지는 두 가지:
 apps/web      공개 블로그 (Next.js 16, App Router)
 apps/admin    콘텐츠 · SEO/GEO · 검수 대시보드 (Next.js 16)
 packages/content  콘텐츠 스키마 · 파일 IO · 감사 · JSON-LD (단일 진실 공급원)
-content/posts     마크다운 글 (DB 없음)
+content/posts     마크다운 글 (기본 드라이버, Supabase 키가 있으면 자동 전환)
 agents/       독립 실행 에이전트 (AGENT.md + skills/) + 런타임·모델 매핑
 wiki/         프로젝트 지식 + 장/단기 메모리
 .claude/      훅 · 슬래시 커맨드
@@ -41,7 +41,8 @@ scripts/      결정적 셸 스크립트 (setup, 의존성 검사, imagegen)
 
 1. **이미지 생성은 Codex `imagegen` 전용.** Claude의 이미지 합성은 금지.
 2. **발행은 사람만.** 에이전트는 `in_review`까지만 올린다.
-3. **콘텐츠의 진실은 파일.** DB나 외부 CMS를 도입하지 않는다.
+3. **콘텐츠와 데이터는 정의된 repository/service 계층을 통해서만 접근한다.** 저장 방식(파일/Supabase/
+   기타)은 불변사항이 아니다.
 4. **검수는 결정적으로.** 게이트 판단에 모델 추론을 넣지 않는다.
 5. **세션 시작 시 컨텍스트 로드는 자동.** 사람이 기억해서 시키지 않는다.
 

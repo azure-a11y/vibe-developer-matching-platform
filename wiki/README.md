@@ -18,6 +18,11 @@
 | [06-history.md](./06-history.md) | 결정 타임라인 | 왜 이렇게 됐는지 궁금할 때 |
 | [07-supabase.md](./07-supabase.md) | 백엔드 드라이버 · 전환 절차 | DB 로 옮길 때 |
 | [08-technical-seo.md](./08-technical-seo.md) | 메타 · 사이트맵 · llms.txt · 소유 확인 · GA4 | 배포·색인 설정 시 |
+| [09-phase-design.md](./09-phase-design.md) | 디자인 단계 CLAUDE.md — Visual Direction, 기존 시안 취급 | 디자인 방향 수립 / 목업 / 확정 시 |
+| [10-phase-development.md](./10-phase-development.md) | 개발 단계 CLAUDE.md — 작업 큐, 완료 기준 | 프론트엔드·관리자 구현 시 |
+| [11-phase-verification.md](./11-phase-verification.md) | 검증 단계 CLAUDE.md — 독립 검토 체크리스트 | 기능·UI·기술 검증 시 |
+| [12-phase-deployment.md](./12-phase-deployment.md) | 배포 단계 CLAUDE.md — 배포 전 블로커 · 체크리스트 | 배포 직전 |
+| [13-phase-handoff.md](./13-phase-handoff.md) | 이관 단계 CLAUDE.md — 운영 인계 체크리스트 | 배포 후 이관 시 |
 | [decisions/](./decisions/) | ADR — 되돌리기 어려운 결정 기록 | 아키텍처를 바꾸려 할 때 |
 | [memory/](./memory/) | 단기 · 장기 메모리 | 세션 시작 / 종료 |
 
