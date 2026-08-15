@@ -16,6 +16,13 @@ const STATUS_OPTIONS = [
   { value: 'archived', label: '보관', description: '목록에서 제외' },
 ];
 
+const CATEGORY_OPTIONS = [
+  { value: 'aiax', label: 'AI · AX' },
+  { value: 'commerce', label: 'Commerce' },
+  { value: 'platform', label: 'Platform / SaaS · Admin' },
+  { value: 'finance', label: 'Finance' },
+];
+
 export default async function WorkEditorPage({ params }: { params: Promise<{ slug: string }> }) {
   const account = await requireMenuPermission('work', 'view');
   const canWrite = hasPermission(account.menuPermissions.work, 'edit_approve');
@@ -83,6 +90,29 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
             </div>
           </section>
 
+          {/* apps/web(지홍님 1안) Work 목록 필터/카드 표기용 필드 — schema.ts §Work 확장 */}
+          <section className="card space-y-4">
+            <h2 className="font-semibold">Work 목록 표기</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="label" htmlFor="category">필터 카테고리</label>
+                <Select id="category" name="category" defaultValue={work.category} options={CATEGORY_OPTIONS} />
+              </div>
+              <div>
+                <label className="label" htmlFor="tag">카드 표시 태그</label>
+                <input id="tag" name="tag" className="field" defaultValue={work.tag} placeholder="예: SaaS · Admin, O2O" />
+              </div>
+              <div>
+                <label className="label" htmlFor="year">연도</label>
+                <input id="year" name="year" className="field" defaultValue={work.year} placeholder="2026" />
+              </div>
+              <div>
+                <label className="label" htmlFor="partner">파트너 표기</label>
+                <input id="partner" name="partner" className="field" defaultValue={work.partner} placeholder="with 똑똑한개발자 · 빌더 조쉬" />
+              </div>
+            </div>
+          </section>
+
           {/* 문제 → 해결 → 결과는 순서가 곧 서사다. 세로로 번호를 매겨 읽는
               순서를 시각적으로도 강제한다 — 세 필드가 나란한 카드가 아니라
               하나의 흐름으로 읽히게. */}
@@ -128,7 +158,7 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
             {builders.length === 0 ? (
               <p className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
                 아직 등록된 빌더가 없습니다.{' '}
-                <Link href="/builder" className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                <Link href="/builder" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
                   Builder에서 먼저 추가하세요.
                 </Link>
               </p>

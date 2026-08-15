@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import type { AdminAccount, MenuKey } from '@orca/content';
 
 import { logoutAction } from '@/lib/auth-actions';
+
 type PendingCountKey = 'builder' | 'work' | 'insight';
 
 const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey; countKey?: PendingCountKey }[] = [
@@ -45,17 +46,18 @@ export function AdminShell({ children, account, pendingCounts }: AdminShellProps
   const totalPending = pendingCounts.builder + pendingCounts.work + pendingCounts.insight;
 
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
+    <div className="admin-shell flex min-h-dvh flex-col lg:flex-row">
       <aside
-        className="flex shrink-0 flex-col lg:w-64"
+        className="admin-sidebar flex shrink-0 flex-col lg:w-64"
         style={{ background: 'var(--color-sidebar-bg)', borderColor: 'var(--color-sidebar-border)' }}
       >
         <Link
           href="/"
-          className="flex items-center gap-2 px-6 py-5 text-sm font-semibold tracking-tight"
+          className="admin-brand flex items-center gap-3 px-6 py-6 text-sm font-semibold tracking-tight"
           style={{ color: 'var(--color-sidebar-text-hover)' }}
         >
-          Orca <span style={{ color: 'var(--color-sidebar-text)' }}>Admin</span>
+          <span className="admin-brand-mark">AI</span>
+          <span className="flex flex-col leading-tight">AI Builder Group <small className="font-mono text-[9px] tracking-[.14em]" style={{ color: 'var(--color-sidebar-text)' }}>ADMIN</small></span>
         </Link>
 
         <nav className="flex flex-1 flex-wrap gap-0.5 px-3 lg:flex-col lg:flex-nowrap">
@@ -67,7 +69,7 @@ export function AdminShell({ children, account, pendingCounts }: AdminShellProps
                 key={item.href}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className="rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                className="admin-nav-link flex items-center gap-2 rounded px-3 py-2.5 text-sm font-semibold transition-colors"
                 style={
                   active
                     ? { background: 'var(--color-sidebar-active-bg)', color: 'var(--color-sidebar-active-text)' }
@@ -81,7 +83,13 @@ export function AdminShell({ children, account, pendingCounts }: AdminShellProps
                 }}
               >
                 <span className="flex-1">{item.label}</span>
-                {count > 0 && <span className="alert-badge">{count}</span>}
+                {count > 0 && (
+                  <span
+                    className="alert-badge"
+                  >
+                    {count}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -132,10 +140,10 @@ export function AdminShell({ children, account, pendingCounts }: AdminShellProps
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header
-          className="flex items-center justify-between px-6 py-4 lg:px-10"
+          className="admin-topbar flex items-center justify-between px-6 py-5 lg:px-10"
           style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface)' }}
         >
-          <h1 className="text-lg font-semibold tracking-tight">{current?.label ?? 'Admin'}</h1>
+          <h1 className="admin-page-title">{current?.label ?? 'Admin'}</h1>
           {totalPending > 0 && (
             <span className="alert-badge alert-badge-wide">
               검수 대기 {totalPending}건

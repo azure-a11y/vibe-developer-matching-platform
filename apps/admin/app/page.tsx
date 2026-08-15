@@ -144,7 +144,7 @@ export default async function DashboardPage({
         <section className="card space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">최근 수정된 Insight</h2>
-            <Link href="/insight" className="text-sm" style={{ color: 'var(--color-accent)' }}>
+            <Link href="/insight" className="text-sm" style={{ color: 'var(--color-accent-soft-text)' }}>
               전체 보기
             </Link>
           </div>

@@ -12,7 +12,7 @@ export default async function LoginPage({
       className="flex min-h-dvh items-center justify-center px-6"
       style={{ background: 'var(--color-sidebar-bg)' }}
     >
-      <form action={loginAction} className="card w-full max-w-sm space-y-6 shadow-xl shadow-black/20">
+      <form action={loginAction} className="login-card card w-full max-w-sm space-y-6 shadow-xl shadow-black/20">
         <div>
           <p className="text-xs font-semibold tracking-tight" style={{ color: 'var(--color-ink-faint)' }}>
             Orca <span style={{ color: 'var(--color-accent)' }}>Admin</span>

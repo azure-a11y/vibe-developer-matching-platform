@@ -105,7 +105,7 @@ export default async function SettingsPage() {
               </dt>
               <dd style={{ color: 'var(--color-ink-muted)' }}>
                 환경변수로 설정 — 관리자가 접수된 문의를 확인하는 pluug 자체 관리 화면.{' '}
-                <Link href="/inquiry" className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+                <Link href="/inquiry" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
                   Inquiry 메뉴
                 </Link>
                 에서 이동합니다.

@@ -61,6 +61,17 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
               <input id="specialties" name="specialties" className="field" defaultValue={builder.specialties.join(', ')} />
             </div>
 
+            <div className="grid gap-4 sm:grid-cols-2 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
+              <div>
+                <label className="label" htmlFor="role">프로필 타이틀 (role)</label>
+                <input id="role" name="role" className="field" defaultValue={builder.role} placeholder="프로덕트 빌더 · 기획+개발" />
+              </div>
+              <div>
+                <label className="label" htmlFor="focus">전문 분야 한 줄 (focus)</label>
+                <input id="focus" name="focus" className="field" defaultValue={builder.focus} placeholder="프로덕트 전체 · MVP · 검증" />
+              </div>
+            </div>
+
             <div className="space-y-4 pt-2" style={{ borderTop: '1px solid var(--color-border)' }}>
               <SubHeading>이력</SubHeading>
               <div>
@@ -112,9 +123,41 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
               />
             </div>
           </section>
+
+          <section className="card space-y-4">
+            <div>
+              <h2 className="font-semibold">일하는 원칙 (프로필 카드, 최대 3개)</h2>
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+                제목·설명이 모두 채워진 항목만 apps/web 프로필 페이지에 노출됩니다.
+              </p>
+            </div>
+            {[0, 1, 2].map((i) => {
+              const p = builder.principles[i];
+              return (
+                <div className="grid gap-2 sm:grid-cols-[200px_1fr]" key={i}>
+                  <input name={`principleTitle${i}`} className="field" defaultValue={p?.title ?? ''} placeholder={`원칙 ${i + 1} 제목`} />
+                  <input name={`principleDesc${i}`} className="field" defaultValue={p?.description ?? ''} placeholder={`원칙 ${i + 1} 설명`} />
+                </div>
+              );
+            })}
+          </section>
         </div>
 
         <div className="min-w-0 space-y-6">
+          <section className="card space-y-4">
+            <h2 className="font-semibold">Work 목록 · 프로필 뱃지</h2>
+            <div>
+              <label className="label" htmlFor="badgeLabel">뱃지 텍스트</label>
+              <input id="badgeLabel" name="badgeLabel" className="field" defaultValue={builder.badgeLabel} placeholder="✳ 이달의 빌더 / NEW" />
+            </div>
+            <CheckboxRow
+              name="isLead"
+              defaultChecked={builder.isLead}
+              title="리드 스타일 뱃지"
+              description="켜면 라임 색 '이달의 빌더' 스타일, 끄면 플레인 'NEW' 스타일로 표시됩니다."
+            />
+          </section>
+
           <section className="card space-y-4">
             <h2 className="font-semibold">상태</h2>
             <div>

@@ -31,7 +31,7 @@ export default async function InsightListPage() {
             전체 {counts.total} · 초안 {counts.draft} · 검수 중 {counts.inReview} · 발행 {counts.published}
           </p>
         </div>
-        <Link href="/seo" className="text-sm" style={{ color: 'var(--color-accent)' }}>
+        <Link href="/seo" className="text-sm" style={{ color: 'var(--color-accent-soft-text)' }}>
           SEO/GEO 현황 ↗
         </Link>
       </header>
@@ -108,7 +108,7 @@ export default async function InsightListPage() {
                     {post.updatedAt.slice(0, 10)}
                   </td>
                   <td className="whitespace-nowrap px-5 py-4 text-right">
-                    <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="text-sm" style={{ color: 'var(--color-accent)' }}>
+                    <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="text-sm" style={{ color: 'var(--color-accent-soft-text)' }}>
                       검수
                     </Link>
                   </td>

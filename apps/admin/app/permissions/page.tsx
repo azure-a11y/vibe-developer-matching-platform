@@ -87,7 +87,7 @@ export default async function PermissionsPage() {
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-right">
                   {canManage && (
-                    <Link href={`/permissions/${encodeURIComponent(a.slug)}`} className="text-sm" style={{ color: 'var(--color-accent)' }}>
+                    <Link href={`/permissions/${encodeURIComponent(a.slug)}`} className="text-sm" style={{ color: 'var(--color-accent-soft-text)' }}>
                       편집
                     </Link>
                   )}

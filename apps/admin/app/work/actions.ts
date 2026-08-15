@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { type WorkFrontmatterInput, type WorkStatus, getWorkRepository, slugify } from '@orca/content';
+import { type WorkCategory, type WorkFrontmatterInput, type WorkStatus, getWorkRepository, slugify } from '@orca/content';
 
 import { requireMenuPermission } from '@/lib/permissions';
 
@@ -62,6 +62,10 @@ export async function saveWorkAction(formData: FormData) {
     result: text(formData, 'result'),
     status: (text(formData, 'status') || existing.status) as WorkStatus,
     builderIds: formData.getAll('builderIds').map(String),
+    category: (text(formData, 'category') || existing.category) as WorkCategory,
+    tag: text(formData, 'tag'),
+    year: text(formData, 'year'),
+    partner: text(formData, 'partner'),
   };
 
   await repo.save(frontmatter);

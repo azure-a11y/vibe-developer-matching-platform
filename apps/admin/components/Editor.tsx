@@ -207,7 +207,7 @@ function ToolbarButton({
       className="rounded-md px-2 py-1 text-sm transition-colors disabled:opacity-40"
       style={
         active
-          ? { background: 'var(--color-accent)', color: 'white' }
+          ? { background: 'var(--color-accent)', color: 'var(--color-ink)' }
           : { color: 'var(--color-ink-muted)' }
       }
     >

@@ -79,7 +79,7 @@ export function Select({
                 {option.description && (
                   <span className="text-xs text-[var(--color-ink-faint)]">{option.description}</span>
                 )}
-                <RadixSelect.ItemIndicator className="absolute right-3 top-2.5 text-[var(--color-accent)]">
+                <RadixSelect.ItemIndicator className="absolute right-3 top-2.5 text-[var(--color-accent-soft-text)]">
                   <Check />
                 </RadixSelect.ItemIndicator>
               </RadixSelect.Item>

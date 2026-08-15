@@ -85,6 +85,16 @@ export async function saveBuilderAction(formData: FormData) {
       canEditInsight: bool(formData, 'permEditInsight'),
       canDeleteInsight: bool(formData, 'permDeleteInsight'),
     },
+    role: text(formData, 'role'),
+    focus: text(formData, 'focus'),
+    badgeLabel: text(formData, 'badgeLabel'),
+    isLead: bool(formData, 'isLead'),
+    principles: [0, 1, 2]
+      .map((i) => ({
+        title: text(formData, `principleTitle${i}`),
+        description: text(formData, `principleDesc${i}`),
+      }))
+      .filter((p) => p.title && p.description),
   };
 
   await repo.save(frontmatter, text(formData, 'bio'));

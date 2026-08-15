@@ -16,6 +16,9 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const backend = describeBackend();
   const account = await getCurrentAccount();
+
+  // Sidebar nav badges + topbar "검수 대기" pill both need these — computed once
+  // here rather than in every page, since AdminShell renders on every route.
   const [{ posts }, { builders }, { works }] = await Promise.all([
     getRepository().getAll(),
     getBuilderRepository().getAll(),

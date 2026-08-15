@@ -46,7 +46,7 @@ export default async function InquiryPage() {
 
         <p className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
           공개 사이트 "문의하기" 버튼이 여는 폼 링크는 여기가 아니라{' '}
-          <Link href="/settings" className="hover:underline" style={{ color: 'var(--color-accent)' }}>
+          <Link href="/settings" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
             Settings
           </Link>
           에서 관리합니다.
