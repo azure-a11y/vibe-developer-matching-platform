@@ -50,7 +50,6 @@ export async function GET(): Promise<Response> {
 ## 주요 링크
 
 - [Insight 목록](${siteUrl}/insight): 발행된 전체 글
-- [소개](${siteUrl}/about): 이 사이트의 운영 방식
 - [RSS](${siteUrl}/rss.xml): 구독 피드
 - [사이트맵](${siteUrl}/sitemap.xml): 전체 URL 목록
 

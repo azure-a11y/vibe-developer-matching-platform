@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getRepository } from '@orca/content';
+import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
 
 import { siteUrl } from '@/lib/site';
 
@@ -11,7 +11,11 @@ import { siteUrl } from '@/lib/site';
  * an archive note in the crawl budget.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const posts = await getRepository().getPublished();
+  const [posts, { works }, { builders }] = await Promise.all([
+    getRepository().getPublished(),
+    getWorkRepository().getAll(),
+    getBuilderRepository().getAll(),
+  ]);
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${siteUrl}/insight/${encodeURIComponent(post.slug)}`,
@@ -29,10 +33,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       : {}),
   }));
 
+  const workEntries: MetadataRoute.Sitemap = works
+    .filter((w) => w.status === 'published')
+    .map((w) => ({
+      url: `${siteUrl}/work/${encodeURIComponent(w.slug)}`,
+      lastModified: new Date(w.updatedAt),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    }));
+
+  const builderEntries: MetadataRoute.Sitemap = builders
+    .filter((b) => b.status === 'active')
+    .map((b) => ({
+      url: `${siteUrl}/builder/${encodeURIComponent(b.slug)}`,
+      lastModified: new Date(b.updatedAt),
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    }));
+
   return [
     { url: siteUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
+    { url: `${siteUrl}/work`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${siteUrl}/builder`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${siteUrl}/insight`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
-    { url: `${siteUrl}/about`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.4 },
+    { url: `${siteUrl}/content`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.5 },
+    { url: `${siteUrl}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.6 },
+    { url: `${siteUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
+    ...workEntries,
+    ...builderEntries,
     ...postEntries,
   ];
 }

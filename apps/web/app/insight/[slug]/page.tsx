@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { blogPostingJsonLd, faqJsonLd, getRepository, postUrl } from '@orca/content';
 
 import { formatDate, renderMarkdown } from '@/lib/markdown';
 import { absoluteUrl, twitterSite } from '@/lib/site';
+
+import FaqToc from './FaqToc';
+import InsightDetailTrack from './track';
+import { CATEGORY_LABEL } from '../view';
+import './insight-detail.css';
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -94,9 +98,10 @@ export default async function PostPage({ params }: Params) {
   if (!post || post.status !== 'published') notFound();
 
   const faq = faqJsonLd(post);
+  const categoryLabel = CATEGORY_LABEL[post.category] ?? post.category;
 
   return (
-    <article className="space-y-8">
+    <main id="main">
       <script
         type="application/ld+json"
         // JSON-LD is generated from validated frontmatter, never user input.
@@ -105,95 +110,54 @@ export default async function PostPage({ params }: Params) {
       {faq && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }} />
       )}
+      <InsightDetailTrack slug={post.slug} category={post.category} />
 
-      <header className="space-y-4">
-        <p className="text-sm text-[var(--color-muted)]">
-          <time dateTime={post.publishedAt ?? post.createdAt}>
-            {formatDate(post.publishedAt, post.geo.locale)}
-          </time>{' '}
-          · {post.readingTimeMinutes}분 읽기 · {post.author}
+      <div className="wrap art-head">
+        <Link className="backlink" href="/insight">인사이트 목록으로</Link>
+        <h1>{post.title}</h1>
+        <p className="meta">
+          {categoryLabel} · <b>{post.author}</b> ·{' '}
+          <time dateTime={post.publishedAt ?? post.createdAt}>{formatDate(post.publishedAt, post.geo.locale)}</time> · 읽는 데 {post.readingTimeMinutes}분
         </p>
-        <h1 className="text-4xl font-bold leading-tight tracking-tight">{post.title}</h1>
-        <p className="text-lg leading-8 text-[var(--color-muted)]">{post.description}</p>
-      </header>
+      </div>
 
-      {post.cover && (
-        <figure className="space-y-2">
-          <Image
-            src={post.cover.src}
-            alt={post.cover.alt}
-            width={post.cover.width ?? 1200}
-            height={post.cover.height ?? 630}
-            className="w-full rounded-2xl object-cover"
-            priority
-          />
-          {post.cover.credit && (
-            <figcaption className="text-xs text-[var(--color-muted)]">{post.cover.credit}</figcaption>
+      <div className="wrap art-body">
+        <article className="art">
+          {post.cover ? (
+            <img className="ph ph--tall" src={post.cover.src} alt={post.cover.alt} style={{ width: '100%', objectFit: 'cover' }} />
+          ) : (
+            <div className="ph ph--tall" data-label="Cover Image"><span className="fx">{post.slug} / COVER</span></div>
           )}
-        </figure>
-      )}
 
-      {post.geo.answerSummary && (
-        <aside className="rounded-2xl bg-neutral-50 p-5 dark:bg-neutral-900">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-[var(--color-muted)]">
-            요약
-          </p>
-          <p className="leading-7">{post.geo.answerSummary}</p>
-        </aside>
-      )}
+          <p>{post.description}</p>
 
-      <div
-        className="prose-body"
-        dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }}
-      />
+          {post.geo.answerSummary && (
+            <blockquote>{post.geo.answerSummary}</blockquote>
+          )}
 
-      {post.geo.faq.length > 0 && (
-        <section className="space-y-4 border-t border-neutral-200 pt-8 dark:border-neutral-800">
-          <h2 className="text-2xl font-semibold tracking-tight">자주 묻는 질문</h2>
-          <dl className="space-y-5">
-            {post.geo.faq.map((item) => (
-              <div key={item.question} className="space-y-1">
-                <dt className="font-semibold">{item.question}</dt>
-                <dd className="leading-7 text-[var(--color-muted)]">{item.answer}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )}
+          <div dangerouslySetInnerHTML={{ __html: renderMarkdown(post.body) }} />
 
-      {post.geo.citations.length > 0 && (
-        <section className="space-y-3 border-t border-neutral-200 pt-8 dark:border-neutral-800">
-          <h2 className="text-sm font-semibold uppercase tracking-widest text-[var(--color-muted)]">참고 자료</h2>
-          <ul className="space-y-1 text-sm">
-            {post.geo.citations.map((citation) => (
-              <li key={citation.url}>
-                <a
-                  href={citation.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[var(--color-accent)] underline underline-offset-4"
-                >
-                  {citation.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+          {post.tags.length > 0 && (
+            <div className="tags">
+              {post.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
+            </div>
+          )}
+        </article>
 
-      {post.tags.length > 0 && (
-        <footer className="flex flex-wrap gap-2 border-t border-neutral-200 pt-8 dark:border-neutral-800">
-          {post.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/insight?tag=${encodeURIComponent(tag)}`}
-              className="rounded-full border border-neutral-200 px-3 py-1 text-sm dark:border-neutral-800"
-            >
-              #{tag}
-            </Link>
-          ))}
-        </footer>
-      )}
-    </article>
+        <FaqToc items={post.geo.faq} />
+      </div>
+
+      <section style={{ paddingTop: 0 }}>
+        <div className="wrap" style={{ maxWidth: 776 }}>
+          <div className="cta-banner" style={{ marginTop: 52 }}>
+            <div>
+              <h3>글이 도움되셨나요?</h3>
+              <p>프로젝트 이야기를 들려주세요.</p>
+            </div>
+            <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="insight_detail">문의하기 <span className="arr">→</span></Link>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

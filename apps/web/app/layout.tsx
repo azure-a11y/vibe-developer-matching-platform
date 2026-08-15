@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 import { Analytics } from '@/components/Analytics';
+import Footer from '@/components/Footer';
+import Gnb from '@/components/Gnb';
+import SiteFx from '@/components/SiteFx';
 import {
   bingVerification,
   googleVerification,
@@ -14,6 +16,9 @@ import {
 } from '@/lib/site';
 
 import './globals.css';
+// 지홍님 1안(artifact/ai-builder-group/05-서비스-nextjs) 디자인 토큰 + 공용 컴포넌트 스타일.
+// 원본 파일명은 style.css — Tailwind 기반 globals.css 와 공존시키기 위해 이름만 바꿔 그대로 이식했다.
+import './builder-group-design.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -66,29 +71,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Points LLM crawlers at the machine-readable site summary. */}
         <link rel="llms" href={`${siteUrl}/llms.txt`} />
       </head>
-      <body className="min-h-dvh">
-        <header className="border-b border-neutral-200 dark:border-neutral-800">
-          <nav className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              {siteName}
-            </Link>
-            <div className="flex gap-6 text-sm text-[var(--color-muted)]">
-              <Link href="/insight" className="hover:text-[var(--color-accent)]">
-                Insight
-              </Link>
-              <Link href="/about" className="hover:text-[var(--color-accent)]">
-                소개
-              </Link>
-            </div>
-          </nav>
-        </header>
-
-        <main className="mx-auto max-w-3xl px-6 py-12">{children}</main>
-
-        <footer className="border-t border-neutral-200 py-10 text-center text-sm text-[var(--color-muted)] dark:border-neutral-800">
-          Built with Orca AI Company · 콘텐츠는 에이전트가 작성하고 사람이 검수합니다.
-        </footer>
-
+      <body>
+        <a className="skip" href="#main">본문 바로가기</a>
+        <Gnb />
+        {children}
+        <Footer />
+        <SiteFx />
         <Analytics />
       </body>
     </html>
