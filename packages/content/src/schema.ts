@@ -216,6 +216,13 @@ export const BuilderPermissionsSchema = z.object({
 });
 export type BuilderPermissions = z.infer<typeof BuilderPermissionsSchema>;
 
+/** One "일하는 원칙" card on the Builder profile page. */
+export const BuilderPrincipleSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+});
+export type BuilderPrinciple = z.infer<typeof BuilderPrincipleSchema>;
+
 export const BuilderFrontmatterSchema = z.object({
   displayName: z.string().min(1),
   slug: z
@@ -230,6 +237,16 @@ export const BuilderFrontmatterSchema = z.object({
   verifications: z.array(z.string()).default([]),
   status: BuilderStatus.default('pending'),
   permissions: BuilderPermissionsSchema.prefault({}),
+  /** Short title shown under the name, e.g. "프로덕트 빌더 · 기획+개발". */
+  role: z.string().default(''),
+  /** One-line focus area, e.g. "프로덕트 전체 · MVP · 검증". */
+  focus: z.string().default(''),
+  /** "일하는 원칙" cards on the profile page — 2~3 items in the 1안 design. */
+  principles: z.array(BuilderPrincipleSchema).default([]),
+  /** Badge text on the card/hero, e.g. "✳ 이달의 빌더" or "NEW". Empty = no badge. */
+  badgeLabel: z.string().default(''),
+  /** Drives the lead-styled badge variant (vs the plain "NEW" variant). */
+  isLead: z.boolean().default(false),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -253,6 +270,13 @@ export interface Builder extends BuilderFrontmatter {
 export const WorkStatus = z.enum(['pending_review', 'published', 'archived']);
 export type WorkStatus = z.infer<typeof WorkStatus>;
 
+/**
+ * Work category — drives the filter chips on the public Work list
+ * (artifact/ai-builder-group/05-서비스-nextjs `app/work/view.tsx`).
+ */
+export const WorkCategory = z.enum(['aiax', 'commerce', 'platform', 'finance']);
+export type WorkCategory = z.infer<typeof WorkCategory>;
+
 export const WorkFrontmatterSchema = z.object({
   title: z.string().min(1),
   slug: z
@@ -272,6 +296,14 @@ export const WorkFrontmatterSchema = z.object({
   /** Participating builders — N:M, resolved against Builder.slug at read time. */
   builderIds: z.array(z.string()).default([]),
   status: WorkStatus.default('pending_review'),
+  /** Filter-chip category. Added for the 지홍님 1안 Work 목록 필터 (아이엑스/커머스/플랫폼/파이낸스). */
+  category: WorkCategory.default('platform'),
+  /** Free-text display tag shown on the card, e.g. "SaaS · Admin", "O2O" — more specific than `category`. */
+  tag: z.string().default(''),
+  /** Display year on the card/detail, e.g. "2026". Free text because a project can span years. */
+  year: z.string().default(''),
+  /** "with 똑똑한개발자 · 빌더 조쉬" style partner credit line shown on the card. */
+  partner: z.string().default(''),
   createdAt: z.string(),
   updatedAt: z.string(),
 });

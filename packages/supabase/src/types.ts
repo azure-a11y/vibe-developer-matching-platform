@@ -52,6 +52,13 @@ export type BuilderRow = {
   verifications: string[];
   status: string;
   permissions: Record<string, unknown>;
+  /** 0003_work_builder_fields.sql 에서 추가 — 프로필 헤더 타이틀. */
+  role: string;
+  focus: string;
+  /** {title, description}[] — Builder.principles 와 1:1. */
+  principles: Record<string, unknown>[];
+  badge_label: string;
+  is_lead: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -77,6 +84,11 @@ export type WorkRow = {
   assets: Record<string, unknown>[];
   builder_ids: string[];
   status: string;
+  /** 0003_work_builder_fields.sql 에서 추가 — Work 목록 필터/카드 표기용. */
+  category: string;
+  tag: string;
+  year: string;
+  partner: string;
   created_at: string;
   updated_at: string;
 };
