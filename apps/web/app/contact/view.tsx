@@ -1,9 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+import { buildPluugEmbedUrl } from '@/lib/site'
 
 export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) {
+  const hasPluugUrl = pluugFormUrl.length > 0
+
+  /* pluug 폼을 직접 임베드한다 — 문의 데이터는 우리 DB로 오지 않고 pluug가 받는다.
+     주소는 클라이언트에서만 만든다 — 유입 utm_source를 location에서 읽기 때문에
+     서버 렌더 결과와 달라져 하이드레이션이 어긋난다. 마운트 후에 채운다.
+     ⚠ pluug 쪽 "제출 후 이동 링크"를 이 사이트의 /submit?src=pluug로 맞춰야 전환 측정이 성립한다. */
+  const [embedSrc, setEmbedSrc] = useState('')
+  useEffect(() => {
+    if (hasPluugUrl) setEmbedSrc(buildPluugEmbedUrl(pluugFormUrl, 'contact_page'))
+  }, [hasPluugUrl, pluugFormUrl])
+
   useEffect(() => {
     document.querySelectorAll('[data-pills]').forEach(group => {
       group.querySelectorAll('.pill').forEach(p => {
@@ -15,15 +28,10 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
     })
   }, [])
 
-  const hasPluugUrl = pluugFormUrl.length > 0
-
-  /* 실제 pluug 폼(관리자 Settings의 pluugFormUrl)으로 이동시킨다.
-     pluug 쪽 "제출 후 이동 링크"가 /submit?src=pluug로 설정되어 있어야 전환 측정이 성립한다.
-     URL이 아직 설정되지 않았으면 임의로 만들지 않고 폼을 비활성 상태로만 표시한다. */
+  /* pluug URL이 설정돼 있으면 위 iframe으로 넘어가므로 이 폼은 렌더되지 않는다.
+     아직 설정 전(로컬 목업)에는 제출해도 갈 곳이 없으니 그냥 막아둔다. */
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!hasPluugUrl) return
-    window.location.href = pluugFormUrl
   }
 
   return (
@@ -68,6 +76,22 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
             </div>
           </div>
 
+          {hasPluugUrl ? (
+            <div className="c-form c-form--embed">
+              {embedSrc && (
+                <iframe
+                  src={embedSrc}
+                  title="프로젝트 문의 폼"
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                />
+              )}
+              <p className="after-note">
+                폼이 보이지 않으면 <a href={embedSrc || pluugFormUrl} target="_blank" rel="noopener noreferrer">새 창에서 열기</a> ·
+                제출하면 <b>하루 안에</b> 회신드려요
+              </p>
+            </div>
+          ) : (
           <form className="c-form" data-form onSubmit={onSubmit}>
             <div className="f-2col">
               <div className="f-row"><label>회사 / 담당자명 <span className="req">*</span></label>
@@ -104,15 +128,12 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
             <label className="agree"><input type="checkbox" required />
               <span>개인정보 수집·이용에 동의합니다. <Link href="/privacy">전문 보기</Link></span></label>
 
-            <button className="btn btn--lime" type="submit" disabled={!hasPluugUrl} aria-disabled={!hasPluugUrl}>
+            <button className="btn btn--lime" type="submit" disabled aria-disabled="true">
               문의 보내기 <span className="arr">→</span>
             </button>
-            {hasPluugUrl ? (
-              <p className="after-note">제출하면 <b>하루 안에</b> 회신드려요 · 광고성 연락은 하지 않습니다</p>
-            ) : (
-              <p className="after-note">문의 폼 준비 중입니다 — 관리자 Settings에서 pluug 폼 URL을 설정하면 활성화됩니다.</p>
-            )}
+            <p className="after-note">문의 폼 준비 중입니다 — 관리자 Settings에서 pluug 폼 URL을 설정하면 활성화됩니다.</p>
           </form>
+          )}
         </div>
       </div>
     </main>

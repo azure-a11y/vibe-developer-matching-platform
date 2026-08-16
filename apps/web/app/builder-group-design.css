@@ -340,6 +340,10 @@ body.dark .logo { color: var(--paper); }
   padding: 10px 18px; border-radius: 0 0 12px 0; font-weight: 700; z-index: 100; }
 .skip:focus { left: 0; }
 
+/* 채널톡이 부팅되면 body.ct-on 이 붙는다. 기본 런처는 우하단 고정이고 모바일에서 .dock 과
+   겹치므로 dock 을 위로 비켜준다 (transform 은 .dock 기본값이 show/hide 를 담당하므로 건드리지 않는다). */
+@media (max-width: 900px) { body.ct-on .dock { bottom: 96px; } }
+
 /* ---------- 플로팅 CTA 독 (v10 — toktokhan/torder 문법 / v12 디벨롭: 잉크 배경 고대비) ---------- */
 .dock { position: fixed; left: 50%; bottom: 24px; z-index: 70;
   transform: translateX(-50%) translateY(160%);

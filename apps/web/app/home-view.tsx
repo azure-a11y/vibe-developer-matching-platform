@@ -1,7 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, type CSSProperties } from 'react'
+
+import { useReplayOnView } from '@/components/fx'
+
+/* 스테퍼 점등 순서를 CSS 변수로 넘긴다 (CSS 커스텀 속성이라 캐스트가 필요하다) */
+const step = (i: number) => ({ '--i': i }) as CSSProperties
 
 /* ── 히어로 스트림 블록 데이터 (원본 index.html 열 1·2·3, 6블록 ×2 루프) ── */
 type Block =
@@ -123,6 +128,10 @@ export default function HomeView({
   workPreviews: WorkPreview[]
   insightPreviews: InsightPreview[]
 }) {
+  /* 0.85 — 스테퍼가 화면에 거의 다 들어왔을 때 시작한다. 낮게 잡으면 아직 화면 끄트머리에
+     있을 때 재생이 끝나서, 정작 눈이 갔을 땐 이미 다 켜져 있다. */
+  useReplayOnView('[data-stepflow]', 'lit', 0.85)
+
   /* v19.5 이음새 리본 — 문구 덱 로테이션(페이드 전환) + 곡선 흐름 */
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -397,7 +406,7 @@ export default function HomeView({
               <Link className="btn btn--ink btn--pulse" href="/contact" data-track="cta_click" data-location="hero">프로젝트 문의 <span className="arr">→</span></Link>
               <Link className="cta-sub" href="/work" data-track="cta_click" data-location="hero_secondary">작업물 먼저 보기 <span className="arr">→</span></Link>
             </div>
-            <p className="st st3 hero-proof"><span>검증된 빌더 <b className="num">10</b>인</span><i></i><span>공개 프로젝트 <b className="num">{workPreviews.length}</b>건</span><i></i><a className="proof-link" href="#system"><b>검수 시스템</b> 운영</a></p>
+            <p className="st st3 hero-proof"><a className="proof-link" href="#builders">검증된 빌더 <b className="num">10</b>인</a><i></i><a className="proof-link" href="#work">공개 프로젝트 <b className="num">{workPreviews.length}</b>건</a><i></i><a className="proof-link" href="#system"><b>검수 시스템</b> 운영</a></p>
           </div>
           <div className="hero__scroll">SCROLL</div>
         </section>
@@ -456,14 +465,14 @@ export default function HomeView({
                 <div className="bd2"><b>매칭·보증 — 크몽</b><span>거래·정산을 <mark>마켓 안전망이 보증</mark></span></div>
               </div>
             </div>
-            <div className="sys__flow2" aria-label="검증 프로세스" style={{ marginTop: 72 }}>
-              <span className="fstep"><span className="dot">01</span><span className="lb2">교육<small>커리큘럼 수료</small></span></span>
-              <span className="fline"></span>
-              <span className="fstep"><span className="dot">02</span><span className="lb2">제작<small>검증된 빌더</small></span></span>
-              <span className="fline"></span>
-              <span className="fstep"><span className="dot">03</span><span className="lb2">검수<small>9년차 기준 심사</small></span></span>
-              <span className="fline"></span>
-              <span className="fstep fstep--last"><span className="dot">✓</span><span className="lb2">고객 전달<small>검수 통과분만</small></span></span>
+            <div className="sys__flow2" data-stepflow aria-label="검증 프로세스" style={{ marginTop: 72 }}>
+              <span className="fstep" style={step(0)}><span className="dot">01</span><span className="lb2">교육<small>커리큘럼 수료</small></span></span>
+              <span className="fline" style={step(1)}></span>
+              <span className="fstep" style={step(2)}><span className="dot">02</span><span className="lb2">제작<small>검증된 빌더</small></span></span>
+              <span className="fline" style={step(3)}></span>
+              <span className="fstep" style={step(4)}><span className="dot">03</span><span className="lb2">검수<small>9년차 기준 심사</small></span></span>
+              <span className="fline" style={step(5)}></span>
+              <span className="fstep fstep--last" style={step(6)}><span className="dot">✓</span><span className="lb2">고객 전달<small>검수 통과분만</small></span></span>
             </div>
           </div>
         </section>
@@ -570,10 +579,10 @@ export default function HomeView({
           </div>
         </section>
 
-        <section className="s5">
+        <section className="s5" id="builders">
           <div className="wrap">
             <h2><span className="w300">개발사를 고르지 마세요.</span><br />맞는 개발자를 매칭해 드립니다</h2>
-            <p className="t-lead">카드에 마우스를 올려보세요. (모바일: 탭)</p>
+            <p className="t-lead">프로젝트 성격에 맞는 빌더를 선별해 배정합니다.</p>
             <div className="grid g3">
               <div className="mcard mcard--light" tabIndex={0}>
                 <div className="bg bgi bgi-1"><span className="mring"></span><svg className="mico" viewBox="0 0 96 96" aria-hidden="true"><rect x="8" y="14" width="80" height="64" rx="10" fill="none" stroke="currentColor" strokeWidth="5" /><line x1="8" y1="32" x2="88" y2="32" stroke="currentColor" strokeWidth="5" /><circle cx="20" cy="23" r="3.2" fill="currentColor" /><circle cx="31" cy="23" r="3.2" fill="currentColor" /><rect x="20" y="42" width="34" height="8" rx="4" fill="currentColor" /><rect x="20" y="56" width="22" height="8" rx="4" fill="currentColor" /><path d="M60 50 L78 65 L69 66.5 L64.5 75 Z" fill="currentColor" /></svg><span className="mdeco md1">✳</span><span className="mdeco md2">✦</span></div>
@@ -625,7 +634,7 @@ export default function HomeView({
         </section>
 
         {/* ===== S6 Work 프리뷰 — 실제 packages/content 데이터 (page.tsx 에서 props 로 전달) ===== */}
-        <section>
+        <section id="work">
           <div className="wrap">
             <div className="sec-head">
               <h2>완성한 프로젝트</h2>
@@ -756,7 +765,7 @@ export default function HomeView({
           </div>
         </section>
 
-        <section className="s10 roomy">
+        <section className="s10">
           <div className="wrap">
             <span className="ast" aria-hidden="true">✳</span>
             <h2><span className="w300">만들고 싶은 것이</span><br />있으신가요?</h2>

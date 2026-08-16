@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getRepository } from '@orca/content';
 
 import InsightView, { CATEGORY_LABEL, type InsightRow } from './view';
+import './insight.css';
 
 export const metadata: Metadata = {
   title: 'Insight — 우리의 생각',

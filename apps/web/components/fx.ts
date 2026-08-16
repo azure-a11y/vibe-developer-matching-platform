@@ -68,6 +68,26 @@ export function useRibbonFlow(DECKS: Record<string, string[]>, ROT: Record<strin
   }, [])
 }
 
+/* 화면에 들어올 때마다 클래스를 다시 붙였다 뗀다.
+   SiteFx 의 .rv 리빌은 한 번 보이면 unobserve 라 되돌아와도 다시 재생되지 않는다.
+   스테퍼처럼 '볼 때마다 순서대로 켜지는' 연출은 그래서 따로 관찰해야 한다. */
+export function useReplayOnView(selector: string, cls = 'lit', threshold = 0.4) {
+  useEffect(() => {
+    const els = Array.from(document.querySelectorAll(selector))
+    if (!els.length) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      els.forEach(el => el.classList.add(cls))
+      return
+    }
+    const io = new IntersectionObserver(
+      es => es.forEach(e => e.target.classList.toggle(cls, e.isIntersecting)),
+      { threshold },
+    )
+    els.forEach(el => io.observe(el))
+    return () => io.disconnect()
+  }, [selector, cls, threshold])
+}
+
 /* 플로팅 독 — 스크롤 진입 후 표시, 최종 CTA·푸터 근처/닫기 시 숨김.
    mode 'main': 히어로가 있는 페이지 (한 화면 스크롤 후 표시, 최종 CTA 근처 숨김)
    mode 'sub' : 서브 페이지 (얕은 스크롤에도 표시, 문서 최하단 근처에서만 숨김) */

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getSiteSettingsRepository } from '@orca/content';
 
 import { Analytics } from '@/components/Analytics';
+import ChannelTalk from '@/components/ChannelTalk';
 import Footer from '@/components/Footer';
 import Gnb from '@/components/Gnb';
 import SiteFx from '@/components/SiteFx';
@@ -88,6 +89,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <SiteFx />
         <Analytics />
+        {/* 플러그인 키가 없으면 아무것도 하지 않는다 */}
+        <ChannelTalk />
       </body>
     </html>
   );

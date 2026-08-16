@@ -10,3 +10,10 @@
 .doc p, .doc li { font-size: 14.5px; color: var(--ink-2); line-height: 1.8; }
 .doc .hold { background: var(--paper-3); border: 1px dashed var(--line-2); border-radius: 13px; padding: 14px 18px;
   font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 8px 0; letter-spacing: .02em; }
+.doc li { margin-bottom: 6px; }
+.doc li::marker { color: var(--muted-2); }
+.doc p + p { margin-top: 12px; }
+.doc section + section { margin-top: 8px; }
+/* 아직 못 채운 값 — 라임 표식으로 띄워서 이 상태로 발행되는 걸 막는다. grep '\[\[' 로 찾는다. */
+.doc .todo, .page-head .todo { background: var(--lime); color: var(--ink); font-weight: 700;
+  padding: 1px 8px; border-radius: 6px; font-family: var(--mono); font-size: .92em; letter-spacing: .02em; }
