@@ -2,9 +2,13 @@ import Link from 'next/link';
 import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
 import type { MenuKey } from '@orca/content';
 
+import { KpiCard } from '@/components/KpiCard';
+import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';
 
 export const dynamic = 'force-dynamic';
+
+const PLUUG_ADMIN_URL = process.env.PLUUG_ADMIN_URL?.trim() || '';
 
 const MENU_LABELS: Record<MenuKey, string> = {
   dashboard: 'Dashboard',
@@ -59,10 +63,12 @@ export default async function DashboardPage({
   ].filter((item): item is { href: string; label: string; count: number } => Boolean(item));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      <PageHeader title="Dashboard" description="운영 현황을 한눈에 확인합니다" />
+
       {denied && (
         <div
-          className="rounded-xl p-4 text-sm"
+          className="rounded-lg p-4 text-sm"
           style={{ background: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}
         >
           <strong>{MENU_LABELS[denied as MenuKey] ?? denied}</strong> 메뉴에 접근할 권한이 없습니다. 필요하면
@@ -72,7 +78,7 @@ export default async function DashboardPage({
 
       {errors.length > 0 && (
         <div
-          className="rounded-xl p-4 text-sm"
+          className="rounded-lg p-4 text-sm"
           style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}
         >
           <p className="font-semibold">프론트매터 오류가 있는 파일이 있습니다:</p>
@@ -86,25 +92,32 @@ export default async function DashboardPage({
         </div>
       )}
 
-      {/* 핵심 통계 — 카드 3개를 나열하는 대신 하나의 요약 바에 구분선으로 묶는다. */}
-      <div className="card grid grid-cols-1 divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0" style={{ borderColor: 'var(--color-border)' }}>
-        {[
-          { href: '/insight', label: 'Insight', total: counts.total, detail: `초안 ${counts.draft} · 검수 중 ${counts.inReview} · 발행 ${counts.published}` },
-          { href: '/builder', label: 'Builder', total: builderCounts.total, detail: `검증 대기 ${builderCounts.pending} · 활성 ${builderCounts.active}` },
-          { href: '/work', label: 'Work', total: workCounts.total, detail: `승인 대기 ${workCounts.pendingReview} · 공개 ${workCounts.published}` },
-        ].map((item, i) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`block px-1 py-2 transition-colors hover:opacity-80 ${i > 0 ? 'sm:pl-6' : ''} ${i < 2 ? 'sm:pr-6' : ''}`}
-          >
-            <p className="label mb-0">{item.label}</p>
-            <p className="mt-2 text-3xl font-semibold tabular-nums">{item.total}</p>
-            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
-              {item.detail}
-            </p>
-          </Link>
-        ))}
+      {/* 핵심 KPI — 항목마다 독립 카드로, 클릭하면 해당 관리 화면으로 이동한다. */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          href="/builder"
+          label="Builder"
+          value={builderCounts.total}
+          detail={`검증 대기 ${builderCounts.pending} · 활성 ${builderCounts.active}`}
+        />
+        <KpiCard
+          href="/inquiry"
+          label="Inquiry"
+          value={PLUUG_ADMIN_URL ? '연동됨' : '—'}
+          detail={PLUUG_ADMIN_URL ? 'pluug에서 문의를 확인하세요' : 'pluug 관리 URL 미설정'}
+        />
+        <KpiCard
+          href="/insight"
+          label="Insight"
+          value={counts.total}
+          detail={`초안 ${counts.draft} · 검수 중 ${counts.inReview} · 발행 ${counts.published}`}
+        />
+        <KpiCard
+          href="/work"
+          label="Work"
+          value={workCounts.total}
+          detail={`승인 대기 ${workCounts.pendingReview} · 공개 ${workCounts.published}`}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">

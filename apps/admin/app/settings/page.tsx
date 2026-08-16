@@ -3,6 +3,7 @@ import { getSiteSettingsRepository } from '@orca/content';
 
 import { saveSiteSettingsAction } from '@/app/settings/actions';
 import { TbdNote } from '@/components/FormPrimitives';
+import { PageHeader } from '@/components/PageHeader';
 import { SaveButton } from '@/components/SaveButton';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
@@ -15,21 +16,23 @@ export default async function SettingsPage() {
   const { settings, error } = await getSiteSettingsRepository().get();
 
   return (
-    <div className="max-w-2xl space-y-8">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-          사이트 전역 설정 — 여기서 바꾸면 공개 사이트에 즉시 반영됩니다.
-        </p>
-        {!canWrite && (
-          <p className="mt-2 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
-            조회 권한만 있어 값을 볼 수만 있습니다. 수정하려면 관리자에게 편집 권한을 요청하세요.
-          </p>
-        )}
-      </header>
+    <div className="max-w-2xl space-y-6">
+      <PageHeader
+        title="Settings"
+        description={
+          <>
+            사이트 전역 설정 — 여기서 바꾸면 공개 사이트에 즉시 반영됩니다.
+            {!canWrite && (
+              <span className="mt-1 block text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                조회 권한만 있어 값을 볼 수만 있습니다. 수정하려면 관리자에게 편집 권한을 요청하세요.
+              </span>
+            )}
+          </>
+        }
+      />
 
       {error && (
-        <div className="rounded-xl p-4 text-sm" style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
+        <div className="rounded-lg p-4 text-sm" style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}>
           <p className="font-semibold">저장된 설정 파일에 오류가 있습니다:</p>
           <p className="mt-2 whitespace-pre-wrap font-mono text-xs">{error}</p>
         </div>

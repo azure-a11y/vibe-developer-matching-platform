@@ -35,12 +35,12 @@ const LEVEL_TONE: Record<PermissionLevel, string> = {
  */
 export function PermissionMatrix({ defaultValues }: { defaultValues?: Partial<AdminMenuPermissions> }) {
   return (
-    <div className="overflow-x-auto rounded-xl" style={{ border: '1px solid var(--color-border)' }}>
+    <div className="overflow-x-auto rounded-lg" style={{ border: '1px solid var(--color-border)' }}>
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <thead>
           <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
             <th
-              className="px-4 py-2.5 text-left font-mono text-[11px] font-semibold uppercase tracking-wide"
+              className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide"
               style={{ color: 'var(--color-ink-faint)' }}
             >
               메뉴
@@ -48,7 +48,7 @@ export function PermissionMatrix({ defaultValues }: { defaultValues?: Partial<Ad
             {LEVELS.map((level) => (
               <th
                 key={level.value}
-                className="px-2 py-2.5 text-center font-mono text-[11px] font-semibold uppercase tracking-wide"
+                className="px-2 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wide"
                 style={{ color: 'var(--color-ink-faint)' }}
               >
                 {level.label}

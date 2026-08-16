@@ -12,14 +12,16 @@ export default async function LoginPage({
       className="flex min-h-dvh items-center justify-center px-6"
       style={{ background: 'var(--color-sidebar-bg)' }}
     >
-      <form action={loginAction} className="login-card card w-full max-w-sm space-y-6 shadow-xl shadow-black/20">
+      <form
+        action={loginAction}
+        className="login-card card w-full max-w-sm space-y-6"
+        style={{ boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.35)' }}
+      >
         <div>
-          <p className="text-xs font-semibold tracking-tight" style={{ color: 'var(--color-ink-faint)' }}>
-            Orca <span style={{ color: 'var(--color-accent)' }}>Admin</span>
-          </p>
-          <h1 className="mt-1 text-xl font-semibold tracking-tight">로그인</h1>
+          <span className="login-brand-mark mb-3">AI</span>
+          <h1 className="text-xl font-semibold tracking-tight">관리자 로그인</h1>
           <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            관리자 계정으로 로그인하세요.
+            AI Builder Group Admin — 관리자 계정으로 로그인하세요.
           </p>
         </div>
 

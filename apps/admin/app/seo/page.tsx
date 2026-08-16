@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { auditPost, getRepository } from '@orca/content';
 
+import { PageHeader } from '@/components/PageHeader';
 import { ScoreBadge } from '@/components/StatusBadge';
 import { requireMenuPermission } from '@/lib/permissions';
 
@@ -34,16 +35,14 @@ export default async function SeoOverviewPage() {
   }
 
   return (
-    <div className="space-y-8">
-      <header>
-        <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-          ← Insight 목록
-        </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">SEO / GEO 상태</h1>
-        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-          GEO는 Generative Engine Optimization — 답변 엔진이 인용할 수 있는 구조화 신호를 뜻합니다.
-        </p>
-      </header>
+    <div className="space-y-6">
+      <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
+        ← Insight 목록
+      </Link>
+      <PageHeader
+        title="SEO / GEO 상태"
+        description="GEO는 Generative Engine Optimization — 답변 엔진이 인용할 수 있는 구조화 신호를 뜻합니다."
+      />
 
       <div className="card grid grid-cols-2 divide-x divide-y-0 sm:grid-cols-4" style={{ borderColor: 'var(--color-border)' }}>
         {(Object.keys(LANE_LABEL) as (keyof typeof LANE_LABEL)[]).map((lane, i) => (

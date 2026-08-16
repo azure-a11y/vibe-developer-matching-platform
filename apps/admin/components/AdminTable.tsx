@@ -5,7 +5,7 @@ export function TableHeadRow({ labels, actionsColumn }: { labels: string[]; acti
       {labels.map((label) => (
         <th
           key={label}
-          className="whitespace-nowrap px-5 py-3 text-left font-mono text-[11px] font-semibold uppercase tracking-wide"
+          className="whitespace-nowrap px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide"
           style={{ color: 'var(--color-ink-faint)' }}
         >
           {label}

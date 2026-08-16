@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { TbdNote } from '@/components/FormPrimitives';
+import { PageHeader } from '@/components/PageHeader';
 import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -12,12 +13,7 @@ export default async function InquiryPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Inquiry</h1>
-        <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-          문의(리드) 관리 — 외부 시스템(pluug) 연동 지점
-        </p>
-      </header>
+      <PageHeader title="Inquiry" description="문의(리드) 관리 — 외부 시스템(pluug) 연동 지점" />
 
       <div className="card max-w-2xl space-y-4">
         <p className="text-sm leading-6" style={{ color: 'var(--color-ink-muted)' }}>
