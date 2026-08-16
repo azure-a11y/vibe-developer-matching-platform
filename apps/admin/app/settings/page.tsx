@@ -75,7 +75,7 @@ export default async function SettingsPage() {
           <div>
             <h2 className="font-semibold">문의 폼 (pluug)</h2>
             <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
-              공개 사이트 "문의하기"가 여는 pluug 폼 링크입니다(FR-5 AC-5.3). 여기서 바꾸면 문의하기 진입점
+              공개 사이트 &quot;문의하기&quot;가 여는 pluug 폼 링크입니다(FR-5 AC-5.3). 여기서 바꾸면 문의하기 진입점
               전체에 즉시 반영됩니다.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default async function SettingsPage() {
                 pluugFormUrl
               </dt>
               <dd style={{ color: 'var(--color-ink-muted)' }}>
-                여기서 설정 — 방문자가 누르는 공개 사이트 "문의하기" 버튼이 여는 입력 폼.
+                여기서 설정 — 방문자가 누르는 공개 사이트 &quot;문의하기&quot; 버튼이 여는 입력 폼.
               </dd>
             </div>
             <div className="flex items-start gap-2">

@@ -4,7 +4,7 @@ import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { htmlToMarkdown, markdownToHtml } from '@/lib/markdown';
 
@@ -47,11 +47,6 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
     },
     onUpdate: ({ editor }) => setMarkdown(htmlToMarkdown(editor.getHTML())),
   });
-
-  // Keep the hidden field in sync if the incoming post changes.
-  useEffect(() => {
-    setMarkdown(defaultValue);
-  }, [defaultValue]);
 
   const uploadImage = useCallback(
     async (file: File) => {

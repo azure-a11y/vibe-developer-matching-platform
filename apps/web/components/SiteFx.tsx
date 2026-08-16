@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 
 declare global {
   interface Window {
@@ -9,12 +9,33 @@ declare global {
   }
 }
 
+/* 에셋 가이드 토글 상태 — sessionStorage가 source of truth.
+   useSyncExternalStore로 구독해 SSR/최초 렌더에는 false, 마운트 후 저장된 값으로 자동 보정한다
+   (react-hooks/set-state-in-effect가 권장하는 "외부 시스템 동기화" 패턴). */
+let assetsListeners: Array<() => void> = []
+function subscribeAssets(listener: () => void) {
+  assetsListeners.push(listener)
+  return () => {
+    assetsListeners = assetsListeners.filter((l) => l !== listener)
+  }
+}
+function getAssetsSnapshot() {
+  try {
+    return sessionStorage.getItem('assets') === '1'
+  } catch {
+    return false
+  }
+}
+function getAssetsServerSnapshot() {
+  return false
+}
+
 /* assets/app.js 공통 스크립트 이식 —
    리빌/마스크 IntersectionObserver · GA4 스텁 · 에셋 가이드 토글 · 커서 추종 "VIEW →"
    pathname이 바뀔 때마다 새 페이지의 .rv/.mask를 다시 관찰한다 */
 export default function SiteFx() {
   const pathname = usePathname()
-  const [assets, setAssets] = useState(false)
+  const assets = useSyncExternalStore(subscribeAssets, getAssetsSnapshot, getAssetsServerSnapshot)
   const curRef = useRef<HTMLDivElement>(null)
 
   /* GA4 이벤트 스텁 — [data-track] 클릭 위임 */
@@ -33,10 +54,6 @@ export default function SiteFx() {
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  /* 에셋 가이드 토글 상태 복원 */
-  useEffect(() => {
-    try { if (sessionStorage.getItem('assets')) setAssets(true) } catch {}
-  }, [])
   useEffect(() => {
     document.body.classList.toggle('assets', assets)
   }, [assets])
@@ -118,10 +135,9 @@ export default function SiteFx() {
   }, [])
 
   const toggleAssets = () => {
-    setAssets(v => {
-      try { sessionStorage.setItem('assets', v ? '' : '1') } catch {}
-      return !v
-    })
+    const next = !getAssetsSnapshot()
+    try { sessionStorage.setItem('assets', next ? '1' : '') } catch {}
+    assetsListeners.forEach((l) => l())
   }
 
   return (

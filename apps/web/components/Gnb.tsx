@@ -25,8 +25,13 @@ export default function Gnb({ brandName }: { brandName?: string } = {}) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  /* 페이지 이동 시 모바일 메뉴 닫기 */
-  useEffect(() => { setOpen(false) }, [pathname])
+  /* 페이지 이동 시 모바일 메뉴 닫기 — effect 대신 렌더 중 상태 조정
+     (https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes) */
+  const [prevPathname, setPrevPathname] = useState(pathname)
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname)
+    setOpen(false)
+  }
 
   /* v22: 오버레이 열림 시 body 스크롤 잠금 (PRD FR-C-04) */
   useEffect(() => {

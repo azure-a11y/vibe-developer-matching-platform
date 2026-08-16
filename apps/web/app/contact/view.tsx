@@ -1,9 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 
 import { buildPluugEmbedUrl } from '@/lib/site'
+
+const noopSubscribe = () => () => {}
+const getIsClientSnapshot = () => true
+const getIsClientServerSnapshot = () => false
 
 export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) {
   const hasPluugUrl = pluugFormUrl.length > 0
@@ -12,10 +16,8 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
      주소는 클라이언트에서만 만든다 — 유입 utm_source를 location에서 읽기 때문에
      서버 렌더 결과와 달라져 하이드레이션이 어긋난다. 마운트 후에 채운다.
      ⚠ pluug 쪽 "제출 후 이동 링크"를 이 사이트의 /submit?src=pluug로 맞춰야 전환 측정이 성립한다. */
-  const [embedSrc, setEmbedSrc] = useState('')
-  useEffect(() => {
-    if (hasPluugUrl) setEmbedSrc(buildPluugEmbedUrl(pluugFormUrl, 'contact_page'))
-  }, [hasPluugUrl, pluugFormUrl])
+  const isClient = useSyncExternalStore(noopSubscribe, getIsClientSnapshot, getIsClientServerSnapshot)
+  const embedSrc = isClient && hasPluugUrl ? buildPluugEmbedUrl(pluugFormUrl, 'contact_page') : ''
 
   useEffect(() => {
     document.querySelectorAll('[data-pills]').forEach(group => {

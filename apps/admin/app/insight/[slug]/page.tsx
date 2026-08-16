@@ -96,7 +96,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <span className="label">에디터</span>
-              <Editor name="body" defaultValue={post.body} slug={post.slug} />
+              <Editor key={post.slug} name="body" defaultValue={post.body} slug={post.slug} />
             </div>
           </section>
 
