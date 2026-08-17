@@ -28,7 +28,7 @@ export default function Footer({ brandName, companyName, ceoName, businessRegist
           <div className="col">
             <b>Company</b>
             <Link href="/#how">일하는 방식</Link>
-            <Link href="/#faq">FAQ</Link>
+            <Link href="/faq">FAQ</Link>
             <span className="soon">채용 (준비 중)</span>
           </div>
           <div className="col">

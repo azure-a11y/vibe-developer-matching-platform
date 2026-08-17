@@ -1,5 +1,5 @@
 import { createAdminSupabase, isSupabaseWritable } from '@orca/supabase';
-import type { AdminAccountRow, BuilderRow, PostRow, SiteSettingsRow, WorkRow } from '@orca/supabase';
+import type { AdminAccountRow, BuilderRow, FaqCategoryRow, FaqRow, PostRow, SiteSettingsRow, WorkRow } from '@orca/supabase';
 
 import { readingTime } from '../posts.ts';
 import {
@@ -9,6 +9,12 @@ import {
   type Builder,
   type BuilderFrontmatterInput,
   BuilderFrontmatterSchema,
+  type Faq,
+  type FaqCategory,
+  type FaqCategoryFrontmatterInput,
+  FaqCategoryFrontmatterSchema,
+  type FaqFrontmatterInput,
+  FaqFrontmatterSchema,
   type Post,
   type PostFrontmatterInput,
   PostFrontmatterSchema,
@@ -23,6 +29,8 @@ import type {
   AdminAccountRepository,
   BuilderRepository,
   ContentRepository,
+  FaqCategoryRepository,
+  FaqRepository,
   SiteSettingsRepository,
   WorkRepository,
 } from './types.ts';
@@ -380,6 +388,193 @@ export const workSupabaseRepository: WorkRepository = {
   async remove(slug: string) {
     const supabase = createAdminSupabase();
     const { error, count } = await supabase.from('works').delete({ count: 'exact' }).eq('slug', slug);
+    if (error) throw new Error(`Supabase 삭제 실패: ${error.message}`);
+    return (count ?? 0) > 0;
+  },
+};
+
+/**
+ * FAQ category domain, Postgres driver. Same shape as `builderSupabaseRepository`.
+ */
+
+function toFaqCategory(row: FaqCategoryRow): FaqCategory {
+  const parsed = FaqCategoryFrontmatterSchema.safeParse({
+    name: row.name,
+    slug: row.slug,
+    order: row.sort_order,
+    isActive: row.is_active,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  });
+
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`);
+    throw new Error(`Invalid record for slug "${row.slug}"\n  - ${issues.join('\n  - ')}`);
+  }
+
+  return { ...parsed.data, filePath: '' };
+}
+
+function toFaqCategoryRow(frontmatter: FaqCategoryFrontmatterInput) {
+  const v = FaqCategoryFrontmatterSchema.parse({ ...frontmatter, updatedAt: new Date().toISOString() });
+  return {
+    slug: v.slug,
+    name: v.name,
+    sort_order: v.order,
+    is_active: v.isActive,
+    created_at: v.createdAt,
+    updated_at: v.updatedAt,
+  };
+}
+
+export const faqCategorySupabaseRepository: FaqCategoryRepository = {
+  driver: 'supabase',
+
+  async getAll() {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('faq_categories').select('*').order('sort_order', { ascending: true });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+
+    const categories: FaqCategory[] = [];
+    const errors: string[] = [];
+    for (const row of data ?? []) {
+      try {
+        categories.push(toFaqCategory(row));
+      } catch (e) {
+        errors.push(e instanceof Error ? e.message : String(e));
+      }
+    }
+    return { categories, errors };
+  },
+
+  async getActive() {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase
+      .from('faq_categories')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return (data ?? []).map(toFaqCategory);
+  },
+
+  async getBySlug(slug: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('faq_categories').select('*').eq('slug', slug).maybeSingle();
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return data ? toFaqCategory(data) : null;
+  },
+
+  async save(frontmatter: FaqCategoryFrontmatterInput) {
+    if (!isSupabaseWritable()) {
+      throw new Error('Supabase 쓰기가 비활성입니다. SUPABASE_SERVICE_ROLE_KEY 를 .env 에 넣으세요.');
+    }
+    const supabase = createAdminSupabase();
+    const row = toFaqCategoryRow(frontmatter);
+    const { error } = await supabase.from('faq_categories').upsert(row, { onConflict: 'slug' });
+    if (error) throw new Error(`Supabase 저장 실패: ${error.message}`);
+    return row.slug;
+  },
+
+  async remove(slug: string) {
+    const supabase = createAdminSupabase();
+    const { error, count } = await supabase.from('faq_categories').delete({ count: 'exact' }).eq('slug', slug);
+    if (error) throw new Error(`Supabase 삭제 실패: ${error.message}`);
+    return (count ?? 0) > 0;
+  },
+};
+
+/**
+ * FAQ domain, Postgres driver. `category_id` is a `faq_categories.slug`
+ * reference — see the comment on `FaqRow` in `@orca/supabase` for why it's
+ * slug-keyed rather than a uuid FK to `faq_categories.id`.
+ */
+
+function toFaq(row: FaqRow): Faq {
+  const parsed = FaqFrontmatterSchema.safeParse({
+    question: row.question,
+    slug: row.slug,
+    categoryId: row.category_id,
+    order: row.sort_order,
+    status: row.status,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  });
+
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`);
+    throw new Error(`Invalid record for slug "${row.slug}"\n  - ${issues.join('\n  - ')}`);
+  }
+
+  return { ...parsed.data, answer: row.answer, filePath: '' };
+}
+
+function toFaqRow(frontmatter: FaqFrontmatterInput, answer: string) {
+  const v = FaqFrontmatterSchema.parse({ ...frontmatter, updatedAt: new Date().toISOString() });
+  return {
+    slug: v.slug,
+    question: v.question,
+    answer: answer.trim(),
+    category_id: v.categoryId,
+    sort_order: v.order,
+    status: v.status,
+    created_at: v.createdAt,
+    updated_at: v.updatedAt,
+  };
+}
+
+export const faqSupabaseRepository: FaqRepository = {
+  driver: 'supabase',
+
+  async getAll() {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase
+      .from('faqs')
+      .select('*')
+      .order('category_id', { ascending: true })
+      .order('sort_order', { ascending: true });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+
+    const faqs: Faq[] = [];
+    const errors: string[] = [];
+    for (const row of data ?? []) {
+      try {
+        faqs.push(toFaq(row));
+      } catch (e) {
+        errors.push(e instanceof Error ? e.message : String(e));
+      }
+    }
+    return { faqs, errors };
+  },
+
+  async getPublished() {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('faqs').select('*').eq('status', 'published').order('sort_order', { ascending: true });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return (data ?? []).map(toFaq);
+  },
+
+  async getBySlug(slug: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('faqs').select('*').eq('slug', slug).maybeSingle();
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return data ? toFaq(data) : null;
+  },
+
+  async save(frontmatter: FaqFrontmatterInput, answer: string) {
+    if (!isSupabaseWritable()) {
+      throw new Error('Supabase 쓰기가 비활성입니다. SUPABASE_SERVICE_ROLE_KEY 를 .env 에 넣으세요.');
+    }
+    const supabase = createAdminSupabase();
+    const row = toFaqRow(frontmatter, answer);
+    const { error } = await supabase.from('faqs').upsert(row, { onConflict: 'slug' });
+    if (error) throw new Error(`Supabase 저장 실패: ${error.message}`);
+    return row.slug;
+  },
+
+  async remove(slug: string) {
+    const supabase = createAdminSupabase();
+    const { error, count } = await supabase.from('faqs').delete({ count: 'exact' }).eq('slug', slug);
     if (error) throw new Error(`Supabase 삭제 실패: ${error.message}`);
     return (count ?? 0) > 0;
   },

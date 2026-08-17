@@ -3,6 +3,10 @@ import type {
   AdminAccountFrontmatterInput,
   Builder,
   BuilderFrontmatterInput,
+  Faq,
+  FaqCategory,
+  FaqCategoryFrontmatterInput,
+  FaqFrontmatterInput,
   Post,
   PostFrontmatterInput,
   SiteSettings,
@@ -72,6 +76,43 @@ export interface WorkRepository {
   getBySlug(slug: string): Promise<Work | null>;
 
   save(frontmatter: WorkFrontmatterInput): Promise<string>;
+
+  remove(slug: string): Promise<boolean>;
+}
+
+/**
+ * FAQ category domain (docs/project/06_데이터모델.md-style: same shape as
+ * every other domain here). Managed independently of `Faq` entries — admins
+ * create/rename/reorder/activate categories, `Faq.categoryId` references
+ * `FaqCategory.slug`.
+ */
+export interface FaqCategoryRepository {
+  readonly driver: 'file' | 'supabase';
+
+  getAll(): Promise<{ categories: FaqCategory[]; errors: string[] }>;
+
+  /** Categories the public site may render: `isActive` only, sorted by `order`. */
+  getActive(): Promise<FaqCategory[]>;
+
+  getBySlug(slug: string): Promise<FaqCategory | null>;
+
+  save(frontmatter: FaqCategoryFrontmatterInput): Promise<string>;
+
+  remove(slug: string): Promise<boolean>;
+}
+
+/** FAQ entry domain. `categoryId` is a `FaqCategory.slug` reference. */
+export interface FaqRepository {
+  readonly driver: 'file' | 'supabase';
+
+  getAll(): Promise<{ faqs: Faq[]; errors: string[] }>;
+
+  /** FAQ entries the public site may render: `published` only. */
+  getPublished(): Promise<Faq[]>;
+
+  getBySlug(slug: string): Promise<Faq | null>;
+
+  save(frontmatter: FaqFrontmatterInput, answer: string): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
 }

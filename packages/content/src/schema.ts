@@ -316,6 +316,71 @@ export interface Work extends WorkFrontmatter {
 }
 
 /**
+ * FAQ domain — Q&A board managed from the admin, rendered on the public FAQ
+ * page and mirrored into the home page's FAQ preview so both read the same
+ * source of truth.
+ *
+ * Categories are their own entity (`FaqCategory`), not a free-text field on
+ * `Faq` — admins manage the category list (create/rename/reorder/activate)
+ * independently of individual entries.
+ */
+export const FaqCategoryFrontmatterSchema = z.object({
+  name: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  /** Lower sorts first. */
+  order: z.number().int().default(0),
+  /** Inactive categories are hidden from the public site but keep their FAQ entries (reassign before deleting). */
+  isActive: z.boolean().default(true),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type FaqCategoryFrontmatter = z.infer<typeof FaqCategoryFrontmatterSchema>;
+
+export type FaqCategoryFrontmatterInput = z.input<typeof FaqCategoryFrontmatterSchema>;
+
+export interface FaqCategory extends FaqCategoryFrontmatter {
+  filePath: string;
+}
+
+export const FaqStatus = z.enum(['archived', 'published']);
+export type FaqStatus = z.infer<typeof FaqStatus>;
+
+export const FaqFrontmatterSchema = z.object({
+  question: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  /**
+   * `FaqCategory.slug` — a real reference, not free text. Kept slug-keyed
+   * (not a synthetic id) for the same reason `Work.builderIds` is a slug
+   * array: the file driver has no uuid concept, and this keeps both drivers
+   * structurally identical. The Supabase migration enforces it with an
+   * actual foreign key against `faq_categories(slug)`.
+   */
+  categoryId: z.string().min(1),
+  /** Lower sorts first, within a category. */
+  order: z.number().int().default(0),
+  status: FaqStatus.default('archived'),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type FaqFrontmatter = z.infer<typeof FaqFrontmatterSchema>;
+
+export type FaqFrontmatterInput = z.input<typeof FaqFrontmatterSchema>;
+
+export interface Faq extends FaqFrontmatter {
+  /** Answer body, markdown, frontmatter stripped — same split as Post/Builder. */
+  answer: string;
+  filePath: string;
+}
+
+/**
  * Admin auth domain (docs/project/06_데이터모델.md §3.6, 04_정책정의.md §4).
  *
  * `full` > `edit_approve` > `view` > `none` — the four levels the admin
@@ -336,6 +401,7 @@ export const AdminMenuPermissionsSchema = z.object({
   builder: PermissionLevel.default('none'),
   work: PermissionLevel.default('none'),
   insight: PermissionLevel.default('none'),
+  faq: PermissionLevel.default('none'),
   inquiry: PermissionLevel.default('none'),
   settings: PermissionLevel.default('none'),
   accountPermission: PermissionLevel.default('none'),

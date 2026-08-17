@@ -1,11 +1,11 @@
-import type { AdminAccountStatus, BuilderStatus, PostStatus, WorkStatus } from '@orca/content';
+import type { AdminAccountStatus, BuilderStatus, FaqStatus, PostStatus, WorkStatus } from '@orca/content';
 
 const STYLES: Record<PostStatus, string> = {
-  draft: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
-  in_review: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
-  scheduled: 'bg-[var(--color-accent-soft)] text-[var(--color-accent-soft-text)]',
-  published: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
-  archived: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
+  draft: 'badge-muted',
+  in_review: 'badge-pending',
+  scheduled: 'badge-scheduled',
+  published: 'badge-confirmed',
+  archived: 'badge-muted',
 };
 
 const LABELS: Record<PostStatus, string> = {
@@ -21,9 +21,9 @@ export function StatusBadge({ status }: { status: PostStatus }) {
 }
 
 const BUILDER_STYLES: Record<BuilderStatus, string> = {
-  pending: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
-  active: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
-  inactive: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
+  pending: 'badge-pending',
+  active: 'badge-confirmed',
+  inactive: 'badge-inactive',
 };
 
 const BUILDER_LABELS: Record<BuilderStatus, string> = {
@@ -37,9 +37,9 @@ export function BuilderStatusBadge({ status }: { status: BuilderStatus }) {
 }
 
 const WORK_STYLES: Record<WorkStatus, string> = {
-  pending_review: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
-  published: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
-  archived: 'bg-[var(--color-surface-sunken)] text-[var(--color-ink-faint)]',
+  pending_review: 'badge-pending',
+  published: 'badge-confirmed',
+  archived: 'badge-muted',
 };
 
 const WORK_LABELS: Record<WorkStatus, string> = {
@@ -52,9 +52,23 @@ export function WorkStatusBadge({ status }: { status: WorkStatus }) {
   return <span className={`badge ${WORK_STYLES[status]}`}>{WORK_LABELS[status]}</span>;
 }
 
+const FAQ_STYLES: Record<FaqStatus, string> = {
+  archived: 'badge-muted',
+  published: 'badge-confirmed',
+};
+
+const FAQ_LABELS: Record<FaqStatus, string> = {
+  archived: '보관',
+  published: '공개',
+};
+
+export function FaqStatusBadge({ status }: { status: FaqStatus }) {
+  return <span className={`badge ${FAQ_STYLES[status]}`}>{FAQ_LABELS[status]}</span>;
+}
+
 const ACCOUNT_STYLES: Record<AdminAccountStatus, string> = {
-  active: 'bg-[var(--color-success-bg)] text-[var(--color-success)]',
-  inactive: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+  active: 'badge-confirmed',
+  inactive: 'badge-inactive',
 };
 
 const ACCOUNT_LABELS: Record<AdminAccountStatus, string> = {
@@ -71,12 +85,32 @@ export function GradeBadge({ grade }: { grade: string }) {
   return <span className="badge bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]">{grade}</span>;
 }
 
-export function ScoreBadge({ score }: { score: number }) {
-  const tone =
-    score >= 85
-      ? 'bg-[var(--color-success-bg)] text-[var(--color-success)]'
-      : score >= 60
-        ? 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]'
-        : 'bg-[var(--color-danger-bg)] text-[var(--color-danger)]';
-  return <span className={`badge tabular-nums ${tone}`}>{score}</span>;
+/** 만점(100)은 파랑, 과락(60 미만)은 빨강, 그 사이는 검정 — 목록/원형 배지가 공유하는 판정 규칙. */
+function scoreColor(score: number): string {
+  if (score === 100) return 'var(--color-status-confirmed)';
+  if (score < 60) return 'var(--color-danger)';
+  return 'var(--color-ink)';
+}
+
+/** 목록(테이블·카드 리스트)에서 여러 항목을 나란히 훑어볼 때 — 배경·테두리 없이 숫자만. */
+export function ScoreValue({ score }: { score: number }) {
+  return (
+    <span className="tabular-nums text-sm font-semibold" style={{ color: scoreColor(score) }}>
+      {score}
+    </span>
+  );
+}
+
+/** 상세/검수 화면 상단에서 "지금 보고 있는 이 글의 점수" 하나를 강조할 때 — 원형 배지. */
+export function ScoreCircle({ score }: { score: number }) {
+  const color = scoreColor(score);
+  const isNeutral = color === 'var(--color-ink)';
+  return (
+    <span
+      className="flex size-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold tabular-nums"
+      style={{ borderColor: isNeutral ? 'var(--color-border-strong)' : color, color }}
+    >
+      {score}
+    </span>
+  );
 }

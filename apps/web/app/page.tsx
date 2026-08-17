@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
-import { getRepository, getWorkRepository } from '@orca/content';
+import { getFaqCategoryRepository, getFaqRepository, getRepository, getWorkRepository } from '@orca/content';
+
+import { buildFaqTopics } from '@/lib/faq';
 
 import HomeView from './home-view';
 import './home.css';
@@ -11,12 +13,14 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [{ works }, posts] = await Promise.all([
+  const [{ works }, posts, faqs, faqCategories] = await Promise.all([
     getWorkRepository().getPublished().then((works) => ({ works })),
     getRepository().getPublished(),
+    getFaqRepository().getPublished(),
+    getFaqCategoryRepository().getActive(),
   ]);
 
-  const workPreviews = works.slice(0, 3).map((w) => ({
+  const workPreviews = works.slice(0, 2).map((w) => ({
     slug: w.slug,
     tag: w.tag || w.category,
     meta: w.year,
@@ -34,5 +38,9 @@ export default async function HomePage() {
     date: (p.publishedAt ?? p.updatedAt).slice(0, 10).replace(/-/g, '.'),
   }));
 
-  return <HomeView workPreviews={workPreviews} insightPreviews={insightPreviews} />;
+  // 홈은 기존 s9 섹션과 같은 모양(카테고리 2개 x 항목 3개)만 미리보기로 보여주고,
+  // 전체 목록은 "전체 보기" → /faq 에서 확인한다.
+  const faqTopics = buildFaqTopics(faqs, faqCategories, { maxTopics: 2, maxItemsPerTopic: 3 });
+
+  return <HomeView workPreviews={workPreviews} insightPreviews={insightPreviews} faqTopics={faqTopics} />;
 }

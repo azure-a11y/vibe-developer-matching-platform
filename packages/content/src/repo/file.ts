@@ -13,6 +13,14 @@ import {
   writeBuilder,
 } from '../builders.ts';
 import {
+  deleteFaqCategory,
+  getActiveFaqCategories,
+  getAllFaqCategories,
+  getFaqCategoryBySlug,
+  writeFaqCategory,
+} from '../faq-categories.ts';
+import { deleteFaq, getAllFaqs, getFaqBySlug, getPublishedFaqs, writeFaq } from '../faq.ts';
+import {
   deletePost,
   getAllPosts,
   getPostBySlug,
@@ -22,6 +30,8 @@ import {
 import type {
   AdminAccountFrontmatterInput,
   BuilderFrontmatterInput,
+  FaqCategoryFrontmatterInput,
+  FaqFrontmatterInput,
   PostFrontmatterInput,
   SiteSettingsFrontmatterInput,
   WorkFrontmatterInput,
@@ -32,6 +42,8 @@ import type {
   AdminAccountRepository,
   BuilderRepository,
   ContentRepository,
+  FaqCategoryRepository,
+  FaqRepository,
   SiteSettingsRepository,
   WorkRepository,
 } from './types.ts';
@@ -114,6 +126,56 @@ export const workFileRepository: WorkRepository = {
 
   async remove(slug: string) {
     return deleteWork(slug);
+  },
+};
+
+export const faqCategoryFileRepository: FaqCategoryRepository = {
+  driver: 'file',
+
+  async getAll() {
+    return getAllFaqCategories();
+  },
+
+  async getActive() {
+    return getActiveFaqCategories();
+  },
+
+  async getBySlug(slug: string) {
+    return getFaqCategoryBySlug(slug);
+  },
+
+  async save(frontmatter: FaqCategoryFrontmatterInput) {
+    writeFaqCategory(frontmatter);
+    return frontmatter.slug;
+  },
+
+  async remove(slug: string) {
+    return deleteFaqCategory(slug);
+  },
+};
+
+export const faqFileRepository: FaqRepository = {
+  driver: 'file',
+
+  async getAll() {
+    return getAllFaqs();
+  },
+
+  async getPublished() {
+    return getPublishedFaqs();
+  },
+
+  async getBySlug(slug: string) {
+    return getFaqBySlug(slug);
+  },
+
+  async save(frontmatter: FaqFrontmatterInput, answer: string) {
+    writeFaq(frontmatter, answer);
+    return frontmatter.slug;
+  },
+
+  async remove(slug: string) {
+    return deleteFaq(slug);
   },
 };
 

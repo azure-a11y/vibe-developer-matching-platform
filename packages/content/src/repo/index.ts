@@ -3,6 +3,8 @@ import { describeStatus, isSupabaseConfigured } from '@orca/supabase';
 import {
   adminAccountFileRepository,
   builderFileRepository,
+  faqCategoryFileRepository,
+  faqFileRepository,
   fileRepository,
   siteSettingsFileRepository,
   workFileRepository,
@@ -10,6 +12,8 @@ import {
 import {
   adminAccountSupabaseRepository,
   builderSupabaseRepository,
+  faqCategorySupabaseRepository,
+  faqSupabaseRepository,
   siteSettingsSupabaseRepository,
   supabaseRepository,
   workSupabaseRepository,
@@ -18,6 +22,8 @@ import type {
   AdminAccountRepository,
   BuilderRepository,
   ContentRepository,
+  FaqCategoryRepository,
+  FaqRepository,
   SiteSettingsRepository,
   WorkRepository,
 } from './types.ts';
@@ -26,6 +32,8 @@ export * from './types.ts';
 export {
   adminAccountFileRepository,
   builderFileRepository,
+  faqCategoryFileRepository,
+  faqFileRepository,
   fileRepository,
   siteSettingsFileRepository,
   workFileRepository,
@@ -33,6 +41,8 @@ export {
 export {
   adminAccountSupabaseRepository,
   builderSupabaseRepository,
+  faqCategorySupabaseRepository,
+  faqSupabaseRepository,
   siteSettingsSupabaseRepository,
   supabaseRepository,
   workSupabaseRepository,
@@ -69,6 +79,22 @@ export function getWorkRepository(): WorkRepository {
   if (forced === 'file') return workFileRepository;
   if (forced === 'supabase') return workSupabaseRepository;
   return isSupabaseConfigured() ? workSupabaseRepository : workFileRepository;
+}
+
+/** FAQ category domain entry point. Same driver-selection rule as `getRepository()`. */
+export function getFaqCategoryRepository(): FaqCategoryRepository {
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return faqCategoryFileRepository;
+  if (forced === 'supabase') return faqCategorySupabaseRepository;
+  return isSupabaseConfigured() ? faqCategorySupabaseRepository : faqCategoryFileRepository;
+}
+
+/** FAQ entry domain entry point. Same driver-selection rule as `getRepository()`. */
+export function getFaqRepository(): FaqRepository {
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return faqFileRepository;
+  if (forced === 'supabase') return faqSupabaseRepository;
+  return isSupabaseConfigured() ? faqSupabaseRepository : faqFileRepository;
 }
 
 /** Admin auth domain entry point. Same driver-selection rule as `getRepository()`. */

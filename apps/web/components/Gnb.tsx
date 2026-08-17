@@ -10,7 +10,8 @@ const NAV = [
   { href: '/' as const, label: 'Home', match: (p: string) => p === '/' },
   { href: '/work' as const, label: 'Work', match: (p: string) => p.startsWith('/work') || p.startsWith('/builder') },
   { href: '/insight' as const, label: 'Insight', match: (p: string) => p.startsWith('/insight') },
-  { href: '/content' as const, label: '콘텐츠', match: (p: string) => p.startsWith('/content') },
+  { href: '/content' as const, label: 'Content', match: (p: string) => p.startsWith('/content') },
+  { href: '/faq' as const, label: 'FAQ', match: (p: string) => p.startsWith('/faq') },
 ]
 
 export default function Gnb({ brandName }: { brandName?: string } = {}) {

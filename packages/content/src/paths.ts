@@ -47,6 +47,22 @@ export function workPath(slug: string): string {
   return path.join(worksDir(), `${slug}.md`);
 }
 
+export function faqDir(): string {
+  return path.join(contentDir(), 'faq');
+}
+
+export function faqPath(slug: string): string {
+  return path.join(faqDir(), `${slug}.md`);
+}
+
+export function faqCategoriesDir(): string {
+  return path.join(contentDir(), 'faq-categories');
+}
+
+export function faqCategoryPath(slug: string): string {
+  return path.join(faqCategoriesDir(), `${slug}.md`);
+}
+
 export function adminAccountsDir(): string {
   return path.join(contentDir(), 'admin-accounts');
 }

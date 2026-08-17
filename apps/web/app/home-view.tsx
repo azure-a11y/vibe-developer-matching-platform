@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, type CSSProperties } from 'react'
+import { useEffect, type CSSProperties, type ReactNode } from 'react'
 
 import { useReplayOnView } from '@/components/fx'
+import type { FaqTopic } from '@/lib/faq'
 
 /* 스테퍼 점등 순서를 CSS 변수로 넘긴다 (CSS 커스텀 속성이라 캐스트가 필요하다) */
 const step = (i: number) => ({ '--i': i }) as CSSProperties
@@ -72,6 +73,77 @@ function StreamCol({ blocks, cls }: { blocks: Block[]; cls: string }) {
   )
 }
 
+/* ── S2 "이런 곳은 조심하세요" — 항목 데이터 + 라인 아이콘 ── */
+type S2Item = {
+  id: string
+  cls: 'warn--a' | 'warn--b' | 'warn--c'
+  label: string
+  title: ReactNode
+  lead: string
+  point: string
+  fig: ReactNode
+}
+
+const S2_ITEMS: S2Item[] = [
+  {
+    id: 'mock',
+    cls: 'warn--a',
+    label: '가짜 포트폴리오',
+    title: <>포트폴리오 수백 개,<br />전부 목업인 업체</>,
+    lead: '실서비스 URL을 물어보세요.',
+    point: '답 못 하면 목업입니다.',
+    fig: (
+      <div className="w-fig w-fig1"><i></i><i></i><i></i><i></i><i className="real"></i><i></i><i></i><i></i><i></i></div>
+    ),
+  },
+  {
+    id: 'copy',
+    cls: 'warn--b',
+    label: '복붙 애니메이션',
+    title: <>모든 섹션이 똑같이<br />움직이는 사이트</>,
+    lead: '전부 같은 애니메이션이면 —',
+    point: '한 번에 뽑은 겁니다.',
+    fig: <div className="w-fig w-fig2"><i></i><i></i><i></i></div>,
+  },
+  {
+    id: 'price',
+    cls: 'warn--c',
+    label: '반값 외주',
+    title: <>싼 가격만 내세우는<br />반값 외주</>,
+    lead: '반값의 결말은',
+    point: '다시 만드는 비용입니다.',
+    fig: <div className="w-fig w-fig3"><span className="tagp"><s>-50%</s></span></div>,
+  },
+]
+
+function S2Icon({ id }: { id: string }) {
+  if (id === 'mock') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3" y="4.5" width="18" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+        <line x1="3" y1="8.7" x2="21" y2="8.7" stroke="currentColor" strokeWidth="1.6" />
+        <line x1="7" y1="12.6" x2="15.5" y2="12.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1.6 2.6" />
+        <line x1="7" y1="15.6" x2="12" y2="15.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1.6 2.6" />
+      </svg>
+    )
+  }
+  if (id === 'copy') {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="8" y="8" width="12" height="12" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M4.5 15.5v-9a2.5 2.5 0 0 1 2.5-2.5h9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12.7 3.5h4.8a2 2 0 0 1 2 2v4.8a2 2 0 0 1-.59 1.41l-8 8a2 2 0 0 1-2.82 0l-4.8-4.8a2 2 0 0 1 0-2.82l8-8a2 2 0 0 1 1.41-.59Z" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="16.1" cy="7.9" r="1.25" fill="currentColor" />
+      <line x1="6" y1="18" x2="18" y2="6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 /* ── 라우렐 잎 SVG ── */
 function Lv({ r = false }: { r?: boolean }) {
   return (
@@ -121,12 +193,32 @@ function Bset({ brands }: { brands: [string, string][] }) {
 type WorkPreview = { slug: string; tag: string; meta: string; title: string; desc?: string; note?: string; shotUrl: string; shotImg: string }
 type InsightPreview = { slug: string; title: string; tag: string; date: string }
 
+function WorkCard({ w }: { w: WorkPreview }) {
+  return (
+    <Link className="wcard" href={`/work/${w.slug}`} data-track="work_card" data-cursor="VIEW →">
+      <div className="slot mask">
+        <div className="bf"><div className="bf__bar"><i></i><i></i><i></i><span className="url">{w.shotUrl}</span></div><img className="shot" src={w.shotImg} alt="" /></div>
+        <div className="par"></div>
+        <div className="slot__spec"><b>Asset — Work Cover</b><span>실서비스 메인 화면 (브라우저 프레임)</span><em>1520×1045px · 16:11 @2x</em></div>
+      </div>
+      <div className="meta">
+        <div className="mrow"><span className="tag">{w.tag}</span><span className="yr num">{w.meta}</span></div>
+        <h3>{w.title}</h3>
+        {w.desc && <p>{w.desc}</p>}
+        {w.note && <div className="builders">{w.note}</div>}
+      </div>
+    </Link>
+  )
+}
+
 export default function HomeView({
   workPreviews,
   insightPreviews,
+  faqTopics,
 }: {
   workPreviews: WorkPreview[]
   insightPreviews: InsightPreview[]
+  faqTopics: FaqTopic[]
 }) {
   /* 0.85 — 스테퍼가 화면에 거의 다 들어왔을 때 시작한다. 낮게 잡으면 아직 화면 끄트머리에
      있을 때 재생이 끝나서, 정작 눈이 갔을 땐 이미 다 켜져 있다. */
@@ -142,14 +234,8 @@ export default function HomeView({
         '아이디어만 가져오세요 ✳ WE BUILD THE REST ✳ NDA 가능 ✳ ',
         'PoC 먼저, 확장은 그다음 ✳ SHIP FAST, SHIP RIGHT ✳ ',
       ],
-      rsepB: [
-        'VIBE CODING ✳ 검증된 빌더 ✳ AI BUILDER GROUP ✳ 외주를 해드립니다 ✳ ',
-        'AI가 짓고, 사람이 검수합니다 ✳ MADE WITH AI, FINISHED BY HUMANS ✳ ',
-        '상담·견적 무료 ✳ 24시간 내 회신 ✳ AI BUILDER GROUP ✳ ',
-        '대충 만든 결과물은 통과 못 함 ✳ QUALITY GATE: ON ✳ 검수 통과분만 전달 ✳ ',
-      ],
     }
-    const ROT: Record<string, number> = { rsepA: 5200, rsepB: 4500 }
+    const ROT: Record<string, number> = { rsepA: 5200 }
     type Flow = { tp: SVGTextPathElement; di: number; off: number; unit: number; speed: number }
     const flows: Flow[] = []
     const timeouts: number[] = []
@@ -208,29 +294,53 @@ export default function HomeView({
     }
   }, [])
 
-  /* S2 스크롤 연동 · S3 자동 순환 · S5 탭 · 모바일 캐러셀 · S6 패럴랙스 · S8 퍼짐 전환 · S9 FAQ */
+  /* S2 "이런 곳은 조심하세요" — IntersectionObserver 기반 활성 항목 추적 + 클릭 이동 (휠 캡처 없음) */
+  useEffect(() => {
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-s2item]'))
+    const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-s2step]'))
+    const now = document.querySelector('[data-s2now]')
+    if (!items.length) return
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let current = 0
+    const setActive = (i: number) => {
+      current = i
+      items.forEach((el, j) => el.classList.toggle('active', j === i))
+      steps.forEach((el, j) => el.setAttribute('aria-current', String(j === i)))
+      if (now) now.textContent = '0' + (i + 1)
+    }
+    setActive(0)
+
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return
+          const idx = Number((entry.target as HTMLElement).dataset.s2item)
+          if (!Number.isNaN(idx) && idx !== current) setActive(idx)
+        })
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
+    )
+    items.forEach(el => io.observe(el))
+
+    const onStepClick = (e: Event) => {
+      const idx = Number((e.currentTarget as HTMLElement).dataset.s2step)
+      const target = items[idx]
+      if (target) target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' })
+    }
+    steps.forEach(btn => btn.addEventListener('click', onStepClick))
+
+    return () => {
+      io.disconnect()
+      steps.forEach(btn => btn.removeEventListener('click', onStepClick))
+    }
+  }, [])
+
+  /* S3 자동 순환 · S5 탭 · 모바일 캐러셀 · S6 패럴랙스 · S8 퍼짐 전환 · S9 FAQ */
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const mobile = window.matchMedia('(max-width: 900px)')
     const cleanups: (() => void)[] = []
-
-    const warns = document.querySelectorAll('[data-warn]')
-    const s2now = document.querySelector('[data-s2now]')
-    const s2Update = () => {
-      const mid = window.innerHeight * (mobile.matches ? 0.72 : 0.55)
-      let act = 0
-      warns.forEach((w, i) => {
-        const r = w.getBoundingClientRect()
-        const on = r.top < mid && r.bottom > mid * 0.5
-        w.classList.toggle('active', on)
-        if (on) act = i
-      })
-      if (s2now) s2now.textContent = '0' + (act + 1)
-      document.querySelectorAll('[data-ic]').forEach((ic, j) => ic.classList.toggle('on', j === act))
-    }
-    window.addEventListener('scroll', s2Update, { passive: true })
-    s2Update()
-    cleanups.push(() => window.removeEventListener('scroll', s2Update))
 
     const steps = document.querySelectorAll('[data-steps] .step')
     const s3now = document.querySelector('[data-s3now]')
@@ -398,8 +508,8 @@ export default function HomeView({
           </div>
 
           <div className="wrap hero__in">
-            <span className="h1-over"><i>✓</i><em>검증된</em></span>
-            <h1 className="st st1"><span className="w300">바이브 코딩으로,</span><br /><mark>외주</mark>를 해드립니다</h1>
+            <span className="h1-over"><i>✓</i><em>검증된</em><span className="h1-over-lead">바이브 코딩으로,</span></span>
+            <h1 className="st st1"><mark>외주</mark><span className="h1-tail">를 해드립니다</span></h1>
             <p className="st st2">기획부터 개발, 검수까지 한 팀이 끝까지 맡습니다.<br />
               아이디어만 가져오세요 — 나머지는 검증된 빌더의 일입니다.</p>
             <div className="st st3 hero-ctas">
@@ -480,7 +590,7 @@ export default function HomeView({
         <section className="s4b">
           <div className="wrap">
             <div className="s4x__brands">
-              <h3>똑똑한 개발자는 다양한 기업의<br />복잡한 문제를 함께 해결해 왔습니다</h3>
+              <h3>똑똑한 개발자는 다양한 기업의 복잡한 문제를 함께 해결해 왔습니다</h3>
               <p className="bsub">이제 그 기준을 바이브 코딩에 적용합니다</p>
               <p className="bcta"><mark>믿고 맡기세요</mark></p>
               <div className="bwall">
@@ -502,39 +612,36 @@ export default function HomeView({
             <div className="s2__grid">
               <div className="s2__left">
                 <h2>요즘 바이브 코딩 외주,<br />이런 곳은 조심하세요</h2>
-                <p className="note">스크롤을 내리면, 실제로 시장에서 벌어지고 있는 일들이 하나씩 나타납니다.</p>
-                <div className="s2__icons" aria-hidden="true">
-                  <span data-ic><svg viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="19" height="17" rx="2.5" fill="#FFFFFF" stroke="#0E0E0C" strokeWidth="1.6" /><path d="M2.5 6a2.5 2.5 0 0 1 2.5-2.5h14a2.5 2.5 0 0 1 2.5 2.5v2.5h-19z" fill="#2F80EA" stroke="#0E0E0C" strokeWidth="1.6" /><circle cx="5.8" cy="6" r=".9" fill="#FFFFFF" /><circle cx="8.6" cy="6" r=".9" fill="#FFFFFF" /><g stroke="#E5484D" strokeWidth="2.5" strokeLinecap="round"><line x1="9.5" y1="12.5" x2="14.5" y2="17.5" /><line x1="14.5" y1="12.5" x2="9.5" y2="17.5" /></g></svg></span>
-                  <span data-ic><svg viewBox="0 0 24 24" fill="none" strokeLinecap="round" strokeLinejoin="round"><g stroke="#2F80EA" strokeWidth="2.5"><polyline points="17 2.5 21 6.5 17 10.5" /><path d="M3 11v-.5a4 4 0 0 1 4-4h14" /></g><g stroke="#F5A623" strokeWidth="2.5"><polyline points="7 21.5 3 17.5 7 13.5" /><path d="M21 13v.5a4 4 0 0 1-4 4H3" /></g></svg></span>
-                  <span data-ic><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.83z" fill="#F5C542" stroke="#0E0E0C" strokeWidth="1.6" /><circle cx="7" cy="7" r="1.5" fill="#FFFFFF" stroke="#0E0E0C" strokeWidth="1.2" /><line x1="10.3" y1="17.7" x2="17.7" y2="10.3" stroke="#E5484D" strokeWidth="2.5" strokeLinecap="round" /></svg></span>
-                </div>
+                <p className="note">아래 항목을 눌러 바로 확인하거나, 스크롤을 내리면 순서대로 나타납니다.</p>
+                <nav className="s2steps" aria-label="주의할 외주 업체 유형">
+                  {S2_ITEMS.map((it, i) => (
+                    <button
+                      key={it.id}
+                      type="button"
+                      className="s2step"
+                      data-s2step={i}
+                      aria-current={i === 0}
+                      aria-controls={`s2item-${it.id}`}
+                    >
+                      <span className="s2step__dot"><S2Icon id={it.id} /></span>
+                      <span className="s2step__meta"><b>0{i + 1}</b><span>{it.label}</span></span>
+                    </button>
+                  ))}
+                </nav>
                 <p className="s2__count"><b data-s2now>01</b> / 03</p>
               </div>
               <div className="s2__right">
-                <div className="warn warn--a" data-warn>
-                  <span className="wnum">01</span>
-                  <div>
-                    <h3>포트폴리오 수백 개,<br />전부 목업인 업체</h3>
-                    <p>실서비스 URL을 물어보세요. <mark>답 못 하면 목업</mark>입니다.</p>
-                  </div>
-                  <div className="w-fig w-fig1"><i></i><i></i><i></i><i></i><i className="real"></i><i></i><i></i><i></i><i></i></div>
-                </div>
-                <div className="warn warn--b" data-warn>
-                  <span className="wnum">02</span>
-                  <div>
-                    <h3>모든 섹션이 똑같이<br />움직이는 사이트</h3>
-                    <p>전부 같은 애니메이션이면 — <mark>한 번에 뽑은 겁니다.</mark></p>
-                  </div>
-                  <div className="w-fig w-fig2"><i></i><i></i><i></i></div>
-                </div>
-                <div className="warn warn--c" data-warn>
-                  <span className="wnum">03</span>
-                  <div>
-                    <h3>싼 가격만 내세우는<br />반값 외주</h3>
-                    <p>반값의 결말은 <mark>다시 만드는 비용</mark>입니다.</p>
-                  </div>
-                  <div className="w-fig w-fig3"><span className="tagp"><s>-50%</s></span></div>
-                </div>
+                {S2_ITEMS.map((it, i) => (
+                  <article className={`warn ${it.cls}`} data-s2item={i} id={`s2item-${it.id}`} key={it.id}>
+                    <span className="wnum">0{i + 1}</span>
+                    <div>
+                      <span className="warn__tag">CHECK · 0{i + 1}</span>
+                      <h3>{it.title}</h3>
+                      <p>{it.lead} <mark>{it.point}</mark></p>
+                    </div>
+                    <div className="warn__figwrap">{it.fig}</div>
+                  </article>
+                ))}
               </div>
             </div>
           </div>
@@ -638,25 +745,13 @@ export default function HomeView({
           <div className="wrap">
             <div className="sec-head">
               <h2>완성한 프로젝트</h2>
-              <Link className="more-link" href="/work">전체 보기</Link>
             </div>
             <p className="t-lead">실제로 수행한 프로젝트만 올립니다.</p>
-            <div className="wg">
-              {workPreviews.map(w => (
-                <Link className="wcard" href={`/work/${w.slug}`} data-track="work_card" data-cursor="VIEW →" key={w.slug}>
-                  <div className="slot mask">
-                    <div className="bf"><div className="bf__bar"><i></i><i></i><i></i><span className="url">{w.shotUrl}</span></div><img className="shot" src={w.shotImg} alt="" /></div>
-                    <div className="par"></div>
-                    <div className="slot__spec"><b>Asset — Work Cover</b><span>실서비스 메인 화면 (브라우저 프레임)</span><em>1520×1045px · 16:11 @2x</em></div>
-                  </div>
-                  <div className="meta">
-                    <div className="mrow"><span className="tag">{w.tag}</span><span className="yr num">{w.meta}</span></div>
-                    <h3>{w.title}</h3>
-                    {w.desc && <p>{w.desc}</p>}
-                    {w.note && <div className="builders">{w.note}</div>}
-                  </div>
-                </Link>
-              ))}
+            <div className="wg2">
+              <Link className="more-link wg2__more" href="/work">전체 보기</Link>
+              <div className="wg2__grid">
+                {workPreviews.map(w => <WorkCard w={w} key={w.slug} />)}
+              </div>
             </div>
           </div>
         </section>
@@ -677,90 +772,43 @@ export default function HomeView({
           </div>
         </section>
 
-        <div className="ribbon-sep" aria-hidden="true">
-          <svg viewBox="0 0 1600 220" preserveAspectRatio="xMidYMid slice">
-            <path id="rsepB" d="M -80,80 C 220,130 460,60 760,110 C 1060,160 1260,80 1460,130 C 1550,152 1620,140 1700,160" fill="none" />
-            <use href="#rsepB" className="edge" />
-            <use href="#rsepB" className="lane" />
-            <text dy="7">
-              <textPath href="#rsepB" data-wflow data-unit="4" data-speed="0.02">VIBE CODING ✳ 검증된 빌더 ✳ AI BUILDER GROUP ✳ 외주를 해드립니다 ✳ VIBE CODING ✳ 검증된 빌더 ✳ AI BUILDER GROUP ✳ 외주를 해드립니다 ✳ </textPath>
-            </text>
-          </svg>
-        </div>
-
-        <section className="s8 grain">
-          <div className="wrap">
-            <div className="sec-head">
-              <h2>영상으로 보는 우리의 작업</h2>
-              <Link className="more-link" href="/content">콘텐츠 탭</Link>
-            </div>
-            <p className="t-lead">세 채널에서 매주 실전 바이브 코딩 콘텐츠가 올라옵니다.</p>
-            <div className="vgrid">
-              <div className="vcell slot" data-expand data-track="youtube_outbound" data-slug="featured">
-                <img className="vimg" src="https://i.ytimg.com/vi/0dBSo3eDE-E/hqdefault.jpg" alt="똑똑한개발자 — 2025 상반기 워크샵" loading="lazy" />
-                <div className="vshade"></div>
-                <span className="dur num">15:47</span>
-                <div className="play"><i>▶</i></div>
-                <div className="cap"><b>2025 똑똑한개발자 상반기 워크샵</b><span>똑똑한개발자 · 오피셜</span></div>
-                <div className="slot__spec"><b>Asset — YouTube</b><span>유튜브 썸네일 원본으로 교체</span><em>1280×720px · 16:9</em></div>
-              </div>
-              <div className="vside">
-                <div className="vcell slot" data-expand style={{ aspectRatio: '16/8' }}>
-                  <img className="vimg" src="https://i.ytimg.com/vi/ZIn53VIic14/hqdefault.jpg" alt="김이솝 — AI 동물 인터뷰 쇼츠 만들기" loading="lazy" />
-                  <div className="vshade"></div>
-                  <span className="dur num">7:57</span><div className="play"><i>▶</i></div>
-                  <div className="cap"><b>AI 동물 인터뷰 쇼츠 만들기 7분만에 끝!</b></div>
-                </div>
-                <div className="vcell slot" data-expand style={{ aspectRatio: '16/8' }}>
-                  <img className="vimg" src="https://i.ytimg.com/vi/TP6ArUCnt8c/hqdefault.jpg" alt="똑똑한개발자 — 원티드 하이파이브 컨퍼런스" loading="lazy" />
-                  <div className="vshade"></div>
-                  <span className="dur num">17:36</span><div className="play"><i>▶</i></div>
-                  <div className="cap"><b>잘봐 이게 컨퍼런스다 — 똑똑한개발자 × 원티드</b></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section className="s9" id="faq">
           <div className="wrap">
-            <h2>자주 묻는 질문</h2>
+            <div className="sec-head">
+              <h2>자주 묻는 질문</h2>
+              <Link className="more-link" href="/faq">전체 보기</Link>
+            </div>
             <p className="t-lead">문의 전에 가장 많이 받는 질문을 모았습니다.</p>
 
-            <div className="topics" role="tablist">
-              <button className="topic" role="tab" aria-selected="true" data-topic="inquiry" data-track="faq_topic_change">외주 문의</button>
-              <button className="topic" role="tab" aria-selected="false" data-topic="process" data-track="faq_topic_change">진행 방식</button>
-            </div>
+            {faqTopics.length > 0 && (
+              <>
+                <div className="topics" role="tablist">
+                  {faqTopics.map((topic, i) => (
+                    <button
+                      key={topic.key}
+                      className="topic"
+                      role="tab"
+                      aria-selected={i === 0}
+                      data-topic={topic.key}
+                      data-track="faq_topic_change"
+                    >
+                      {topic.label}
+                    </button>
+                  ))}
+                </div>
 
-            <div data-panel="inquiry">
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fa1">바이브 코딩으로 만들면 품질이 괜찮나요?</button>
-                <div className="faq-a" id="fa1" role="region"><p>도구가 아니라 만드는 사람이 품질을 결정합니다. 우리는 교육을 수료하고 검증된 빌더만 배정하고, 전용 시스템으로 진행 과정을 관리해 결과물을 상향 평준화합니다.</p></div>
-              </div>
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fa2">기간은 얼마나 걸리나요?</button>
-                <div className="faq-a" id="fa2" role="region"><p>규모에 따라 다르지만, 랜딩 페이지 기준 제작 2주 + 환경 세팅·이관 1주가 일반적입니다. 기획 단계에서 일정을 확정해 드립니다.</p></div>
-              </div>
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fa3">어떤 개발자가 작업하나요?</button>
-                <div className="faq-a" id="fa3" role="region"><p>프로젝트 성격에 맞는 빌더를 선별해 배정합니다. 규모가 큰 프로젝트는 시니어 개발자가 함께 투입되는 투트랙으로 진행합니다.</p></div>
-              </div>
-            </div>
-
-            <div data-panel="process" hidden>
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fb1">진행 단계는 어떻게 되나요?</button>
-                <div className="faq-a" id="fb1" role="region"><p>기획 → 디자인(목업) → 개발 순서로 진행하며, 각 단계마다 확인을 받고 다음으로 넘어갑니다. 디자인 단계에서는 실제로 눌러볼 수 있는 목업을 드립니다.</p></div>
-              </div>
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fb2">수정 요청은 어디까지 가능한가요?</button>
-                <div className="faq-a" id="fb2" role="region"><p>문구·이미지 교체 같은 경미한 수정은 범위 내에서 반영합니다. 화면 추가나 기능 변경은 일정·비용과 함께 별도로 안내드립니다.</p></div>
-              </div>
-              <div className="faq-item">
-                <button className="faq-q" aria-expanded="false" aria-controls="fb3">완료 후 유지보수는요?</button>
-                <div className="faq-a" id="fb3" role="region"><p>납품 후 30일 무상 하자보수가 기본입니다. 이후 기능 추가·운영 관리는 별도 유지보수 계약으로 진행합니다.</p></div>
-              </div>
-            </div>
+                {faqTopics.map((topic, i) => (
+                  <div data-panel={topic.key} hidden={i !== 0} key={topic.key}>
+                    {topic.items.map(item => (
+                      <div className="faq-item" key={item.id}>
+                        <button className="faq-q" aria-expanded="false" aria-controls={`faq-a-${item.id}`}>{item.question}</button>
+                        <div className="faq-a" id={`faq-a-${item.id}`} role="region"><p>{item.answer}</p></div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </>
+            )}
 
           </div>
         </section>

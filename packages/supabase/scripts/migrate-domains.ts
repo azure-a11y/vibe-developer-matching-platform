@@ -1,20 +1,29 @@
 #!/usr/bin/env node --experimental-strip-types
 /**
- * content/builders, content/works, content/admin-accounts, content/site-settings.md
- * → Supabase 테이블 이관 (builders / works / admin_accounts / site_settings).
+ * content/builders, content/works, content/faq-categories, content/faq,
+ * content/admin-accounts, content/site-settings.md
+ * → Supabase 테이블 이관 (builders / works / faq_categories / faqs /
+ *   admin_accounts / site_settings).
  *
  * 멱등적입니다(slug 기준 upsert, site_settings 는 싱글톤). 여러 번 실행해도 안전합니다.
  * 파일은 삭제하지 않습니다 — 되돌릴 수 있어야 합니다.
  *
+ * faq-categories 는 faqs 보다 먼저 이관됩니다 — faqs.category_id 가
+ * faq_categories.slug 를 참조하는 FK 이기 때문입니다.
+ *
  * 사전 조건
  *   1. .env 에 Supabase 키 3개
- *   2. migrations/0001_init.sql, 0002_builder_group_domains.sql 적용 완료
+ *   2. migrations/0001_init.sql ~ 0004_faq.sql 적용 완료
  */
 import {
   adminAccountFileRepository,
   adminAccountSupabaseRepository,
   builderFileRepository,
   builderSupabaseRepository,
+  faqCategoryFileRepository,
+  faqCategorySupabaseRepository,
+  faqFileRepository,
+  faqSupabaseRepository,
   siteSettingsFileRepository,
   siteSettingsSupabaseRepository,
   workFileRepository,
@@ -72,6 +81,44 @@ let failed = 0;
       ok++;
     } catch (error) {
       console.error(`  ✘ ${work.slug} — ${error instanceof Error ? error.message : String(error)}`);
+      failed++;
+    }
+  }
+}
+
+// ── faq-categories (faqs 보다 먼저 — category_id FK 대상) ─────
+{
+  const { categories, errors } = await faqCategoryFileRepository.getAll();
+  for (const error of errors) console.error(`[faq-categories] 파싱 실패 (건너뜀): ${error}`);
+
+  console.log(`faq-categories: ${categories.length}건${dryRun ? ' (dry run)' : ''}`);
+  for (const category of categories) {
+    const { filePath: _filePath, ...frontmatter } = category;
+    try {
+      if (!dryRun) await faqCategorySupabaseRepository.save(frontmatter);
+      console.log(`  ✔ ${category.slug}`);
+      ok++;
+    } catch (error) {
+      console.error(`  ✘ ${category.slug} — ${error instanceof Error ? error.message : String(error)}`);
+      failed++;
+    }
+  }
+}
+
+// ── faqs ─────────────────────────────────────────────────────
+{
+  const { faqs, errors } = await faqFileRepository.getAll();
+  for (const error of errors) console.error(`[faqs] 파싱 실패 (건너뜀): ${error}`);
+
+  console.log(`faqs: ${faqs.length}건${dryRun ? ' (dry run)' : ''}`);
+  for (const faq of faqs) {
+    const { answer, filePath: _filePath, ...frontmatter } = faq;
+    try {
+      if (!dryRun) await faqSupabaseRepository.save(frontmatter, answer);
+      console.log(`  ✔ ${faq.slug}`);
+      ok++;
+    } catch (error) {
+      console.error(`  ✘ ${faq.slug} — ${error instanceof Error ? error.message : String(error)}`);
       failed++;
     }
   }

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
 import type { MenuKey } from '@orca/content';
 
+import type { CountTone } from '@/components/CountSummary';
+import { CountSummary } from '@/components/CountSummary';
 import { KpiCard } from '@/components/KpiCard';
 import { PageHeader } from '@/components/PageHeader';
 import { StatusBadge } from '@/components/StatusBadge';
@@ -15,9 +17,10 @@ const MENU_LABELS: Record<MenuKey, string> = {
   builder: 'Builder',
   work: 'Work',
   insight: 'Insight',
+  faq: 'Faq',
   inquiry: 'Inquiry',
   settings: 'Settings',
-  accountPermission: '계정 · 권한',
+  accountPermission: 'Accounts & Permissions',
 };
 
 export default async function DashboardPage({
@@ -36,31 +39,35 @@ export default async function DashboardPage({
     total: posts.length,
     draft: posts.filter((p) => p.status === 'draft').length,
     inReview: posts.filter((p) => p.status === 'in_review').length,
+    scheduled: posts.filter((p) => p.status === 'scheduled').length,
     published: posts.filter((p) => p.status === 'published').length,
+    archived: posts.filter((p) => p.status === 'archived').length,
   };
 
   const builderCounts = {
     total: builders.length,
     pending: builders.filter((b) => b.status === 'pending').length,
     active: builders.filter((b) => b.status === 'active').length,
+    inactive: builders.filter((b) => b.status === 'inactive').length,
   };
 
   const workCounts = {
     total: works.length,
     pendingReview: works.filter((w) => w.status === 'pending_review').length,
     published: works.filter((w) => w.status === 'published').length,
+    archived: works.filter((w) => w.status === 'archived').length,
   };
 
   const recent = [...posts].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 5);
 
   // "확인이 필요한 항목" — only surfaces work that actually needs a decision,
-  // not every count on the dashboard.
+  // not every count on the dashboard. tone은 KPI 카드(CountSummary)와 동일한 상태 색상을 쓴다.
   const attentionItems = [
-    counts.draft > 0 && { href: '/insight', label: 'Insight 초안', count: counts.draft },
-    counts.inReview > 0 && { href: '/insight', label: 'Insight 검수 대기', count: counts.inReview },
-    builderCounts.pending > 0 && { href: '/builder', label: 'Builder 검증 대기', count: builderCounts.pending },
-    workCounts.pendingReview > 0 && { href: '/work', label: 'Work 승인 대기', count: workCounts.pendingReview },
-  ].filter((item): item is { href: string; label: string; count: number } => Boolean(item));
+    counts.draft > 0 && { href: '/insight', menu: 'Insight', title: '초안', count: counts.draft, tone: 'muted' as CountTone },
+    counts.inReview > 0 && { href: '/insight', menu: 'Insight', title: '검수 대기', count: counts.inReview, tone: 'pending' as CountTone },
+    builderCounts.pending > 0 && { href: '/builder', menu: 'Builder', title: '검증 대기', count: builderCounts.pending, tone: 'pending' as CountTone },
+    workCounts.pendingReview > 0 && { href: '/work', menu: 'Work', title: '승인 대기', count: workCounts.pendingReview, tone: 'pending' as CountTone },
+  ].filter((item): item is { href: string; menu: string; title: string; count: number; tone: CountTone } => Boolean(item));
 
   return (
     <div className="space-y-6">
@@ -98,7 +105,15 @@ export default async function DashboardPage({
           href="/builder"
           label="Builder"
           value={builderCounts.total}
-          detail={`검증 대기 ${builderCounts.pending} · 활성 ${builderCounts.active}`}
+          detail={
+            <CountSummary
+              items={[
+                { label: '검증 대기', count: builderCounts.pending, tone: 'pending' },
+                { label: '활성', count: builderCounts.active, tone: 'confirmed' },
+                { label: '비활성', count: builderCounts.inactive, tone: 'inactive' },
+              ]}
+            />
+          }
         />
         <KpiCard
           href="/inquiry"
@@ -110,13 +125,30 @@ export default async function DashboardPage({
           href="/insight"
           label="Insight"
           value={counts.total}
-          detail={`초안 ${counts.draft} · 검수 중 ${counts.inReview} · 발행 ${counts.published}`}
+          detail={
+            <CountSummary
+              items={[
+                { label: '초안', count: counts.draft, tone: 'muted' },
+                { label: '검수 중', count: counts.inReview, tone: 'pending' },
+                { label: '예약', count: counts.scheduled, tone: 'scheduled' },
+                { label: '발행', count: counts.published, tone: 'confirmed' },
+              ]}
+            />
+          }
         />
         <KpiCard
           href="/work"
           label="Work"
           value={workCounts.total}
-          detail={`승인 대기 ${workCounts.pendingReview} · 공개 ${workCounts.published}`}
+          detail={
+            <CountSummary
+              items={[
+                { label: '승인 대기', count: workCounts.pendingReview, tone: 'pending' },
+                { label: '공개', count: workCounts.published, tone: 'confirmed' },
+                { label: '보관', count: workCounts.archived, tone: 'muted' },
+              ]}
+            />
+          }
         />
       </div>
 
@@ -131,21 +163,27 @@ export default async function DashboardPage({
           ) : (
             <ul className="-mx-2">
               {attentionItems.map((item) => (
-                <li key={`${item.href}-${item.label}`}>
+                <li key={`${item.href}-${item.menu}-${item.title}`}>
                   <Link
                     href={item.href}
                     className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-[var(--color-surface-sunken)]"
                   >
-                    <span className="flex items-center gap-2.5">
-                      <span
-                        className="size-1.5 shrink-0 rounded-full"
-                        style={{ background: 'var(--color-warning)' }}
-                      />
-                      {item.label}
+                    <span className="flex items-baseline gap-3">
+                      <span className="flex items-center gap-2.5">
+                        <span
+                          className="size-1.5 shrink-0 rounded-full"
+                          style={{ background: 'var(--color-danger)' }}
+                        />
+                        <span
+                          className="text-xs font-semibold tracking-wide"
+                          style={{ color: 'var(--color-ink-faint)' }}
+                        >
+                          [{item.menu}]
+                        </span>
+                      </span>
+                      <span>{item.title}</span>
                     </span>
-                    <span className="badge bg-[var(--color-warning-bg)] text-[var(--color-warning)]">
-                      {item.count}
-                    </span>
+                    <span className={`badge badge-${item.tone}`}>{item.count}</span>
                   </Link>
                 </li>
               ))}

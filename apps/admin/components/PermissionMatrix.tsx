@@ -5,9 +5,10 @@ const MENU_LABELS: [MenuKey, string][] = [
   ['builder', 'Builder'],
   ['work', 'Work'],
   ['insight', 'Insight'],
+  ['faq', 'Faq'],
   ['inquiry', 'Inquiry'],
   ['settings', 'Settings'],
-  ['accountPermission', '계정·권한'],
+  ['accountPermission', 'Accounts & Permissions'],
 ];
 
 const LEVELS: { value: PermissionLevel; label: string }[] = [
@@ -35,32 +36,32 @@ const LEVEL_TONE: Record<PermissionLevel, string> = {
  */
 export function PermissionMatrix({ defaultValues }: { defaultValues?: Partial<AdminMenuPermissions> }) {
   return (
-    <div className="overflow-x-auto rounded-lg" style={{ border: '1px solid var(--color-border)' }}>
+    <div className="table-shell">
       <table className="w-full min-w-[560px] border-collapse text-sm">
         <thead>
           <tr style={{ background: 'var(--color-surface-sunken)', borderBottom: '1px solid var(--color-border)' }}>
             <th
-              className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide"
-              style={{ color: 'var(--color-ink-faint)' }}
+              className="px-4 py-3.5 text-left text-[12px] font-semibold uppercase tracking-wide"
+              style={{ color: 'var(--color-ink-muted)' }}
             >
               메뉴
             </th>
             {LEVELS.map((level) => (
               <th
                 key={level.value}
-                className="px-2 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wide"
-                style={{ color: 'var(--color-ink-faint)' }}
+                className="px-2 py-3.5 text-center text-[12px] font-semibold uppercase tracking-wide"
+                style={{ color: 'var(--color-ink-muted)' }}
               >
                 {level.label}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
+        <tbody className="divide-y">
           {MENU_LABELS.map(([key, label]) => {
             const current = defaultValues?.[key] ?? (key === 'dashboard' ? 'view' : 'none');
             return (
-              <tr key={key} className="transition-colors hover:bg-[var(--color-surface-sunken)]">
+              <tr key={key} className="transition-colors">
                 <td className="px-4 py-2.5 font-medium">{label}</td>
                 {LEVELS.map((level) => (
                   <td key={level.value} className="px-2 py-2.5">

@@ -111,6 +111,40 @@ export type AdminAccountRow = {
 
 export type AdminAccountInsert = Omit<AdminAccountRow, 'id'> & { id?: string };
 
+/** faq_categories 테이블의 한 행. FaqCategory 프론트매터 스키마와 1:1 대응됩니다. */
+export type FaqCategoryRow = {
+  id: string;
+  name: string;
+  slug: string;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FaqCategoryInsert = Omit<FaqCategoryRow, 'id'> & { id?: string };
+
+/**
+ * faqs 테이블의 한 행. `category_id` 는 `faq_categories.slug` 를 참조하는
+ * text FK다 — `works.builder_ids` 가 Builder.slug 배열인 것과 같은 이유로,
+ * uuid PK 대신 slug 를 키로 쓴다(파일 드라이버에 uuid 개념이 없어서 두
+ * 드라이버 구조를 동일하게 유지하기 위함). 실제 FK 제약은
+ * `0004_faq.sql` 에서 `faq_categories(slug)` 를 참조하도록 건다.
+ */
+export type FaqRow = {
+  id: string;
+  question: string;
+  slug: string;
+  answer: string;
+  category_id: string;
+  sort_order: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type FaqInsert = Omit<FaqRow, 'id'> & { id?: string };
+
 /** site_settings 테이블의 유일한 행 (id 는 항상 true). */
 export type SiteSettingsRow = {
   id: boolean;
@@ -151,6 +185,18 @@ export type Database = {
         Row: WorkRow;
         Insert: WorkInsert;
         Update: Partial<WorkInsert>;
+        Relationships: [];
+      };
+      faq_categories: {
+        Row: FaqCategoryRow;
+        Insert: FaqCategoryInsert;
+        Update: Partial<FaqCategoryInsert>;
+        Relationships: [];
+      };
+      faqs: {
+        Row: FaqRow;
+        Insert: FaqInsert;
+        Update: Partial<FaqInsert>;
         Relationships: [];
       };
       admin_accounts: {
