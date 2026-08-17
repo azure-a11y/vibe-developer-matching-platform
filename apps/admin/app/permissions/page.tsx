@@ -22,12 +22,12 @@ const STATUS_FILTER_OPTIONS = [
 export default async function PermissionsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; error?: string }>;
 }) {
   const account = await requireMenuPermission('accountPermission', 'view');
   const canManage = hasPermission(account.menuPermissions.accountPermission, 'edit_approve');
 
-  const { q = '', status = 'all' } = await searchParams;
+  const { q = '', status = 'all', error: createError } = await searchParams;
   const { accounts: allAccounts, errors } = await getAdminAccountRepository().getAll();
 
   const query = q.trim().toLowerCase();
@@ -68,6 +68,14 @@ export default async function PermissionsPage({
       {canManage && (
         <form action={createAdminAccountAction} className="card space-y-5">
           <h2 className="font-semibold">관리자 계정 생성</h2>
+          {createError && (
+            <p
+              className="rounded-lg px-3 py-2 text-sm"
+              style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }}
+            >
+              {createError}
+            </p>
+          )}
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
               <label className="label" htmlFor="email">이메일</label>
