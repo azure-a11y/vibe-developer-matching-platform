@@ -18,7 +18,7 @@ export default async function LoginPage({
         style={{ boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.35)' }}
       >
         <div>
-          <span className="login-brand-mark mb-3">AI</span>
+          <img src="/logo-full.svg" alt="" className="login-brand-mark mb-3" />
           <h1 className="text-xl font-semibold tracking-tight">관리자 로그인</h1>
           <p className="mt-1 text-sm" style={{ color: 'var(--color-ink-muted)' }}>
             AI Builder Group Admin — 관리자 계정으로 로그인하세요.

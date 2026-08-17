@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 모바일 앱 · 크로스플랫폼
 focus: 모바일 앱 · 스토어 출시
 principles:

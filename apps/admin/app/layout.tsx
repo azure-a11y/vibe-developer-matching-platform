@@ -7,8 +7,8 @@ import { getCurrentAccount } from '@/lib/session';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Orca Admin',
-  icons: { icon: '/favicon.svg' },
+  title: 'AI 빌더 그룹 관리자',
+  icons: { icon: '/favicon.png' },
   description: '콘텐츠 · SEO/GEO · 검수 대시보드',
   robots: { index: false, follow: false },
 };
@@ -47,19 +47,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko">
       <body className="min-h-dvh">
-        {/* The demo state is a supported state, not a warning — but it must be
-            visible so nobody assumes writes are hitting a database. */}
-        <div
-          className="px-6 py-2 text-center font-mono text-[11px] tracking-wide"
-          style={
-            backend.driver === 'supabase'
-              ? { background: 'var(--color-success-bg)', color: 'var(--color-success)' }
-              : { background: 'var(--color-warning-bg)', color: 'var(--color-warning)' }
-          }
-        >
-          <strong>{backend.driver === 'supabase' ? 'Supabase' : '파일 기반'}</strong> · {backend.message}
-        </div>
-        <AdminShell account={account} pendingCounts={pendingCounts} attentionItems={attentionItems}>
+        <AdminShell account={account} pendingCounts={pendingCounts} attentionItems={attentionItems} backend={backend}>
           {children}
         </AdminShell>
       </body>

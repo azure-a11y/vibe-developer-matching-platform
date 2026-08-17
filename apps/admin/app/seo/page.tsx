@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { auditPost, getRepository } from '@orca/content';
 
 import { PageHeader } from '@/components/PageHeader';
-import { ScoreBadge } from '@/components/StatusBadge';
+import { ScoreValue } from '@/components/StatusBadge';
 import { requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -67,7 +67,7 @@ export default async function SeoOverviewPage() {
                 <span className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
                   FAQ {post.geo.faq.length} · 인용 {post.geo.citations.length} · 키워드 {post.seo.keywords.length}
                 </span>
-                <ScoreBadge score={audit.score} />
+                <ScoreValue score={audit.score} />
               </div>
             </div>
             {audit.issues.length === 0 ? (

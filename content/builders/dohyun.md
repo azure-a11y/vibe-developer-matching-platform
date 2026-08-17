@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 플랫폼 · 어드민
 focus: 어드민 · 정산 · 권한 설계
 principles:

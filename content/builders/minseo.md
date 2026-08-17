@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 브랜드 · 모션 디자인
 focus: 디자인 시스템 · 모션
 principles:

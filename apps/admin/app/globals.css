@@ -151,6 +151,40 @@ input[type='checkbox']:focus-visible {
 .badge-inactive { background: var(--color-status-inactive); color: #ffffff; }
 .badge-muted { background: #ffffff; color: var(--color-neutral-badge); border: 1px solid var(--color-border); }
 
+/* "확인이 필요한 항목" 리스트 — 메뉴명은 길이와 무관하게 동일한 크기의 사각 태그로,
+   개수는 위 5단계 톤 색상 규칙을 그대로 쓰는 원형 배지로 표시한다. */
+.menu-tag {
+  display: inline-flex;
+  width: 4.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-circle {
+  display: inline-flex;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  padding: 0 0.3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+.badge-circle-pending { background: #ffffff; color: var(--color-danger); border: 1px solid var(--color-danger); }
+.badge-circle-confirmed { background: #ffffff; color: var(--color-status-confirmed); border: 1px solid var(--color-status-confirmed); }
+.badge-circle-scheduled { background: #ffffff; color: #111111; border: 1px solid #111111; }
+.badge-circle-inactive { background: var(--color-status-inactive); color: #ffffff; }
+.badge-circle-muted { background: #ffffff; color: var(--color-neutral-badge); border: 1px solid var(--color-border); }
+
 .admin-page-title { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.015em; }
 .admin-panel-title { font-size: 1.0625rem; font-weight: 600; }
 .table-shell { overflow-x: auto; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-surface); }

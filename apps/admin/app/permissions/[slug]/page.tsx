@@ -1,9 +1,10 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getAdminAccountRepository } from '@orca/content';
 
 import { saveAdminAccountAction } from '@/app/permissions/actions';
+import { DetailNav } from '@/components/DetailNav';
 import { PermissionMatrix } from '@/components/PermissionMatrix';
+import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { AccountStatusBadge, GradeBadge } from '@/components/StatusBadge';
 import { requireMenuPermission } from '@/lib/permissions';
@@ -14,8 +15,16 @@ export default async function AdminAccountEditorPage({ params }: { params: Promi
   await requireMenuPermission('accountPermission', 'edit_approve');
 
   const { slug } = await params;
-  const account = await getAdminAccountRepository().getBySlug(decodeURIComponent(slug));
+  const [account, { accounts: allAccounts }] = await Promise.all([
+    getAdminAccountRepository().getBySlug(decodeURIComponent(slug)),
+    getAdminAccountRepository().getAll(),
+  ]);
   if (!account) notFound();
+
+  // 목록과 동일한 정렬(이메일순) 기준으로 이전/다음을 찾는다.
+  const currentIndex = allAccounts.findIndex((a) => a.slug === account.slug);
+  const prevAccount = currentIndex > 0 ? allAccounts[currentIndex - 1] : undefined;
+  const nextAccount = currentIndex >= 0 && currentIndex < allAccounts.length - 1 ? allAccounts[currentIndex + 1] : undefined;
 
   return (
     <form action={saveAdminAccountAction} className="max-w-2xl space-y-8">
@@ -23,16 +32,18 @@ export default async function AdminAccountEditorPage({ params }: { params: Promi
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/permissions" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            ← 목록
-          </Link>
           <h1 className="text-xl font-semibold tracking-tight">{account.name}</h1>
           <GradeBadge grade={account.grade} />
           <AccountStatusBadge status={account.status} />
         </div>
-        <button type="submit" className="btn-primary">
-          저장
-        </button>
+        <div className="flex items-center gap-6">
+          <DetailNav
+            listHref="/permissions"
+            prev={prevAccount && { href: `/permissions/${encodeURIComponent(prevAccount.slug)}`, label: prevAccount.name }}
+            next={nextAccount && { href: `/permissions/${encodeURIComponent(nextAccount.slug)}`, label: nextAccount.name }}
+          />
+          <SaveButton />
+        </div>
       </header>
 
       <section className="card space-y-4">

@@ -3,8 +3,10 @@ import { notFound } from 'next/navigation';
 import { auditPost, blogPostingJsonLd, faqJsonLd, getRepository } from '@orca/content';
 
 import { saveReviewAction } from '@/app/actions';
+import { DetailNav } from '@/components/DetailNav';
+import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
-import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
+import { ScoreCircle, StatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -18,10 +20,11 @@ const CHECKLIST = [
   { name: 'checkLinks', label: '링크 — 내부/외부 링크 동작 확인' },
 ] as const;
 
+/* 상태 배지와 동일한 톤 체계 재사용 — error는 승인 대기와 같은 빨강, warn은 예약과 같은 검정, info는 보관·초안과 같은 회색. */
 const SEVERITY_STYLE: Record<'error' | 'warn' | 'info', string> = {
-  error: 'bg-[var(--color-danger-bg)] text-[var(--color-danger)]',
-  warn: 'bg-[var(--color-warning-bg)] text-[var(--color-warning)]',
-  info: 'bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]',
+  error: 'badge-pending',
+  warn: 'badge-scheduled',
+  info: 'badge-muted',
 };
 
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -29,8 +32,16 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
   const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
 
   const { slug } = await params;
-  const post = await getRepository().getBySlug(decodeURIComponent(slug));
+  const [post, { posts: allPosts }] = await Promise.all([
+    getRepository().getBySlug(decodeURIComponent(slug)),
+    getRepository().getAll(),
+  ]);
   if (!post) notFound();
+
+  // 목록과 동일한 정렬(발행일·수정일 최신순) 기준으로 이전/다음을 찾는다.
+  const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
+  const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
+  const nextPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
 
   const audit = auditPost(post);
   const checks = post.review.checks;
@@ -40,16 +51,20 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
     <div className="space-y-8">
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            ← 목록
-          </Link>
           <h1 className="text-xl font-semibold tracking-tight">검수: {post.title}</h1>
           <StatusBadge status={post.status} />
-          <ScoreBadge score={audit.score} />
+          <ScoreCircle score={audit.score} />
         </div>
-        <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="btn-secondary">
-          편집으로
-        </Link>
+        <div className="flex items-center gap-6">
+          <DetailNav
+            listHref="/insight"
+            prev={prevPost && { href: `/insight/${encodeURIComponent(prevPost.slug)}/review`, label: prevPost.title }}
+            next={nextPost && { href: `/insight/${encodeURIComponent(nextPost.slug)}/review`, label: nextPost.title }}
+          />
+          <Link href={`/insight/${encodeURIComponent(post.slug)}`} className="btn-secondary">
+            편집으로
+          </Link>
+        </div>
       </header>
 
       {/* `min-w-0` is load-bearing: a grid item defaults to `min-width: auto`,
@@ -84,11 +99,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
             )}
             <p
               className="rounded-lg px-3 py-2 text-sm font-medium"
-              style={
-                audit.publishable
-                  ? { background: 'var(--color-success-bg)', color: 'var(--color-success)' }
-                  : { background: 'var(--color-danger-bg)', color: 'var(--color-danger)' }
-              }
+              style={{ background: 'var(--color-surface-sunken)', color: 'var(--color-ink)' }}
             >
               {audit.publishable ? '발행 가능 (error 없음)' : '발행 불가 — error를 먼저 해결하세요.'}
             </p>
@@ -173,9 +184,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ slug: s
               </p>
             )}
 
-            <button type="submit" className="btn-primary w-full">
-              검수 저장
-            </button>
+            <SaveButton className="w-full">검수 저장</SaveButton>
           </form>
         ) : (
           <section className="card h-fit min-w-0 space-y-3">

@@ -9,7 +9,13 @@ import { useFormStatus } from 'react-dom';
  * with no client-visible failure mode (the action throws, which Next surfaces
  * via its own error boundary, not through this button).
  */
-export function SaveButton({ children = '저장' }: { children?: React.ReactNode }) {
+export function SaveButton({
+  children = '저장',
+  className = '',
+}: {
+  children?: React.ReactNode;
+  className?: string;
+}) {
   const { pending } = useFormStatus();
   const [justSaved, setJustSaved] = useState(false);
   const wasPending = useRef(false);
@@ -24,7 +30,7 @@ export function SaveButton({ children = '저장' }: { children?: React.ReactNode
   }, [pending]);
 
   return (
-    <button type="submit" className="btn-primary" disabled={pending}>
+    <button type="submit" className={`btn-primary ${className}`.trim()} disabled={pending}>
       {pending ? '저장 중…' : justSaved ? '저장됨 ✓' : children}
     </button>
   );

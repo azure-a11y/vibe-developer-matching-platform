@@ -168,22 +168,11 @@ export default async function DashboardPage({
                     href={item.href}
                     className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-[var(--color-surface-sunken)]"
                   >
-                    <span className="flex items-baseline gap-3">
-                      <span className="flex items-center gap-2.5">
-                        <span
-                          className="size-1.5 shrink-0 rounded-full"
-                          style={{ background: 'var(--color-danger)' }}
-                        />
-                        <span
-                          className="text-xs font-semibold tracking-wide"
-                          style={{ color: 'var(--color-ink-faint)' }}
-                        >
-                          [{item.menu}]
-                        </span>
-                      </span>
+                    <span className="flex items-center gap-3">
+                      <span className="menu-tag">{item.menu}</span>
                       <span>{item.title}</span>
                     </span>
-                    <span className={`badge badge-${item.tone}`}>{item.count}</span>
+                    <span className={`badge-circle badge-circle-${item.tone}`}>{item.count}</span>
                   </Link>
                 </li>
               ))}

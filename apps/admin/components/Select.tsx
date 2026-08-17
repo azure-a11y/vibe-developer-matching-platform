@@ -45,11 +45,15 @@ export function Select({
   const selectId = id ?? generatedId;
 
   return (
-    <RadixSelect.Root name={name} defaultValue={defaultValue} required={required}>
+    // `key={defaultValue}` forces a remount whenever the server-fetched value
+    // changes (e.g. after a server-action save without a redirect) — an
+    // uncontrolled Radix Root otherwise keeps showing the value it mounted
+    // with, ignoring later `defaultValue` prop updates.
+    <RadixSelect.Root key={defaultValue} name={name} defaultValue={defaultValue} required={required}>
       <RadixSelect.Trigger
         id={selectId}
         aria-label={rest['aria-label']}
-        className="flex w-full items-center justify-between gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-left text-sm text-[var(--color-ink)] outline-none transition-colors hover:border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)] data-[placeholder]:text-[var(--color-ink-faint)]"
+        className="flex w-full items-center justify-between gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2.5 text-left text-sm text-[var(--color-ink)] outline-none transition-colors hover:border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)] data-[placeholder]:text-[var(--color-ink-faint)]"
       >
         <RadixSelect.Value placeholder={placeholder} />
         <RadixSelect.Icon className="text-[var(--color-ink-faint)]">

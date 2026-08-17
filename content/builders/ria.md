@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 랜딩 · 인터랙션
 focus: 수주용 랜딩 · 브랜드 사이트
 principles:

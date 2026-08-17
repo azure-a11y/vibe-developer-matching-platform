@@ -13,6 +13,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 프로덕트 빌더 · 기획+개발
 focus: 프로덕트 전체 · MVP · 검증
 principles:

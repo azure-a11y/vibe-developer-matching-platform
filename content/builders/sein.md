@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: 데이터 · 업무 자동화
 focus: 데이터 파이프라인 · 자동화
 principles:

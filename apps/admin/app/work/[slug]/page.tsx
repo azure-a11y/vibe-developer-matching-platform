@@ -4,7 +4,9 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 
 import { deleteWorkAction, saveWorkAction } from '@/app/work/actions';
 import { BuilderStatusBadge, WorkStatusBadge } from '@/components/StatusBadge';
+import { DetailNav } from '@/components/DetailNav';
 import { SubHeading } from '@/components/FormPrimitives';
+import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
@@ -29,11 +31,17 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
   const canDelete = hasPermission(account.menuPermissions.work, 'full');
 
   const { slug } = await params;
-  const [work, { builders }] = await Promise.all([
+  const [work, { works: allWorks }, { builders }] = await Promise.all([
     getWorkRepository().getBySlug(decodeURIComponent(slug)),
+    getWorkRepository().getAll(),
     getBuilderRepository().getAll(),
   ]);
   if (!work) notFound();
+
+  // 목록과 동일한 정렬(수정일 최신순) 기준으로 이전/다음을 찾는다 — Work 목록에서 보이는 순서 그대로.
+  const currentIndex = allWorks.findIndex((w) => w.slug === work.slug);
+  const prevWork = currentIndex > 0 ? allWorks[currentIndex - 1] : undefined;
+  const nextWork = currentIndex >= 0 && currentIndex < allWorks.length - 1 ? allWorks[currentIndex + 1] : undefined;
 
   const selectedBuilders = new Set(work.builderIds);
 
@@ -43,17 +51,17 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/work" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            ← 목록
-          </Link>
           <h1 className="text-xl font-semibold tracking-tight">{work.title}</h1>
           <WorkStatusBadge status={work.status} />
         </div>
-        {canWrite && (
-          <button type="submit" className="btn-primary">
-            저장
-          </button>
-        )}
+        <div className="flex items-center gap-6">
+          <DetailNav
+            listHref="/work"
+            prev={prevWork && { href: `/work/${encodeURIComponent(prevWork.slug)}`, label: prevWork.title }}
+            next={nextWork && { href: `/work/${encodeURIComponent(nextWork.slug)}`, label: nextWork.title }}
+          />
+          {canWrite && <SaveButton />}
+        </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">

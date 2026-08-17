@@ -12,6 +12,10 @@ education: []
 communityActivity: []
 verifications: []
 status: active
+permissions:
+  canWriteInsight: true
+  canEditInsight: true
+  canDeleteInsight: false
 role: AI 서비스 · 에이전트
 focus: LLM 연동 · 에이전트 · PoC
 principles:

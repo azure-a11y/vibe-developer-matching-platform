@@ -11,11 +11,32 @@ const PLUUG_ADMIN_URL = process.env.PLUUG_ADMIN_URL?.trim() || '';
 export default async function InquiryPage() {
   await requireMenuPermission('inquiry', 'view');
 
+  const isConnected = Boolean(PLUUG_ADMIN_URL);
+
   return (
-    <div className="space-y-6">
+    <div className="max-w-2xl space-y-6">
       <PageHeader title="Inquiry" description="문의(리드) 관리 — 외부 시스템(pluug) 연동 지점" />
 
-      <div className="card max-w-2xl space-y-4">
+      <div className="card space-y-5">
+        <div className="flex items-start justify-between gap-4 border-b pb-5" style={{ borderColor: 'var(--color-border-subtle)' }}>
+          <div>
+            <p className="admin-panel-title">pluug CRM</p>
+            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+              리드 접수 · 배정 · 파이프라인 관리를 전담하는 외부 서비스
+            </p>
+          </div>
+          <span
+            className="badge shrink-0"
+            style={
+              isConnected
+                ? { background: 'var(--color-success-bg)', color: 'var(--color-success)' }
+                : { background: 'var(--color-neutral-badge-bg)', color: 'var(--color-neutral-badge)' }
+            }
+          >
+            {isConnected ? '연동됨' : '미설정'}
+          </span>
+        </div>
+
         <p className="text-sm leading-6" style={{ color: 'var(--color-ink-muted)' }}>
           문의는 pluug(CRM)가 전담합니다 — 리드는 이 사이트의 DB에 저장하지 않고, 영업 담당자가 pluug에서
           직접 배정받습니다(<code className="font-mono text-xs">04_정책정의.md</code> §2.3, 기획서 D3). 이
@@ -23,7 +44,7 @@ export default async function InquiryPage() {
           제공합니다.
         </p>
 
-        {PLUUG_ADMIN_URL ? (
+        {isConnected ? (
           <div className="space-y-1.5">
             <a href={PLUUG_ADMIN_URL} target="_blank" rel="noopener noreferrer" className="btn-primary inline-flex">
               pluug 문의 관리 열기 ↗
@@ -40,7 +61,7 @@ export default async function InquiryPage() {
           </TbdNote>
         )}
 
-        <p className="text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+        <p className="border-t pt-4 text-xs" style={{ borderColor: 'var(--color-border-subtle)', color: 'var(--color-ink-faint)' }}>
           공개 사이트 &quot;문의하기&quot; 버튼이 여는 폼 링크는 여기가 아니라{' '}
           <Link href="/settings" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
             Settings

@@ -16,7 +16,7 @@ export default async function SettingsPage() {
   const { settings, error } = await getSiteSettingsRepository().get();
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="max-w-4xl space-y-8">
       <PageHeader
         title="Settings"
         description={
@@ -39,117 +39,127 @@ export default async function SettingsPage() {
       )}
 
       <form action={canWrite ? saveSiteSettingsAction : undefined} className="space-y-8">
-        <section className="card space-y-4">
+        <section className="grid gap-6 border-t pt-8 sm:grid-cols-[220px_1fr]" style={{ borderColor: 'var(--color-border)' }}>
           <div>
-            <h2 className="font-semibold">사이트 기본</h2>
-            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+            <h2 className="admin-panel-title">사이트 기본</h2>
+            <p className="mt-1.5 text-xs leading-relaxed" style={{ color: 'var(--color-ink-muted)' }}>
               브랜드명·도메인이 아직 확정되지 않았다면(§8 Q1/Q3) 비워두세요 — 코드에는 이 값이 하드코딩되지
               않습니다.
             </p>
           </div>
-          <div>
-            <label className="label" htmlFor="brandName">브랜드명</label>
-            <input
-              id="brandName"
-              name="brandName"
-              className="field"
-              defaultValue={settings.brandName}
-              placeholder="예: AI Builder Group (미확정)"
-              readOnly={!canWrite}
-            />
-          </div>
-          <div>
-            <label className="label" htmlFor="domain">도메인</label>
-            <input
-              id="domain"
-              name="domain"
-              className="field"
-              defaultValue={settings.domain}
-              placeholder="예: aibuildergroup.co (미확정)"
-              readOnly={!canWrite}
-            />
-            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
-              프로토콜 없이 도메인만 입력합니다.
-            </p>
+          <div className="card max-w-xl space-y-4">
+            <div>
+              <label className="label" htmlFor="brandName">브랜드명</label>
+              <input
+                id="brandName"
+                name="brandName"
+                className="field"
+                defaultValue={settings.brandName}
+                placeholder="예: AI Builder Group (미확정)"
+                readOnly={!canWrite}
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="domain">도메인</label>
+              <input
+                id="domain"
+                name="domain"
+                className="field"
+                defaultValue={settings.domain}
+                placeholder="예: aibuildergroup.co (미확정)"
+                readOnly={!canWrite}
+              />
+              <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-faint)' }}>
+                프로토콜 없이 도메인만 입력합니다.
+              </p>
+            </div>
           </div>
         </section>
 
-        <section className="card space-y-4">
+        <section className="grid gap-6 border-t pt-8 sm:grid-cols-[220px_1fr]" style={{ borderColor: 'var(--color-border)' }}>
           <div>
-            <h2 className="font-semibold">문의 폼 (pluug)</h2>
-            <p className="mt-1 text-xs" style={{ color: 'var(--color-ink-muted)' }}>
+            <h2 className="admin-panel-title">문의 폼 (pluug)</h2>
+            <p className="mt-1.5 text-xs leading-relaxed" style={{ color: 'var(--color-ink-muted)' }}>
               공개 사이트 &quot;문의하기&quot;가 여는 pluug 폼 링크입니다(FR-5 AC-5.3). 여기서 바꾸면 문의하기 진입점
               전체에 즉시 반영됩니다.
             </p>
           </div>
-          <div>
-            <label className="label" htmlFor="pluugFormUrl">pluug 폼 URL</label>
-            <input
-              id="pluugFormUrl"
-              name="pluugFormUrl"
-              className="field"
-              defaultValue={settings.pluugFormUrl}
-              placeholder="https://pluug.example.com/forms/..."
-              readOnly={!canWrite}
-            />
-          </div>
-          <dl className="space-y-2 rounded-lg p-3 text-xs" style={{ background: 'var(--color-surface-sunken)' }}>
-            <div className="flex items-start gap-2">
-              <dt className="badge shrink-0 bg-[var(--color-accent-soft)] text-[var(--color-accent-soft-text)]">
-                pluugFormUrl
-              </dt>
-              <dd style={{ color: 'var(--color-ink-muted)' }}>
-                여기서 설정 — 방문자가 누르는 공개 사이트 &quot;문의하기&quot; 버튼이 여는 입력 폼.
-              </dd>
+          <div className="card max-w-xl space-y-4">
+            <div>
+              <label className="label" htmlFor="pluugFormUrl">pluug 폼 URL</label>
+              <input
+                id="pluugFormUrl"
+                name="pluugFormUrl"
+                className="field"
+                defaultValue={settings.pluugFormUrl}
+                placeholder="https://pluug.example.com/forms/..."
+                readOnly={!canWrite}
+              />
             </div>
-            <div className="flex items-start gap-2">
-              <dt className="badge shrink-0 bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]">
-                PLUUG_ADMIN_URL
-              </dt>
-              <dd style={{ color: 'var(--color-ink-muted)' }}>
-                환경변수로 설정 — 관리자가 접수된 문의를 확인하는 pluug 자체 관리 화면.{' '}
-                <Link href="/inquiry" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
-                  Inquiry 메뉴
-                </Link>
-                에서 이동합니다.
-              </dd>
-            </div>
-          </dl>
-        </section>
-
-        <section className="card space-y-4">
-          <div>
-            <h2 className="font-semibold">회사 정보 (푸터)</h2>
-          </div>
-          <TbdNote title="PRD §8 Q12 — 사실 확인 전">
-            아래 값은 아직 확정된 사업자 정보로 검증되지 않았습니다. 실제 값을 확인하기 전에는 비워두거나
-            추측으로 채우지 마세요.
-          </TbdNote>
-          <div>
-            <label className="label" htmlFor="companyName">회사명</label>
-            <input id="companyName" name="companyName" className="field" defaultValue={settings.companyName} readOnly={!canWrite} />
-          </div>
-          <div>
-            <label className="label" htmlFor="ceoName">대표자</label>
-            <input id="ceoName" name="ceoName" className="field" defaultValue={settings.ceoName} readOnly={!canWrite} />
-          </div>
-          <div>
-            <label className="label" htmlFor="businessRegistrationNumber">사업자등록번호</label>
-            <input
-              id="businessRegistrationNumber"
-              name="businessRegistrationNumber"
-              className="field"
-              defaultValue={settings.businessRegistrationNumber}
-              readOnly={!canWrite}
-            />
-          </div>
-          <div>
-            <label className="label" htmlFor="operatedBy">운영주체</label>
-            <input id="operatedBy" name="operatedBy" className="field" defaultValue={settings.operatedBy} readOnly={!canWrite} />
+            <dl className="space-y-2 rounded-lg p-3 text-xs" style={{ background: 'var(--color-surface-sunken)' }}>
+              <div className="flex items-start gap-2">
+                <dt className="badge shrink-0 bg-[var(--color-accent-soft)] text-[var(--color-accent-soft-text)]">
+                  pluugFormUrl
+                </dt>
+                <dd style={{ color: 'var(--color-ink-muted)' }}>
+                  여기서 설정 — 방문자가 누르는 공개 사이트 &quot;문의하기&quot; 버튼이 여는 입력 폼.
+                </dd>
+              </div>
+              <div className="flex items-start gap-2">
+                <dt className="badge shrink-0 bg-[var(--color-neutral-badge-bg)] text-[var(--color-neutral-badge)]">
+                  PLUUG_ADMIN_URL
+                </dt>
+                <dd style={{ color: 'var(--color-ink-muted)' }}>
+                  환경변수로 설정 — 관리자가 접수된 문의를 확인하는 pluug 자체 관리 화면.{' '}
+                  <Link href="/inquiry" className="hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
+                    Inquiry 메뉴
+                  </Link>
+                  에서 이동합니다.
+                </dd>
+              </div>
+            </dl>
           </div>
         </section>
 
-        {canWrite && <SaveButton />}
+        <section className="grid gap-6 border-t pt-8 sm:grid-cols-[220px_1fr]" style={{ borderColor: 'var(--color-border)' }}>
+          <div>
+            <h2 className="admin-panel-title">회사 정보 (푸터)</h2>
+          </div>
+          <div className="card max-w-xl space-y-4">
+            <TbdNote title="PRD §8 Q12 — 사실 확인 전">
+              아래 값은 아직 확정된 사업자 정보로 검증되지 않았습니다. 실제 값을 확인하기 전에는 비워두거나
+              추측으로 채우지 마세요.
+            </TbdNote>
+            <div>
+              <label className="label" htmlFor="companyName">회사명</label>
+              <input id="companyName" name="companyName" className="field" defaultValue={settings.companyName} readOnly={!canWrite} />
+            </div>
+            <div>
+              <label className="label" htmlFor="ceoName">대표자</label>
+              <input id="ceoName" name="ceoName" className="field" defaultValue={settings.ceoName} readOnly={!canWrite} />
+            </div>
+            <div>
+              <label className="label" htmlFor="businessRegistrationNumber">사업자등록번호</label>
+              <input
+                id="businessRegistrationNumber"
+                name="businessRegistrationNumber"
+                className="field"
+                defaultValue={settings.businessRegistrationNumber}
+                readOnly={!canWrite}
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor="operatedBy">운영주체</label>
+              <input id="operatedBy" name="operatedBy" className="field" defaultValue={settings.operatedBy} readOnly={!canWrite} />
+            </div>
+          </div>
+        </section>
+
+        {canWrite && (
+          <div className="border-t pt-8 sm:pl-[calc(220px+1.5rem)]" style={{ borderColor: 'var(--color-border)' }}>
+            <SaveButton />
+          </div>
+        )}
       </form>
     </div>
   );

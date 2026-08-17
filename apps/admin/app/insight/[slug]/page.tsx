@@ -3,10 +3,12 @@ import { notFound } from 'next/navigation';
 import { auditPost, getRepository } from '@orca/content';
 
 import { deletePostAction, savePostAction } from '@/app/actions';
+import { DetailNav } from '@/components/DetailNav';
 import { Editor } from '@/components/Editor';
 import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
+import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
-import { ScoreBadge, StatusBadge } from '@/components/StatusBadge';
+import { ScoreCircle, StatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -39,8 +41,16 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
   const canDelete = hasPermission(account.menuPermissions.insight, 'full');
 
   const { slug } = await params;
-  const post = await getRepository().getBySlug(decodeURIComponent(slug));
+  const [post, { posts: allPosts }] = await Promise.all([
+    getRepository().getBySlug(decodeURIComponent(slug)),
+    getRepository().getAll(),
+  ]);
   if (!post) notFound();
+
+  // 목록과 동일한 정렬(발행일·수정일 최신순) 기준으로 이전/다음을 찾는다.
+  const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
+  const prevPost = currentIndex > 0 ? allPosts[currentIndex - 1] : undefined;
+  const nextPost = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : undefined;
 
   const audit = auditPost(post);
   const faqRows = [...post.geo.faq, ...Array.from({ length: EXTRA_ROWS }, () => ({ question: '', answer: '' }))];
@@ -59,22 +69,22 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/insight" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            ← 목록
-          </Link>
           <h1 className="text-xl font-semibold tracking-tight">{post.title}</h1>
           <StatusBadge status={post.status} />
-          <ScoreBadge score={audit.score} />
+          <ScoreCircle score={audit.score} />
         </div>
-        <div className="flex items-center gap-2">
-          <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="btn-secondary">
-            검수 화면
-          </Link>
-          {canWrite && (
-            <button type="submit" className="btn-primary">
-              저장
-            </button>
-          )}
+        <div className="flex items-center gap-6">
+          <DetailNav
+            listHref="/insight"
+            prev={prevPost && { href: `/insight/${encodeURIComponent(prevPost.slug)}`, label: prevPost.title }}
+            next={nextPost && { href: `/insight/${encodeURIComponent(nextPost.slug)}`, label: nextPost.title }}
+          />
+          <div className="flex items-center gap-2">
+            <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="btn-secondary">
+              검수 화면
+            </Link>
+            {canWrite && <SaveButton />}
+          </div>
         </div>
       </header>
 

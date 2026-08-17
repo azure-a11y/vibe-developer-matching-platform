@@ -41,7 +41,7 @@ export default async function PermissionsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        title="계정 · 권한"
+        title="Accounts & Permissions"
         description="등급 이름·범위는 아직 클라이언트 확인 전입니다(04_정책정의.md §4.5) — 등급은 표시용 자유 텍스트일 뿐, 실제 접근 권한은 메뉴별 권한 표로만 결정됩니다."
       />
 
@@ -104,20 +104,20 @@ export default async function PermissionsPage({
         </form>
       )}
 
-      <div className="overflow-x-auto rounded-lg" style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
+      <div className="table-shell">
         <table className="w-full text-sm">
           <thead>
-            <TableHeadRow labels={['이름', '이메일', '등급', '상태']} actionsColumn />
+            <TableHeadRow labels={['이름', '이메일', '등급', '상태']} actionsColumn centerColumns={[2, 3]} />
           </thead>
-          <tbody className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
+          <tbody className="divide-y">
             {accounts.map((a) => (
               <tr key={a.slug} className="transition-colors hover:bg-[var(--color-surface-sunken)]">
                 <td className="px-5 py-4 font-medium">{a.name}</td>
                 <td className="px-5 py-4" style={{ color: 'var(--color-ink-muted)' }}>{a.email}</td>
-                <td className="px-5 py-4">
+                <td className="px-5 py-4 text-center">
                   <GradeBadge grade={a.grade} />
                 </td>
-                <td className="px-5 py-4">
+                <td className="px-5 py-4 text-center">
                   <AccountStatusBadge status={a.status} />
                 </td>
                 <td className="whitespace-nowrap px-5 py-4 text-right">

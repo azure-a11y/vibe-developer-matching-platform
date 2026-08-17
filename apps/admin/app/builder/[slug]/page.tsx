@@ -1,9 +1,10 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getBuilderRepository } from '@orca/content';
 
 import { deleteBuilderAction, saveBuilderAction } from '@/app/builder/actions';
+import { DetailNav } from '@/components/DetailNav';
 import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
+import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
@@ -22,8 +23,16 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
   const canDelete = hasPermission(account.menuPermissions.builder, 'full');
 
   const { slug } = await params;
-  const builder = await getBuilderRepository().getBySlug(decodeURIComponent(slug));
+  const [builder, { builders: allBuilders }] = await Promise.all([
+    getBuilderRepository().getBySlug(decodeURIComponent(slug)),
+    getBuilderRepository().getAll(),
+  ]);
   if (!builder) notFound();
+
+  // 목록과 동일한 정렬(수정일 최신순) 기준으로 이전/다음을 찾는다.
+  const currentIndex = allBuilders.findIndex((b) => b.slug === builder.slug);
+  const prevBuilder = currentIndex > 0 ? allBuilders[currentIndex - 1] : undefined;
+  const nextBuilder = currentIndex >= 0 && currentIndex < allBuilders.length - 1 ? allBuilders[currentIndex + 1] : undefined;
 
   return (
     <form action={saveBuilderAction} className="space-y-8">
@@ -31,17 +40,17 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
 
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Link href="/builder" className="text-sm" style={{ color: 'var(--color-ink-muted)' }}>
-            ← 목록
-          </Link>
           <h1 className="text-xl font-semibold tracking-tight">{builder.displayName}</h1>
           <BuilderStatusBadge status={builder.status} />
         </div>
-        {canWrite && (
-          <button type="submit" className="btn-primary">
-            저장
-          </button>
-        )}
+        <div className="flex items-center gap-6">
+          <DetailNav
+            listHref="/builder"
+            prev={prevBuilder && { href: `/builder/${encodeURIComponent(prevBuilder.slug)}`, label: prevBuilder.displayName }}
+            next={nextBuilder && { href: `/builder/${encodeURIComponent(nextBuilder.slug)}`, label: nextBuilder.displayName }}
+          />
+          {canWrite && <SaveButton />}
+        </div>
       </header>
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">

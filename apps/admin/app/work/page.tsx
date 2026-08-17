@@ -4,8 +4,9 @@ import type { WorkStatus } from '@orca/content';
 
 import { createWorkAction } from '@/app/work/actions';
 import { TableHeadRow } from '@/components/AdminTable';
+import { CountSummary } from '@/components/CountSummary';
 import { EmptyState } from '@/components/EmptyState';
-import { FilterBar } from '@/components/FilterBar';
+import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
 import { WorkStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
@@ -38,6 +39,7 @@ export default async function WorkListPage({
     total: allWorks.length,
     pendingReview: allWorks.filter((w) => w.status === 'pending_review').length,
     published: allWorks.filter((w) => w.status === 'published').length,
+    archived: allWorks.filter((w) => w.status === 'archived').length,
   };
 
   const query = q.trim().toLowerCase();
@@ -52,7 +54,16 @@ export default async function WorkListPage({
     <div className="space-y-6">
       <PageHeader
         title="Work"
-        description={`전체 ${counts.total} · 승인 대기 ${counts.pendingReview} · 공개 ${counts.published}`}
+        description={
+          <CountSummary
+            total={counts.total}
+            items={[
+              { label: '승인 대기', count: counts.pendingReview, tone: 'pending' },
+              { label: '공개', count: counts.published, tone: 'confirmed' },
+              { label: '보관', count: counts.archived, tone: 'muted' },
+            ]}
+          />
+        }
       />
 
       {errors.length > 0 && (
@@ -68,40 +79,41 @@ export default async function WorkListPage({
         </div>
       )}
 
+      {canWrite && (
+        <CreatePanel label="+ Work 추가">
+          <form action={createWorkAction} className="flex flex-wrap items-end gap-3">
+            <div className="min-w-56">
+              <label className="label" htmlFor="title">
+                프로젝트명
+              </label>
+              <input id="title" name="title" className="field" placeholder="예: Flowdesk" required />
+            </div>
+            <div className="w-40">
+              <label className="label" htmlFor="slug">
+                슬러그 (선택)
+              </label>
+              <input id="slug" name="slug" className="field" placeholder="자동 생성" />
+            </div>
+            <button type="submit" className="btn-primary">
+              Work 추가
+            </button>
+          </form>
+        </CreatePanel>
+      )}
+
       <FilterBar
         searchPlaceholder="프로젝트명 또는 슬러그로 검색"
         defaultQuery={q}
         statusOptions={STATUS_FILTER_OPTIONS}
         defaultStatus={status}
-        actions={
-          canWrite && (
-            <form action={createWorkAction} className="flex flex-wrap items-end gap-3">
-              <div className="min-w-56">
-                <label className="label" htmlFor="title">
-                  프로젝트명
-                </label>
-                <input id="title" name="title" className="field" placeholder="예: Flowdesk" required />
-              </div>
-              <div className="w-40">
-                <label className="label" htmlFor="slug">
-                  슬러그 (선택)
-                </label>
-                <input id="slug" name="slug" className="field" placeholder="자동 생성" />
-              </div>
-              <button type="submit" className="btn-primary">
-                Work 추가
-              </button>
-            </form>
-          )
-        }
       />
 
-      <div className="overflow-x-auto rounded-lg" style={{ border: '1px solid var(--color-border)', background: 'var(--color-surface)' }}>
+      <div className="table-shell">
         <table className="w-full text-sm">
           <thead>
-            <TableHeadRow labels={['프로젝트명', '참여 빌더', '작업 기간', '상태', '수정일']} />
+            <TableHeadRow labels={['프로젝트명', '참여 빌더', '작업 기간', '상태', '수정일']} centerColumns={[3]} />
           </thead>
-          <tbody className="divide-y" style={{ borderColor: 'var(--color-border)' }}>
+          <tbody className="divide-y">
             {works.map((work) => (
               <tr key={work.slug} className="transition-colors hover:bg-[var(--color-surface-sunken)]">
                 <td className="px-5 py-4">
@@ -120,7 +132,7 @@ export default async function WorkListPage({
                 <td className="px-5 py-4" style={{ color: 'var(--color-ink-muted)' }}>
                   {work.period || '—'}
                 </td>
-                <td className="px-5 py-4">
+                <td className="px-5 py-4 text-center">
                   <WorkStatusBadge status={work.status} />
                 </td>
                 <td className="px-5 py-4 tabular-nums" style={{ color: 'var(--color-ink-faint)' }}>
