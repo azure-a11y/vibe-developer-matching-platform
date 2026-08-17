@@ -34,3 +34,8 @@ wiki/memory/short-term/*.local.md
 
 # Admin account passwordHash values are credentials, not content — never commit
 content/admin-accounts/
+
+# Session log dumps (work-log-compact-*.md) run tens of MB each — local only.
+# Small dated notes already tracked here (work-log-2026-08-04.md 등) stay
+# tracked; this only stops new large dumps from being added by accident.
+docs/work-log/
