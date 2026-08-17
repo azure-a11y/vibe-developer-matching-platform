@@ -15,11 +15,6 @@ const VIDEOS: Video[] = [
 ]
 
 export default function ContentView() {
-  useEffect(() => {
-    document.body.classList.add('dark')
-    return () => document.body.classList.remove('dark')
-  }, [])
-
   /* 유튜브 직행 + UTM (목업: 이동 대신 클릭 트래킹만 남긴다) */
   useEffect(() => {
     document.querySelectorAll<HTMLElement>('[data-yt]').forEach(v => {

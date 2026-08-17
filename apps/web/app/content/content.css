@@ -1,19 +1,4 @@
-/* 다크 지면 페이지 (시안 B 크래프트) */
-body { color: var(--paper);
-  background:
-    radial-gradient(1000px 640px at 96% -8%, rgba(216,255,61,.09), transparent 55%),
-    radial-gradient(1200px 800px at -6% 110%, rgba(216,255,61,.05), transparent 55%),
-    var(--ink);
-  background-attachment: fixed; }
-body::after { opacity: .05; }
-.gnb.scrolled { background: color-mix(in srgb, var(--ink) 86%, transparent); border-bottom-color: var(--d-line); }
-.gnb nav a { color: var(--paper); opacity: .5; } .gnb nav a:hover { opacity: 1; }
-.gnb nav a.active { opacity: 1; } .gnb nav a.active::after { background: var(--lime); }
-.logo { color: var(--paper); }
-.page-head { border-bottom-color: var(--d-line); }
-.page-head p { color: var(--d-mut); }
-.crumb { color: var(--d-mut2); }
-/* v19: 이음새 리본 (다크 페이지 — 라임 발광) */
+/* v19: 이음새 리본 */
 .ribbon-sep { position: relative; height: 0; z-index: 6; pointer-events: none; }
 .ribbon-sep svg { position: absolute; left: 0; right: 0; top: -120px; width: 100%; height: 200px;
   display: block; overflow: visible; filter: drop-shadow(0 12px 28px rgba(0,0,0,.4)); }
@@ -50,11 +35,6 @@ body::after { opacity: .05; }
   color: var(--d-mut2); display: block; margin-bottom: 10px; }
 .sub-banner h3 { margin: 0 0 4px; font-size: 23px; font-weight: 800; letter-spacing: -0.035em; }
 .sub-banner p { margin: 0; color: var(--d-mut); font-size: 14px; }
-footer { background: #131310; border-top-color: var(--d-line); }
-.ft__top { border-bottom-color: var(--d-line); }
-.ft__brand p, .ft__nav a, .ft__biz, .ft__bottom { color: var(--d-mut2); }
-.ft__biz b { color: var(--d-mut); }
-.ft__nav a:hover, .ft__bottom a:hover { color: var(--paper); }
 @media (max-width: 900px) { .vg { grid-template-columns: 1fr; } .feat { aspect-ratio: 16/9; } }
 .vcell .vimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .vcell .vshade { position: absolute; inset: 0; background: linear-gradient(200deg, rgba(0,0,0,.04) 40%, rgba(0,0,0,.72)); }

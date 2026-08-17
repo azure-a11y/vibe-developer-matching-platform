@@ -33,7 +33,8 @@ export default function BrandLink({ brandName, className = 'logo', onNavigate }:
 
   return (
     <Link className={className} href="/" onClick={onClick} aria-label={`${brandName || 'AI빌더그룹'} 홈`}>
-      <em>✳</em>{brandName || 'AI빌더그룹'}
+      <img src="/logo-full.svg" alt="" className="logo-mark" />
+      {brandName || 'AI빌더그룹'}
     </Link>
   )
 }
