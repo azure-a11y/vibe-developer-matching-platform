@@ -39,3 +39,8 @@ content/admin-accounts/
 # Small dated notes already tracked here (work-log-2026-08-04.md 등) stay
 # tracked; this only stops new large dumps from being added by accident.
 docs/work-log/
+
+# Local reference checkout of an external project (never tracked in this
+# repo's history) — overlaps heavily with artifact/ai-builder-group/, which
+# is the actual tracked copy.
+reference/
