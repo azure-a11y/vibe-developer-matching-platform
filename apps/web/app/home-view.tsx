@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, type CSSProperties, type ReactNode } from 'react'
 
 import { useReplayOnView } from '@/components/fx'
+import { RibbonSep } from '@/components/RibbonSep'
 import type { FaqTopic } from '@/lib/faq'
 
 /* 스테퍼 점등 순서를 CSS 변수로 넘긴다 (CSS 커스텀 속성이라 캐스트가 필요하다) */
@@ -93,7 +94,12 @@ const S2_ITEMS: S2Item[] = [
     lead: '실서비스 URL을 물어보세요.',
     point: '답 못 하면 목업입니다.',
     fig: (
-      <div className="w-fig w-fig1"><i></i><i></i><i></i><i></i><i className="real"></i><i></i><i></i><i></i><i></i></div>
+      <div className="w-fig w-fig1">
+        <div className="w-fig1__shot">
+          <span className="dots"><i></i><i></i><i></i></span>
+          <img src="/assets/img/s2-real-site.jpg" alt="" />
+        </div>
+      </div>
     ),
   },
   {
@@ -221,78 +227,9 @@ export default function HomeView({
   faqTopics: FaqTopic[]
 }) {
   /* 0.85 — 스테퍼가 화면에 거의 다 들어왔을 때 시작한다. 낮게 잡으면 아직 화면 끄트머리에
-     있을 때 재생이 끝나서, 정작 눈이 갔을 땐 이미 다 켜져 있다. */
-  useReplayOnView('[data-stepflow]', 'lit', 0.85)
-
-  /* v19.5 이음새 리본 — 문구 덱 로테이션(페이드 전환) + 곡선 흐름 */
-  useEffect(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const DECKS: Record<string, string[]> = {
-      rsepA: [
-        'AI 에이전트 ✳ 랜딩 페이지 ✳ 플랫폼 ✳ 모바일 앱 ✳ 업무 자동화 ✳ ',
-        'PLAN ✳ DESIGN ✳ BUILD ✳ REVIEW ✳ 올인원 턴키 ✳ ',
-        '아이디어만 가져오세요 ✳ WE BUILD THE REST ✳ NDA 가능 ✳ ',
-        'PoC 먼저, 확장은 그다음 ✳ SHIP FAST, SHIP RIGHT ✳ ',
-      ],
-    }
-    const ROT: Record<string, number> = { rsepA: 5200 }
-    type Flow = { tp: SVGTextPathElement; di: number; off: number; unit: number; speed: number }
-    const flows: Flow[] = []
-    const timeouts: number[] = []
-    const intervals: number[] = []
-    document.querySelectorAll<SVGTextPathElement>('[data-wflow]').forEach(tp => {
-      const pid = (tp.getAttribute('href') || '').slice(1)
-      const path = document.getElementById(pid) as unknown as SVGPathElement | null
-      if (!path) return
-      const decks = DECKS[pid] || [tp.textContent || '']
-      const pathLen = path.getTotalLength()
-      const txt = tp.parentNode as SVGTextElement
-      txt.style.transition = 'opacity .45s ease'
-      const f: Flow = {
-        tp, di: 0, off: 0, unit: 10,
-        speed: parseFloat(tp.dataset.speed || '0.022') * (tp.dataset.dir === 'rev' ? -1 : 1),
-      }
-      const setDeck = (i: number) => {
-        f.di = i
-        const phrase = decks[i]
-        tp.textContent = phrase ?? ''
-        const one = Math.max(1, tp.getComputedTextLength())
-        const n = Math.max(2, Math.ceil((pathLen * 1.5) / one) + 1)
-        tp.textContent = new Array(n + 1).join(phrase)
-        f.unit = (one / pathLen) * 100
-        f.off = -f.unit / 2
-      }
-      setDeck(0)
-      flows.push(f)
-      if (!reduce && decks.length > 1) {
-        const period = ROT[pid] || 5000
-        const swap = () => {
-          if (document.hidden) return
-          txt.style.opacity = '0'
-          timeouts.push(window.setTimeout(() => { setDeck((f.di + 1) % decks.length); txt.style.opacity = '1' }, 470))
-        }
-        timeouts.push(window.setTimeout(() => { swap(); intervals.push(window.setInterval(swap, period)) }, 2600))
-      }
-    })
-    let raf = 0
-    if (!reduce && flows.length) {
-      const loop = () => {
-        flows.forEach(f => {
-          f.off -= f.speed
-          if (f.off <= -f.unit) f.off += f.unit
-          if (f.off > 0) f.off -= f.unit
-          f.tp.setAttribute('startOffset', f.off + '%')
-        })
-        raf = requestAnimationFrame(loop)
-      }
-      raf = requestAnimationFrame(loop)
-    }
-    return () => {
-      cancelAnimationFrame(raf)
-      timeouts.forEach(t => clearTimeout(t))
-      intervals.forEach(t => clearInterval(t))
-    }
-  }, [])
+     있을 때 재생이 끝나서, 정작 눈이 갔을 땐 이미 다 켜져 있다. 스탯 숫자 펄스(s4x__stats)도
+     같은 스크롤-재생 트리거를 공유한다. */
+  useReplayOnView('[data-stepflow], [data-numpulse]', 'lit', 0.85)
 
   /* S2 "이런 곳은 조심하세요" — IntersectionObserver 기반 활성 항목 추적 + 클릭 이동 (휠 캡처 없음) */
   useEffect(() => {
@@ -521,16 +458,15 @@ export default function HomeView({
           <div className="hero__scroll">SCROLL</div>
         </section>
 
-        <div className="ribbon-sep" aria-hidden="true">
-          <svg viewBox="0 0 1600 220" preserveAspectRatio="xMidYMid slice">
-            <path id="rsepA" d="M -80,150 C 240,90 420,190 720,150 C 1020,110 1220,170 1420,120 C 1520,95 1600,100 1700,80" fill="none" />
-            <use href="#rsepA" className="edge2" />
-            <use href="#rsepA" className="lane2" />
-            <text className="t2" dy="6">
-              <textPath href="#rsepA" data-wflow data-unit="5" data-speed="0.026" data-dir="rev">AI 에이전트 ✳ 랜딩 ✳ 플랫폼 ✳ 모바일 앱 ✳ 자동화 ✳ AI 에이전트 ✳ 랜딩 ✳ 플랫폼 ✳ 모바일 앱 ✳ 자동화 ✳ </textPath>
-            </text>
-          </svg>
-        </div>
+        <RibbonSep
+          id="rsepA"
+          phrases={[
+            'AI 에이전트 ✳ 랜딩 페이지 ✳ 플랫폼 ✳ 모바일 앱 ✳ 업무 자동화 ✳ ',
+            'PLAN ✳ DESIGN ✳ BUILD ✳ REVIEW ✳ 올인원 턴키 ✳ ',
+            '아이디어만 가져오세요 ✳ WE BUILD THE REST ✳ NDA 가능 ✳ ',
+            'PoC 먼저, 확장은 그다음 ✳ SHIP FAST, SHIP RIGHT ✳ ',
+          ]}
+        />
 
         <section className="s4x" id="system">
           <div className="wrap">
@@ -576,13 +512,13 @@ export default function HomeView({
               </div>
             </div>
             <div className="sys__flow2" data-stepflow aria-label="검증 프로세스" style={{ marginTop: 72 }}>
-              <span className="fstep" style={step(0)}><span className="dot">01</span><span className="lb2">교육<small>커리큘럼 수료</small></span></span>
+              <span className="fstep" style={step(0)}><span className="dot">01</span><span className="lb2"><span className="lb2t">교육</span><small>커리큘럼 수료</small></span></span>
               <span className="fline" style={step(1)}></span>
-              <span className="fstep" style={step(2)}><span className="dot">02</span><span className="lb2">제작<small>검증된 빌더</small></span></span>
+              <span className="fstep" style={step(2)}><span className="dot">02</span><span className="lb2"><span className="lb2t">제작</span><small>검증된 빌더</small></span></span>
               <span className="fline" style={step(3)}></span>
-              <span className="fstep" style={step(4)}><span className="dot">03</span><span className="lb2">검수<small>9년차 기준 심사</small></span></span>
+              <span className="fstep" style={step(4)}><span className="dot">03</span><span className="lb2"><span className="lb2t">검수</span><small>9년차 기준 심사</small></span></span>
               <span className="fline" style={step(5)}></span>
-              <span className="fstep fstep--last" style={step(6)}><span className="dot">✓</span><span className="lb2">고객 전달<small>검수 통과분만</small></span></span>
+              <span className="fstep fstep--last" style={step(6)}><span className="dot">✓</span><span className="lb2"><span className="lb2t">고객 전달</span><small>검수 통과분만</small></span></span>
             </div>
           </div>
         </section>
@@ -598,11 +534,11 @@ export default function HomeView({
                 <div className="brow"><div className="btrack btrack--rev"><Bset brands={BRANDS2} /><Bset brands={BRANDS2} /></div></div>
               </div>
             </div>
-            <div className="s4x__stats" style={{ marginTop: 36 }}>
-              <span className="st2"><b>3<em>단계</em></b><span>모든 단계 확인 후 진행</span></span>
-              <span className="st2"><b>17<em>화면</em></b><span>범위를 화면 단위로 확정</span></span>
-              <span className="st2"><b>3<em>주</em></b><span>랜딩 표준 납기</span></span>
-              <span className="st2"><b>30<em>일</em></b><span>무상 하자보수 보장</span></span>
+            <div className="s4x__stats" data-numpulse style={{ marginTop: 36 }}>
+              <span className="st2" style={step(0)}><b>3<em>단계</em></b><span>모든 단계 확인 후 진행</span></span>
+              <span className="st2" style={step(1)}><b>17<em>화면</em></b><span>범위를 화면 단위로 확정</span></span>
+              <span className="st2" style={step(2)}><b>3<em>주</em></b><span>랜딩 표준 납기</span></span>
+              <span className="st2" style={step(3)}><b>30<em>일</em></b><span>무상 하자보수 보장</span></span>
             </div>
           </div>
         </section>
@@ -611,8 +547,7 @@ export default function HomeView({
           <div className="wrap">
             <div className="s2__grid">
               <div className="s2__left">
-                <h2>요즘 바이브 코딩 외주,<br />이런 곳은 조심하세요</h2>
-                <p className="note">아래 항목을 눌러 바로 확인하거나, 스크롤을 내리면 순서대로 나타납니다.</p>
+                <h2><span className="w300">요즘 바이브 코딩 외주,</span><br />이런 곳은 조심하세요</h2>
                 <nav className="s2steps" aria-label="주의할 외주 업체 유형">
                   {S2_ITEMS.map((it, i) => (
                     <button
