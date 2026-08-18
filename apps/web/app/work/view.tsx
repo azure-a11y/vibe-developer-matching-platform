@@ -111,10 +111,12 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
   return (
     <>
       <main id="main">
-        <div className="page-head">
-          <div className="wrap">
-            <h1><span className="w300">만드는 사람과,</span> 만든 것들</h1>
-            <p>추천받고 싶다면 30초 매칭으로, 직접 둘러보고 싶다면 작업물부터. 두 길 모두 열어두었습니다.</p>
+        <div className="page-head page-head--work">
+          <div className="wrap page-head__row">
+            <div className="page-head__text">
+              <h1><span className="w300">만드는 사람과,</span> 만든 것들</h1>
+              <p>추천받고 싶다면 30초 매칭으로, 직접 둘러보고 싶다면 작업물부터. 두 길 모두 열어두었습니다.</p>
+            </div>
             <div className="head-stats">
               <div><b className="num">{builders.length}</b><span>검증된 빌더</span></div>
               <div><b className="num">{String(works.length).padStart(2, '0')}</b><span>공개 프로젝트</span></div>
