@@ -127,7 +127,7 @@ export default async function InsightListPage({
       <div className="table-shell">
         <table className="w-full text-sm">
           <thead>
-            <TableHeadRow labels={['제목', '상태', '점수', '작성자', '수정일']} actionsColumn centerColumns={[1, 2]} />
+            <TableHeadRow labels={['제목', '상태', '점수', '작성자', '수정일']} actionsColumn actionsLabel="검수" centerColumns={[1, 2]} />
           </thead>
           <tbody className="divide-y">
             {posts.map((post) => {
@@ -155,8 +155,14 @@ export default async function InsightListPage({
                     {post.updatedAt.slice(0, 10)}
                   </td>
                   <td className="whitespace-nowrap px-5 py-4 text-right">
-                    <Link href={`/insight/${encodeURIComponent(post.slug)}/review`} className="text-sm" style={{ color: 'var(--color-accent-soft-text)' }}>
-                      검수
+                    <Link
+                      href={`/insight/${encodeURIComponent(post.slug)}/review`}
+                      aria-label="검수"
+                      title="검수"
+                      className="inline-flex rounded-md p-1.5 transition-colors hover:bg-[var(--color-surface-sunken)]"
+                      style={{ color: 'var(--color-ink-muted)' }}
+                    >
+                      <EditIcon />
                     </Link>
                   </td>
                 </tr>
@@ -175,5 +181,19 @@ export default async function InsightListPage({
         </table>
       </div>
     </div>
+  );
+}
+
+function EditIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M11.5 2.5l2 2L5 13H3v-2l8.5-8.5z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }

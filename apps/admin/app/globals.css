@@ -54,14 +54,17 @@ body {
 h1, h2, h3 { letter-spacing: -0.02em; }
 main h2 { font-size: 1.0625rem; font-weight: 600; letter-spacing: -0.01em; }
 main .overflow-x-auto { border-radius: 0.5rem; }
-main table thead { border-bottom: 1px solid var(--color-border); }
+main table thead { border-bottom: 1px solid var(--color-border-subtle); }
 
 /* Tailwind's `divide-y` only sets border-width — color defaults to
    `currentColor` (the row's text color) unless a divide-color utility is
    applied. Every list/table in this app relies on the bare utility, so fix
    the color centrally instead of adding a `divide-*` class at every call
-   site. */
-.divide-y > :not([hidden]) ~ :not([hidden]) {
+   site. Selector must mirror Tailwind's own `:not(:last-child)` exactly —
+   using `:not([hidden]) ~ :not([hidden])` (not-first) instead left the
+   first row's divider on `currentColor`, since Tailwind gives that row a
+   border-width but this override never matched it to recolor it. */
+.divide-y > :not(:last-child) {
   border-color: var(--color-border-subtle);
 }
 
@@ -188,7 +191,7 @@ input[type='checkbox']:focus-visible {
 .admin-page-title { font-size: 1.75rem; font-weight: 600; letter-spacing: -0.015em; }
 .admin-panel-title { font-size: 1.0625rem; font-weight: 600; }
 .table-shell { overflow-x: auto; border: 1px solid var(--color-border); border-radius: 0.5rem; background: var(--color-surface); }
-.table-shell table thead { border-bottom: 1px solid var(--color-border); }
+.table-shell table thead { border-bottom: 1px solid var(--color-border-subtle); }
 .table-shell tbody tr:hover { background: var(--color-row-hover); }
 .concept-note { border-radius: 0.375rem; background: var(--color-warning-bg); color: #7c3f0a; }
 

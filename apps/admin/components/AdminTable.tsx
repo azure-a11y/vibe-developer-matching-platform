@@ -6,14 +6,16 @@
 export function TableHeadRow({
   labels,
   actionsColumn,
+  actionsLabel,
   centerColumns = [],
 }: {
   labels: string[];
   actionsColumn?: boolean;
+  actionsLabel?: string;
   centerColumns?: number[];
 }) {
   return (
-    <tr style={{ borderBottom: '1px solid var(--color-border)', background: 'var(--color-surface-sunken)' }}>
+    <tr style={{ borderBottom: '1px solid var(--color-border-subtle)', background: 'var(--color-surface-sunken)' }}>
       {labels.map((label, i) => (
         <th
           key={label}
@@ -23,7 +25,14 @@ export function TableHeadRow({
           {label}
         </th>
       ))}
-      {actionsColumn && <th className="px-5 py-3" />}
+      {actionsColumn && (
+        <th
+          className="whitespace-nowrap px-5 py-3.5 text-right text-[12px] font-semibold uppercase tracking-wide"
+          style={{ color: 'var(--color-ink-muted)' }}
+        >
+          {actionsLabel}
+        </th>
+      )}
     </tr>
   );
 }

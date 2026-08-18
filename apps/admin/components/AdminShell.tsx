@@ -126,7 +126,7 @@ export function AdminShell({ children, account, pendingCounts, attentionItems, b
               className="shrink-0 font-medium transition-colors hover:underline"
               style={{ color: 'var(--color-ink-faint)' }}
             >
-              admin home
+              Admin home
             </Link>
             <span className="shrink-0" style={{ color: 'var(--color-ink-faint)' }}>
               ›
