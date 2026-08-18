@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 
+import { RibbonSep } from '@/components/RibbonSep'
+
 type Video = { yt: string; dur: string; title: string; sub: string }
 
 const FEATURED: Video = { yt: '0dBSo3eDE-E', dur: '15:47', title: '2025 똑똑한개발자 상반기 워크샵', sub: '똑똑한개발자 · 오피셜' }
@@ -34,6 +36,14 @@ export default function ContentView() {
           <p>김이솝의 AI 가이드 · 똑똑한개발자 · AI 서대표 — 세 채널의 실전 콘텐츠</p>
         </div>
       </div>
+      <RibbonSep
+        id="rsepContent"
+        phrases={[
+          '유튜브 워크숍 ✳ AI 튜토리얼 ✳ 라이브 코딩 ✳ 실전 강의 ✳ ',
+          'WATCH & LEARN ✳ REAL BUILDS ✳ NO FLUFF ✳ ',
+          '김이솝의 AI 가이드 ✳ 똑똑한개발자 ✳ AI 서대표 ✳ ',
+        ]}
+      />
       <div className="wrap" style={{ padding: '20px 32px 100px' }}>
         <a className="vcell feat slot" href={`https://www.youtube.com/watch?v=${FEATURED.yt}`} data-yt data-utm="featured">
           <img className="vimg" src={`https://i.ytimg.com/vi/${FEATURED.yt}/hqdefault.jpg`} alt={FEATURED.title} fetchPriority="high" decoding="async" />

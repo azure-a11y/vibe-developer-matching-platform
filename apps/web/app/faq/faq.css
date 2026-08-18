@@ -1,4 +1,16 @@
 /* FAQ 전용 페이지 — 홈 S9 FAQ 섹션과 같은 시각 언어(topics/faq-item)를 이 라우트로 옮겨온 것. */
+
+/* 이음새 리본 간격 — 전역 기본값(builder-group-design.css)은 홈페이지 기준이라
+   이 페이지엔 안 맞는다. top/margin-bottom은 박스 크기가 아니라 실제 곡선
+   궤적(SVGPathElement.getPointAtLength + getScreenCTM)으로 실측해서 맞춘
+   값이다 — path가 곡선이라 svg 박스 상단/하단과 실제로 보이는 선 위치가
+   다르므로, top·height만으로 계산하면 어긋난다. 설명문구-리본 간격 20px
+   (다른 서브 페이지와 통일), 리본-본문 간격 35px 기준. */
+.ribbon-sep svg { top: -134px; }
+.ribbon-sep { margin-bottom: 90px; }
+@media (max-width: 960px) {
+  .ribbon-sep { margin-bottom: 44px; }
+}
 .faq-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
 .faq-toolbar .topics { margin-bottom: 0; }
 .faq-search { width: 260px; max-width: 100%; padding: 11px 20px; border: 1.5px solid var(--line); border-radius: 999px;

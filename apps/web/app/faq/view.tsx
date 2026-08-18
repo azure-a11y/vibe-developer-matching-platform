@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 
+import { RibbonSep } from '@/components/RibbonSep'
 import type { FaqTopic } from '@/lib/faq'
 
 const PAGE_SIZE = 10
@@ -136,6 +137,14 @@ export default function FaqView({ topics }: { topics: FaqTopic[] }) {
           <p>외주 문의부터 진행 방식까지, 가장 많이 받는 질문을 모았습니다.</p>
         </div>
       </div>
+      <RibbonSep
+        id="rsepFaq"
+        phrases={[
+          '견적 문의 ✳ 진행 방식 ✳ 계약 · 결제 ✳ 유지보수 ✳ ',
+          'GOT QUESTIONS? ✳ WE ANSWER FAST ✳ ',
+          '무료 상담 ✳ NDA 가능 ✳ 빠른 회신 ✳ ',
+        ]}
+      />
 
       <div className="wrap" style={{ padding: '48px 32px 120px' }}>
         {topics.length === 0 ? (

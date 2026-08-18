@@ -29,12 +29,19 @@
   .arow { grid-template-columns: 1fr; }
 }
 
-/* v19: 이음새 리본 (서브 페이지 슬림 버전) */
-.ribbon-sep { position: relative; height: 0; z-index: 6; pointer-events: none; }
-.ribbon-sep svg { position: absolute; left: 0; right: 0; top: -96px; width: 100%; height: 200px;
+/* v19: 이음새 리본 (서브 페이지 슬림 버전). top/margin-bottom은 박스 크기가
+   아니라 실제 곡선 궤적(SVGPathElement.getPointAtLength + getScreenCTM)으로
+   실측해서 맞춘 값이다 — path가 곡선이라 svg 박스 상단/하단과 실제로 보이는
+   선 위치가 다르므로, top·height만으로 계산하면 어긋난다. 설명문구-리본
+   간격 20px(다른 서브 페이지와 통일), 리본-본문 간격 35px 기준. */
+.ribbon-sep { position: relative; height: 0; z-index: 6; pointer-events: none; margin-bottom: 81px; }
+.ribbon-sep svg { position: absolute; left: 0; right: 0; top: -103px; width: 100%; height: 200px;
   display: block; overflow: visible; filter: drop-shadow(0 12px 24px rgba(14,14,12,.14)); }
 .ribbon-sep .edge { fill: none; stroke: var(--ink); stroke-width: 44; stroke-linecap: round; }
 .ribbon-sep .lane { fill: none; stroke: var(--lime); stroke-width: 38; stroke-linecap: round; }
 .ribbon-sep text { font-family: var(--sans); font-size: 16px; font-weight: 800; letter-spacing: .1em;
   fill: var(--ink); dominant-baseline: middle; }
-@media (max-width: 960px) { .ribbon-sep svg { top: -108px; height: 150px; filter: drop-shadow(0 8px 16px rgba(14,14,12,.14)); } }
+@media (max-width: 960px) {
+  .ribbon-sep { margin-bottom: 8px; }
+  .ribbon-sep svg { top: -108px; height: 150px; filter: drop-shadow(0 8px 16px rgba(14,14,12,.14)); }
+}
