@@ -18,6 +18,7 @@ const MENU_KEYS: (keyof AdminMenuPermissions)[] = [
   'builder',
   'work',
   'insight',
+  'video',
   'faq',
   'inquiry',
   'settings',

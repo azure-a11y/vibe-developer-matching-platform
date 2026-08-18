@@ -15,7 +15,8 @@
   .ribbon-sep svg { top: -108px; height: 150px; filter: drop-shadow(0 8px 16px rgba(14,14,12,.14)); }
 }
 .vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #17170f;
-  transition: transform .35s cubic-bezier(.2,.6,.2,1); display: block; text-decoration: none; }
+  transition: transform .35s cubic-bezier(.2,.6,.2,1); display: block; text-decoration: none;
+  width: 100%; border: 0; padding: 0; text-align: left; font: inherit; -webkit-appearance: none; appearance: none; }
 .vcell:hover { transform: scale(1.018); }
 .vcell .thumb { position: absolute; inset: 0;
   background: radial-gradient(80% 90% at 28% 18%, rgba(216,255,61,.24), transparent 58%),
@@ -48,3 +49,43 @@
 .vcell .cap b { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
 .chbadge { position: absolute; top: 14px; left: 14px; z-index: 3; background: rgba(0,0,0,.6); color: #fff;
   font-size: 11.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: -0.01em; }
+
+/* 대표영상 — 화면 상단 중앙, 목록보다 폭을 좁혀 시선을 모으고 하단에 제목을 별도로 표시한다. */
+.vhero { max-width: 760px; margin: 0 auto; }
+.vhero__cell { display: block; }
+.vhero__title { margin: 18px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
+
+.vempty { padding: 40px 8px; color: var(--muted); font-size: 15px; text-align: center; }
+
+.vpager { display: flex; align-items: center; justify-content: center; gap: 18px; padding: 40px 0 8px; }
+.vpager .btn--ghost:disabled { opacity: .35; cursor: not-allowed; }
+.vpager__status { font-family: var(--mono); font-size: 13px; color: var(--muted); letter-spacing: .04em; }
+
+.vsearch-row { display: flex; justify-content: center; margin-top: 28px; }
+.vsearch { width: 360px; max-width: 100%; padding: 12px 22px; border: 1.5px solid var(--line); border-radius: 999px;
+  font-family: var(--sans); font-size: 14px; color: var(--ink); background: #fff; transition: var(--hover); }
+.vsearch::placeholder { color: var(--muted-2); }
+.vsearch:hover { border-color: var(--line-2); }
+.vsearch:focus { outline: none; border-color: var(--ink); }
+
+/* 카드 클릭 → 모달 안에서 재생. 새 브라우저 창이 아니라 오버레이 팝업. */
+.vmodal-backdrop { position: fixed; inset: 0; z-index: 200; background: rgba(8,8,6,.82); backdrop-filter: blur(2px);
+  display: grid; place-items: center; padding: 24px; }
+.vmodal { position: relative; width: 100%; max-width: 900px; background: #17170f; border-radius: 20px; overflow: hidden;
+  box-shadow: 0 40px 90px rgba(0,0,0,.5); }
+.vmodal__close { position: absolute; top: 12px; right: 12px; z-index: 2; width: 36px; height: 36px; border-radius: 50%;
+  border: 0; background: rgba(0,0,0,.55); color: #fff; font-size: 15px; cursor: pointer; display: grid; place-items: center;
+  transition: var(--hover); }
+.vmodal__close:hover { background: var(--lime); color: var(--ink); }
+.vmodal__frame { position: relative; aspect-ratio: 16/9; background: #000; }
+.vmodal__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vmodal__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px;
+  flex-wrap: wrap; }
+.vmodal__foot b { color: #fff; font-size: 15.5px; letter-spacing: -0.02em; font-weight: 700; }
+.vmodal__foot a { color: var(--lime); font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em;
+  text-decoration: none; white-space: nowrap; }
+.vmodal__foot a:hover { text-decoration: underline; }
+@media (max-width: 640px) {
+  .vhero__title { font-size: 18px; }
+  .vsearch { width: 100%; }
+}

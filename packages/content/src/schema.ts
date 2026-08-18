@@ -381,6 +381,43 @@ export interface Faq extends FaqFrontmatter {
 }
 
 /**
+ * Video domain — 유튜브 영상 관리. 콘텐츠 페이지(`/content`)에 노출되는 영상
+ * 목록의 진실 공급원. 발행 상태 개념은 없다: 등록된 영상은 전부 공개
+ * 사이트에 보인다 (Post/Work처럼 별도 검수 게이트가 필요하다는 요청이 없었음).
+ *
+ * `youtubeId`는 `youtubeUrl`에서 저장 시점에 파싱해 같이 저장한다 — 공개
+ * 페이지가 클라이언트 컴포넌트라 `@orca/content`(node:fs 의존)를 직접 import할
+ * 수 없으므로, 썸네일/임베드에 필요한 값은 서버에서 미리 계산해 내려준다.
+ *
+ * `featured`는 한 번에 하나만 true — 저장 시 다른 영상의 featured는 자동 해제된다
+ * (videos.ts `writeVideo` 참고).
+ */
+export const VideoFrontmatterSchema = z.object({
+  title: z.string().min(1),
+  slug: z
+    .string()
+    .min(1)
+    .max(120, 'slug should stay under 120 chars')
+    .regex(SLUG_PATTERN, 'slug must be lowercase, hyphen-separated, with no whitespace'),
+  youtubeUrl: z.string().url(),
+  /** 11-char YouTube video id, parsed from `youtubeUrl`. */
+  youtubeId: z.string().min(1),
+  /** Lower sorts first. */
+  order: z.number().int().default(0),
+  /** 대표영상 — 공개 페이지 상단에 고정 노출. 한 번에 하나만 true. */
+  featured: z.boolean().default(false),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+});
+export type VideoFrontmatter = z.infer<typeof VideoFrontmatterSchema>;
+
+export type VideoFrontmatterInput = z.input<typeof VideoFrontmatterSchema>;
+
+export interface Video extends VideoFrontmatter {
+  filePath: string;
+}
+
+/**
  * Admin auth domain (docs/project/06_데이터모델.md §3.6, 04_정책정의.md §4).
  *
  * `full` > `edit_approve` > `view` > `none` — the four levels the admin
@@ -401,6 +438,7 @@ export const AdminMenuPermissionsSchema = z.object({
   builder: PermissionLevel.default('none'),
   work: PermissionLevel.default('none'),
   insight: PermissionLevel.default('none'),
+  video: PermissionLevel.default('none'),
   faq: PermissionLevel.default('none'),
   inquiry: PermissionLevel.default('none'),
   settings: PermissionLevel.default('none'),

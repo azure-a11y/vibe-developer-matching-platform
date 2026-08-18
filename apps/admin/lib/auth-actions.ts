@@ -42,6 +42,7 @@ async function tryBootstrapFirstAccount(email: string, password: string) {
       builder: 'full',
       work: 'full',
       insight: 'full',
+      video: 'full',
       faq: 'full',
       inquiry: 'full',
       settings: 'full',

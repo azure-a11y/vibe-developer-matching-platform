@@ -63,6 +63,14 @@ export function faqCategoryPath(slug: string): string {
   return path.join(faqCategoriesDir(), `${slug}.md`);
 }
 
+export function videosDir(): string {
+  return path.join(contentDir(), 'videos');
+}
+
+export function videoPath(slug: string): string {
+  return path.join(videosDir(), `${slug}.md`);
+}
+
 export function adminAccountsDir(): string {
   return path.join(contentDir(), 'admin-accounts');
 }

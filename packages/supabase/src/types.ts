@@ -145,6 +145,25 @@ export type FaqRow = {
 
 export type FaqInsert = Omit<FaqRow, 'id'> & { id?: string };
 
+/**
+ * videos 테이블의 한 행. Video 프론트매터 스키마와 1:1 대응됩니다.
+ * `youtube_id`는 `youtube_url`에서 저장 시점에 파싱해 함께 저장한다
+ * (packages/content/src/videos.ts extractYoutubeId 참고).
+ */
+export type VideoRow = {
+  id: string;
+  slug: string;
+  title: string;
+  youtube_url: string;
+  youtube_id: string;
+  sort_order: number;
+  featured: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type VideoInsert = Omit<VideoRow, 'id'> & { id?: string };
+
 /** site_settings 테이블의 유일한 행 (id 는 항상 true). */
 export type SiteSettingsRow = {
   id: boolean;
@@ -197,6 +216,12 @@ export type Database = {
         Row: FaqRow;
         Insert: FaqInsert;
         Update: Partial<FaqInsert>;
+        Relationships: [];
+      };
+      videos: {
+        Row: VideoRow;
+        Insert: VideoInsert;
+        Update: Partial<VideoInsert>;
         Relationships: [];
       };
       admin_accounts: {

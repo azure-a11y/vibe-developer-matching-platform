@@ -11,6 +11,8 @@ import type {
   PostFrontmatterInput,
   SiteSettings,
   SiteSettingsFrontmatterInput,
+  Video,
+  VideoFrontmatterInput,
   Work,
   WorkFrontmatterInput,
 } from '../schema.ts';
@@ -113,6 +115,23 @@ export interface FaqRepository {
   getBySlug(slug: string): Promise<Faq | null>;
 
   save(frontmatter: FaqFrontmatterInput, answer: string): Promise<string>;
+
+  remove(slug: string): Promise<boolean>;
+}
+
+/**
+ * Video domain — no publish gate, so no `getPublished`/`getActive` split:
+ * every registered video is public. Both admin and web call `getAll()`.
+ */
+export interface VideoRepository {
+  readonly driver: 'file' | 'supabase';
+
+  getAll(): Promise<{ videos: Video[]; errors: string[] }>;
+
+  getBySlug(slug: string): Promise<Video | null>;
+
+  /** `featured: true` clears the flag on every other video first (at most one featured). */
+  save(frontmatter: VideoFrontmatterInput): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
 }

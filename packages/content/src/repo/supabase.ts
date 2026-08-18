@@ -1,5 +1,5 @@
 import { createAdminSupabase, isSupabaseWritable } from '@orca/supabase';
-import type { AdminAccountRow, BuilderRow, FaqCategoryRow, FaqRow, PostRow, SiteSettingsRow, WorkRow } from '@orca/supabase';
+import type { AdminAccountRow, BuilderRow, FaqCategoryRow, FaqRow, PostRow, SiteSettingsRow, VideoRow, WorkRow } from '@orca/supabase';
 
 import { readingTime } from '../posts.ts';
 import {
@@ -21,6 +21,9 @@ import {
   type SiteSettings,
   type SiteSettingsFrontmatterInput,
   SiteSettingsFrontmatterSchema,
+  type Video,
+  type VideoFrontmatterInput,
+  VideoFrontmatterSchema,
   type Work,
   type WorkFrontmatterInput,
   WorkFrontmatterSchema,
@@ -32,6 +35,7 @@ import type {
   FaqCategoryRepository,
   FaqRepository,
   SiteSettingsRepository,
+  VideoRepository,
   WorkRepository,
 } from './types.ts';
 
@@ -575,6 +579,102 @@ export const faqSupabaseRepository: FaqRepository = {
   async remove(slug: string) {
     const supabase = createAdminSupabase();
     const { error, count } = await supabase.from('faqs').delete({ count: 'exact' }).eq('slug', slug);
+    if (error) throw new Error(`Supabase 삭제 실패: ${error.message}`);
+    return (count ?? 0) > 0;
+  },
+};
+
+/**
+ * Video domain, Postgres driver. No publish gate — mirrors `faqCategorySupabaseRepository`
+ * in shape. `save` clears `featured` on every other row first, same rule as
+ * the file driver's `writeVideo`.
+ */
+
+function toVideo(row: VideoRow): Video {
+  const parsed = VideoFrontmatterSchema.safeParse({
+    title: row.title,
+    slug: row.slug,
+    youtubeUrl: row.youtube_url,
+    youtubeId: row.youtube_id,
+    order: row.sort_order,
+    featured: row.featured,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  });
+
+  if (!parsed.success) {
+    const issues = parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`);
+    throw new Error(`Invalid record for slug "${row.slug}"\n  - ${issues.join('\n  - ')}`);
+  }
+
+  return { ...parsed.data, filePath: '' };
+}
+
+function toVideoRow(frontmatter: VideoFrontmatterInput) {
+  const v = VideoFrontmatterSchema.parse({ ...frontmatter, updatedAt: new Date().toISOString() });
+  return {
+    slug: v.slug,
+    title: v.title,
+    youtube_url: v.youtubeUrl,
+    youtube_id: v.youtubeId,
+    sort_order: v.order,
+    featured: v.featured,
+    created_at: v.createdAt,
+    updated_at: v.updatedAt,
+  };
+}
+
+export const videoSupabaseRepository: VideoRepository = {
+  driver: 'supabase',
+
+  async getAll() {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('videos').select('*').order('sort_order', { ascending: true });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+
+    const videos: Video[] = [];
+    const errors: string[] = [];
+    for (const row of data ?? []) {
+      try {
+        videos.push(toVideo(row));
+      } catch (e) {
+        errors.push(e instanceof Error ? e.message : String(e));
+      }
+    }
+    return { videos, errors };
+  },
+
+  async getBySlug(slug: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('videos').select('*').eq('slug', slug).maybeSingle();
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return data ? toVideo(data) : null;
+  },
+
+  async save(frontmatter: VideoFrontmatterInput) {
+    if (!isSupabaseWritable()) {
+      throw new Error('Supabase 쓰기가 비활성입니다. SUPABASE_SERVICE_ROLE_KEY 를 .env 에 넣으세요.');
+    }
+    const supabase = createAdminSupabase();
+    const row = toVideoRow(frontmatter);
+
+    if (row.featured) {
+      const { error: clearError } = await supabase
+        .from('videos')
+        .update({ featured: false, updated_at: new Date().toISOString() })
+        .eq('featured', true)
+        .neq('slug', row.slug);
+      if (clearError) throw new Error(`Supabase 저장 실패: ${clearError.message}`);
+    }
+
+    const { error } = await supabase.from('videos').upsert(row, { onConflict: 'slug' });
+    if (error) throw new Error(`Supabase 저장 실패: ${error.message}`);
+    return row.slug;
+  },
+
+  async remove(slug: string) {
+    const supabase = createAdminSupabase();
+    const { error, count } = await supabase.from('videos').delete({ count: 'exact' }).eq('slug', slug);
     if (error) throw new Error(`Supabase 삭제 실패: ${error.message}`);
     return (count ?? 0) > 0;
   },

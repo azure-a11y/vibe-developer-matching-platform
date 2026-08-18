@@ -1,8 +1,8 @@
 #!/usr/bin/env node --experimental-strip-types
 /**
- * content/builders, content/works, content/faq-categories, content/faq,
- * content/admin-accounts, content/site-settings.md
- * → Supabase 테이블 이관 (builders / works / faq_categories / faqs /
+ * content/builders, content/works, content/videos, content/faq-categories,
+ * content/faq, content/admin-accounts, content/site-settings.md
+ * → Supabase 테이블 이관 (builders / works / videos / faq_categories / faqs /
  *   admin_accounts / site_settings).
  *
  * 멱등적입니다(slug 기준 upsert, site_settings 는 싱글톤). 여러 번 실행해도 안전합니다.
@@ -13,7 +13,7 @@
  *
  * 사전 조건
  *   1. .env 에 Supabase 키 3개
- *   2. migrations/0001_init.sql ~ 0004_faq.sql 적용 완료
+ *   2. migrations/0001_init.sql ~ 0006_video.sql 적용 완료
  */
 import {
   adminAccountFileRepository,
@@ -26,6 +26,8 @@ import {
   faqSupabaseRepository,
   siteSettingsFileRepository,
   siteSettingsSupabaseRepository,
+  videoFileRepository,
+  videoSupabaseRepository,
   workFileRepository,
   workSupabaseRepository,
 } from '../../content/src/index.ts';
@@ -81,6 +83,25 @@ let failed = 0;
       ok++;
     } catch (error) {
       console.error(`  ✘ ${work.slug} — ${error instanceof Error ? error.message : String(error)}`);
+      failed++;
+    }
+  }
+}
+
+// ── videos ───────────────────────────────────────────────────
+{
+  const { videos, errors } = await videoFileRepository.getAll();
+  for (const error of errors) console.error(`[videos] 파싱 실패 (건너뜀): ${error}`);
+
+  console.log(`videos: ${videos.length}건${dryRun ? ' (dry run)' : ''}`);
+  for (const video of videos) {
+    const { filePath: _filePath, ...frontmatter } = video;
+    try {
+      if (!dryRun) await videoSupabaseRepository.save(frontmatter);
+      console.log(`  ✔ ${video.slug}`);
+      ok++;
+    } catch (error) {
+      console.error(`  ✘ ${video.slug} — ${error instanceof Error ? error.message : String(error)}`);
       failed++;
     }
   }

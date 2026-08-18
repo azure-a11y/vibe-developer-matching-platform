@@ -19,6 +19,7 @@ const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey; countKey?: Pen
   { href: '/', label: 'Dashboard', menuKey: 'dashboard' },
   { href: '/work', label: 'Work', menuKey: 'work', countKey: 'work' },
   { href: '/insight', label: 'Insight', menuKey: 'insight', countKey: 'insight' },
+  { href: '/video', label: 'Video', menuKey: 'video' },
   { href: '/faq', label: 'Faq', menuKey: 'faq' },
   { href: '/builder', label: 'Builder', menuKey: 'builder', countKey: 'builder' },
   { href: '/permissions', label: 'Accounts & Permissions', menuKey: 'accountPermission' },

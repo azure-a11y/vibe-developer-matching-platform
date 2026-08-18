@@ -5,6 +5,7 @@ const MENU_LABELS: [MenuKey, string][] = [
   ['builder', 'Builder'],
   ['work', 'Work'],
   ['insight', 'Insight'],
+  ['video', 'Video'],
   ['faq', 'Faq'],
   ['inquiry', 'Inquiry'],
   ['settings', 'Settings'],

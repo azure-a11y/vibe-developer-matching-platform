@@ -20,6 +20,7 @@ import {
   writeFaqCategory,
 } from '../faq-categories.ts';
 import { deleteFaq, getAllFaqs, getFaqBySlug, getPublishedFaqs, writeFaq } from '../faq.ts';
+import { deleteVideo, getAllVideos, getVideoBySlug, writeVideo } from '../videos.ts';
 import {
   deletePost,
   getAllPosts,
@@ -34,6 +35,7 @@ import type {
   FaqFrontmatterInput,
   PostFrontmatterInput,
   SiteSettingsFrontmatterInput,
+  VideoFrontmatterInput,
   WorkFrontmatterInput,
 } from '../schema.ts';
 import { getSiteSettings, writeSiteSettings } from '../site-settings.ts';
@@ -45,6 +47,7 @@ import type {
   FaqCategoryRepository,
   FaqRepository,
   SiteSettingsRepository,
+  VideoRepository,
   WorkRepository,
 } from './types.ts';
 
@@ -176,6 +179,27 @@ export const faqFileRepository: FaqRepository = {
 
   async remove(slug: string) {
     return deleteFaq(slug);
+  },
+};
+
+export const videoFileRepository: VideoRepository = {
+  driver: 'file',
+
+  async getAll() {
+    return getAllVideos();
+  },
+
+  async getBySlug(slug: string) {
+    return getVideoBySlug(slug);
+  },
+
+  async save(frontmatter: VideoFrontmatterInput) {
+    writeVideo(frontmatter);
+    return frontmatter.slug;
+  },
+
+  async remove(slug: string) {
+    return deleteVideo(slug);
   },
 };
 

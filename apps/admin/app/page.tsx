@@ -17,6 +17,7 @@ const MENU_LABELS: Record<MenuKey, string> = {
   builder: 'Builder',
   work: 'Work',
   insight: 'Insight',
+  video: 'Video',
   faq: 'Faq',
   inquiry: 'Inquiry',
   settings: 'Settings',

@@ -1,32 +1,51 @@
 'use client'
 
-import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { RibbonSep } from '@/components/RibbonSep'
 
-type Video = { yt: string; dur: string; title: string; sub: string }
+type PublicVideo = { slug: string; title: string; youtubeId: string; youtubeUrl: string; featured: boolean }
 
-const FEATURED: Video = { yt: '0dBSo3eDE-E', dur: '15:47', title: '2025 똑똑한개발자 상반기 워크샵', sub: '똑똑한개발자 · 오피셜' }
-const VIDEOS: Video[] = [
-  { yt: 'ZIn53VIic14', dur: '7:57', title: 'AI 동물 인터뷰 쇼츠 만들기 7분만에 끝!', sub: '김이솝의 AI 가이드' },
-  { yt: 'TP6ArUCnt8c', dur: '17:36', title: '잘봐 이게 컨퍼런스다 — 똑똑한개발자 × 원티드', sub: '똑똑한개발자' },
-  { yt: 'kkbtjKvnS-Q', dur: '11:11', title: '미친 무료기능 총집합! 제미나이 10분만에 마스터', sub: '김이솝의 AI 가이드' },
-  { yt: '8uif-Wf65SI', dur: '18:38', title: '12시간씩 클로드 코드 쓰고 깨달은 핵심 꿀팁 20가지', sub: '김이솝의 AI 가이드' },
-  { yt: 'LjrO4urq5gI', dur: '23:40', title: '10년차 IT 에이전시 대표가 푸는 개발 외주의 모든 것', sub: 'AI 서대표' },
-]
+const PAGE_SIZE = 9
 
-export default function ContentView() {
-  /* 유튜브 직행 + UTM (목업: 이동 대신 클릭 트래킹만 남긴다) */
+export default function ContentView({ videos }: { videos: PublicVideo[] }) {
+  const featured = useMemo(() => videos.find(v => v.featured) ?? videos[0], [videos])
+  const rest = useMemo(() => videos.filter(v => v.slug !== featured?.slug), [videos, featured])
+
+  const [query, setQuery] = useState('')
+  const [page, setPage] = useState(1)
+  const [openVideo, setOpenVideo] = useState<PublicVideo | null>(null)
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return q.length === 0 ? rest : rest.filter(v => v.title.toLowerCase().includes(q))
+  }, [rest, query])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+
   useEffect(() => {
-    document.querySelectorAll<HTMLElement>('[data-yt]').forEach(v => {
-      v.addEventListener('click', e => {
-        e.preventDefault()
-        const utm = '?utm_source=ai-builder-group&utm_medium=content&utm_content=' + v.dataset.utm
-        window.track?.('youtube_outbound', { utm })
-      })
-    })
-  }, [])
+    setPage(1)
+  }, [query])
+
+  useEffect(() => {
+    if (!openVideo) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenVideo(null)
+    }
+    document.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+    }
+  }, [openVideo])
+
+  const openModal = (video: PublicVideo) => {
+    window.track?.('video_modal_open', { slug: video.slug })
+    setOpenVideo(video)
+  }
 
   return (
     <main id="main">
@@ -45,32 +64,95 @@ export default function ContentView() {
         ]}
       />
       <div className="wrap" style={{ padding: '20px 32px 100px' }}>
-        <a className="vcell feat slot" href={`https://www.youtube.com/watch?v=${FEATURED.yt}`} data-yt data-utm="featured">
-          <img className="vimg" src={`https://i.ytimg.com/vi/${FEATURED.yt}/hqdefault.jpg`} alt={FEATURED.title} fetchPriority="high" decoding="async" />
-          <div className="vshade"></div>
-          <span className="dur num">{FEATURED.dur}</span>
-          <div className="play"><i>▶</i></div>
-          <div className="cap"><b>{FEATURED.title}</b><span>{FEATURED.sub}</span></div>
-        </a>
-        <div className="vg" style={{ marginTop: 20 }}>
-          {VIDEOS.map(v => (
-            <a className="vcell slot" href={`https://www.youtube.com/watch?v=${v.yt}`} data-yt data-utm={v.yt} key={v.yt}>
-              <img className="vimg" src={`https://i.ytimg.com/vi/${v.yt}/hqdefault.jpg`} alt={v.title} loading="lazy" decoding="async" />
-              <div className="vshade"></div>
-              <span className="dur num">{v.dur}</span>
-              <div className="play"><i>▶</i></div>
-              <div className="cap"><b>{v.title}</b><span>{v.sub}</span></div>
-            </a>
-          ))}
-        </div>
+        {videos.length === 0 ? (
+          <p style={{ color: 'var(--muted)' }}>아직 등록된 영상이 없습니다.</p>
+        ) : (
+          <>
+            {featured && (
+              <div className="vhero">
+                <button type="button" className="vcell feat slot vhero__cell" onClick={() => openModal(featured)}>
+                  <img className="vimg" src={`https://i.ytimg.com/vi/${featured.youtubeId}/hqdefault.jpg`} alt={featured.title} fetchPriority="high" decoding="async" />
+                  <div className="vshade"></div>
+                  <span className="chbadge">대표영상</span>
+                  <div className="play"><i>▶</i></div>
+                </button>
+                <h2 className="vhero__title">{featured.title}</h2>
+              </div>
+            )}
+
+            {paged.length > 0 && (
+              <div className="vg" style={{ marginTop: 20 }}>
+                {paged.map(v => (
+                  <button type="button" className="vcell slot" onClick={() => openModal(v)} key={v.slug}>
+                    <img className="vimg" src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} loading="lazy" decoding="async" />
+                    <div className="vshade"></div>
+                    <div className="play"><i>▶</i></div>
+                    <div className="cap"><b>{v.title}</b></div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {rest.length > 0 && filtered.length === 0 && (
+              <p className="vempty">&ldquo;{query}&rdquo;와(과) 일치하는 영상이 없습니다.</p>
+            )}
+
+            {totalPages > 1 && (
+              <div className="vpager">
+                <button type="button" className="btn btn--ghost" disabled={currentPage === 1} onClick={() => setPage(p => p - 1)}>이전</button>
+                <span className="vpager__status">{currentPage} / {totalPages}</span>
+                <button type="button" className="btn btn--ghost" disabled={currentPage === totalPages} onClick={() => setPage(p => p + 1)}>다음</button>
+              </div>
+            )}
+
+            <div className="vsearch-row">
+              <input
+                type="search"
+                className="vsearch"
+                placeholder="영상 제목으로 검색"
+                aria-label="영상 검색"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </div>
+          </>
+        )}
+
         <div className="cta-banner" style={{ marginTop: 60 }}>
           <div>
             <h3>비슷한 프로젝트를 계획 중이신가요?</h3>
             <p>프로젝트 이야기를 들려주세요.</p>
           </div>
-          <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="content">프로젝트 문의 <span className="arr">→</span></Link>
+          <a className="btn btn--lime" href="/contact" data-track="cta_click" data-location="content">프로젝트 문의 <span className="arr">→</span></a>
         </div>
       </div>
+
+      {openVideo && (
+        <div className="vmodal-backdrop" onClick={() => setOpenVideo(null)}>
+          <div className="vmodal" onClick={e => e.stopPropagation()}>
+            <button type="button" className="vmodal__close" aria-label="닫기" onClick={() => setOpenVideo(null)}>✕</button>
+            <div className="vmodal__frame">
+              <iframe
+                src={`https://www.youtube.com/embed/${openVideo.youtubeId}?autoplay=1&rel=0`}
+                title={openVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+            <div className="vmodal__foot">
+              <b>{openVideo.title}</b>
+              <a
+                href={openVideo.youtubeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => window.track?.('youtube_outbound', { slug: openVideo.slug })}
+              >
+                유튜브에서 보기 ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

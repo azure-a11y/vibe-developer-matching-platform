@@ -7,6 +7,7 @@ import {
   faqFileRepository,
   fileRepository,
   siteSettingsFileRepository,
+  videoFileRepository,
   workFileRepository,
 } from './file.ts';
 import {
@@ -16,6 +17,7 @@ import {
   faqSupabaseRepository,
   siteSettingsSupabaseRepository,
   supabaseRepository,
+  videoSupabaseRepository,
   workSupabaseRepository,
 } from './supabase.ts';
 import type {
@@ -25,6 +27,7 @@ import type {
   FaqCategoryRepository,
   FaqRepository,
   SiteSettingsRepository,
+  VideoRepository,
   WorkRepository,
 } from './types.ts';
 
@@ -36,6 +39,7 @@ export {
   faqFileRepository,
   fileRepository,
   siteSettingsFileRepository,
+  videoFileRepository,
   workFileRepository,
 } from './file.ts';
 export {
@@ -45,6 +49,7 @@ export {
   faqSupabaseRepository,
   siteSettingsSupabaseRepository,
   supabaseRepository,
+  videoSupabaseRepository,
   workSupabaseRepository,
 } from './supabase.ts';
 
@@ -95,6 +100,14 @@ export function getFaqRepository(): FaqRepository {
   if (forced === 'file') return faqFileRepository;
   if (forced === 'supabase') return faqSupabaseRepository;
   return isSupabaseConfigured() ? faqSupabaseRepository : faqFileRepository;
+}
+
+/** Video domain entry point. Same driver-selection rule as `getRepository()`. */
+export function getVideoRepository(): VideoRepository {
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return videoFileRepository;
+  if (forced === 'supabase') return videoSupabaseRepository;
+  return isSupabaseConfigured() ? videoSupabaseRepository : videoFileRepository;
 }
 
 /** Admin auth domain entry point. Same driver-selection rule as `getRepository()`. */

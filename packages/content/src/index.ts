@@ -5,6 +5,7 @@ export * from './builders.ts';
 export * from './works.ts';
 export * from './faq.ts';
 export * from './faq-categories.ts';
+export * from './videos.ts';
 export * from './admin-accounts.ts';
 export * from './site-settings.ts';
 export * from './audit.ts';
