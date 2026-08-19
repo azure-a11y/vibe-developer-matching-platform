@@ -3,6 +3,11 @@ import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/co
 
 import { siteUrl } from '@/lib/site';
 
+/* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 캐시를 지우지
+   못한다 — 60초 재검증으로 새로 발행된 Work/Insight/Builder가 재배포 없이 사이트맵에
+   반영되게 한다. */
+export const revalidate = 60;
+
 /**
  * Sitemap driven by per-post frontmatter.
  *

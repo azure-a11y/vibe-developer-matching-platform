@@ -22,6 +22,11 @@ import './globals.css';
 // 원본 파일명은 style.css — Tailwind 기반 globals.css 와 공존시키기 위해 이름만 바꿔 그대로 이식했다.
 import './builder-group-design.css';
 
+/* GNB/Footer가 여기서 읽은 site_settings를 모든 페이지에서 보여준다 — admin에서 저장해도
+   admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 캐시에는 닿지 않는다.
+   그래서 60초 시간 기반 재검증을 루트 레이아웃에 걸어 사이트 전역에 적용한다. */
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {

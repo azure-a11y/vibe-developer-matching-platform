@@ -4,6 +4,10 @@ import { getBuilderRepository, getWorkRepository } from '@orca/content';
 import WorkView, { type BuilderCard, type WorkCard } from './view';
 import './work.css';
 
+/* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 페이지 캐시를
+   지우지 못한다 — 60초 시간 기반 재검증으로 Supabase 변경이 재배포 없이 반영되게 한다. */
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Work — 만드는 사람과, 만든 것들',
   description: '실제로 수행한 프로젝트와 검증된 빌더를 확인하세요. 30초 매칭으로 맞는 빌더를 추천받을 수도 있습니다.',

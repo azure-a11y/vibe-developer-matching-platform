@@ -2,6 +2,10 @@ import { getRepository, postUrl } from '@orca/content';
 
 import { siteDescription, siteName, siteUrl } from '@/lib/site';
 
+/* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 캐시를 지우지
+   못한다 — 60초 재검증으로 새 글이 재배포 없이 피드에 반영되게 한다. */
+export const revalidate = 60;
+
 function escapeXml(value: string): string {
   return value.replace(/[<>&'"]/g, (char) => {
     switch (char) {

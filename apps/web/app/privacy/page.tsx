@@ -4,6 +4,11 @@ import { getSiteSettingsRepository } from '@orca/content';
 
 import './privacy.css';
 
+/* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 페이지 캐시를
+   지우지 못한다 — 60초 시간 기반 재검증으로 site_settings(회사명 등) 변경이 재배포
+   없이 반영되게 한다. */
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: '개인정보처리방침',
   robots: { index: false },
