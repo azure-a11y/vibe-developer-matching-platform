@@ -275,7 +275,9 @@ body.dark .ft__legal b { color: var(--d-mut); }
 body.dark .logo { color: var(--paper); }
 
 /* ---------- 반응형 ---------- */
-@media (max-width: 1000px) { .ft6 { grid-template-columns: 1fr 1fr; } }
+/* 2열로 접힐 때 로고가 사이트맵 칸과 나란히 서지 않도록 로고를 전체 폭 첫 행으로 분리한다
+   (로고 → 사이트맵 그룹들 → 카피라이트 순서가 유지되도록). */
+@media (max-width: 1000px) { .ft6 { grid-template-columns: 1fr 1fr; } .ft6__brand { grid-column: 1 / -1; } }
 @media (max-width: 900px) {
   .g3, .g2 { grid-template-columns: 1fr; }
   section { padding: 76px 0; }
@@ -384,19 +386,20 @@ body.dark .logo { color: var(--paper); }
 .dock-open:hover { transform: translateY(-3px); }
 
 /* ── 섹션 이음새 리본 — 곡선을 따라 흐르는 라임색 문구. RibbonSep 컴포넌트가 쓴다.
-   페이지마다 삽입 위치가 다르므로 svg는 항상 자기 자리 기준 -158px 위로 끌어올려
+   페이지마다 삽입 위치가 다르므로 svg는 항상 자기 자리 기준 -188px 위로 끌어올려
    앞 섹션 경계에 걸치도록 배치한다 (홈페이지 히어로 아래 배치가 기준). ── */
 .ribbon-sep { position: relative; height: 0; z-index: 6; pointer-events: none;
-  /* 이 기본값은 홈페이지 기준이다: svg가 -158px/220px라 앵커보다 62px 아래까지
-     내려오고, 바로 다음 섹션(.s4x)이 이미 자체 padding-top:104px을 갖고 있어
-     손대지 않아도 42px 간격이 생긴다 — 50px로 맞추려면 8px만 더 밀면 된다.
-     페이지마다 리본 뒤에 오는 요소의 기존 padding/margin이 달라서, 같은 "50px
-     간격"이라도 필요한 margin-bottom 값이 다르다 — 페이지별 CSS(work.css,
+  /* 이 기본값은 홈페이지 기준이다. svg를 히어로 쪽으로 30px 추가로 끌어올린 만큼
+     (top -158px → -188px) margin-bottom을 8px → -22px로 같이 낮춰서, 바로 다음
+     섹션(.s4x, padding-top:104px)과의 실제 시각적 간격을 이동 전과 동일하게
+     유지한다 — 리본이 .s4x 위로 살짝 걸치는 배치는 의도된 것이다(위 주석 참고).
+     페이지마다 리본 뒤에 오는 요소의 기존 padding/margin이 달라서, 같은 간격
+     이라도 필요한 margin-bottom 값이 다르다 — 페이지별 CSS(work.css,
      insight.css, content.css, faq.css)에서 자기 몫을 다시 계산해 오버라이드한다.
      새 페이지에 리본을 추가할 때도 반드시 리본 뒤 요소의 기존 top spacing을
      먼저 확인하고 값을 계산할 것. */
-  margin-bottom: 8px; }
-.ribbon-sep svg { position: absolute; left: 0; right: 0; top: -158px; width: 100%; height: 220px;
+  margin-bottom: -22px; }
+.ribbon-sep svg { position: absolute; left: 0; right: 0; top: -188px; width: 100%; height: 220px;
   display: block; overflow: visible; filter: drop-shadow(0 14px 28px rgba(14,14,12,.16)); }
 .ribbon-sep .edge { fill: none; stroke: var(--ink); stroke-width: 56; stroke-linecap: round; }
 .ribbon-sep .lane { fill: none; stroke: var(--lime); stroke-width: 48; stroke-linecap: round; }
