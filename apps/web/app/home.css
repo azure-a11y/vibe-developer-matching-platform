@@ -634,6 +634,25 @@
 
 .wg2 .bf .shot { flex: 1; min-height: 0; width: 100%; object-fit: cover; object-position: center top; display: block; }
 
+/* Work 프리뷰 카드 hover 포커스 · 내부 이미지 마우스 패럴랙스 — 정밀 포인터 + 모션 허용 시에만.
+   ".rv"(등장 리빌)의 transition은 건드리지 않는다: 여기서는 :hover/:has(:hover)에만 transition을
+   다시 선언해 hover 중에만 우선순위로 이기게 하고, hover가 풀리면 .rv의 기존 transition으로
+   자연스럽게 복귀한다. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .wg2 .wcard:hover { transition: transform .4s var(--ease-in); transform: scale(1.018); }
+  .wg2__grid:has(.wcard:nth-child(1):hover) .wcard:nth-child(2) {
+    transition: transform .4s var(--ease-in), opacity .4s var(--ease-in);
+    opacity: .78; transform: scale(.988) translateX(7px);
+  }
+  .wg2__grid:has(.wcard:nth-child(2):hover) .wcard:nth-child(1) {
+    transition: transform .4s var(--ease-in), opacity .4s var(--ease-in);
+    opacity: .78; transform: scale(.988) translateX(-7px);
+  }
+  .wg2 .wcard h3 { transition: transform .3s var(--ease-in); }
+  .wg2 .wcard:hover h3 { transform: translateY(-3px); }
+  .wg2 .bf .shot { transition: transform .35s var(--ease-in); }
+}
+
 /* ---- S7 Insight 프리뷰 — 제목 우선 ---- */
 .s7 { background: var(--paper-2); border-top: 1px solid var(--line); }
 .s7 .sec-head { margin-bottom: 38px; }

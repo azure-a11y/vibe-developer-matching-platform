@@ -200,9 +200,14 @@ function Bset({ brands }: { brands: [string, string][] }) {
 type WorkPreview = { slug: string; tag: string; meta: string; title: string; desc?: string; note?: string; shotUrl: string; shotImg: string }
 type InsightPreview = { slug: string; title: string; tag: string; date: string }
 
-function WorkCard({ w }: { w: WorkPreview }) {
+function WorkCard({ w, index }: { w: WorkPreview; index: number }) {
   return (
-    <Link className="wcard" href={`/work/${w.slug}`} data-track="work_card" data-cursor="VIEW →">
+    <Link
+      className={`wcard rv${index === 1 ? ' d2' : ''}`}
+      href={`/work/${w.slug}`}
+      data-track="work_card"
+      data-cursor="VIEW →"
+    >
       <div className="slot mask">
         <div className="bf"><div className="bf__bar"><i></i><i></i><i></i><span className="url">{w.shotUrl}</span></div><img className="shot" src={w.shotImg} alt="" /></div>
         <div className="par"></div>
@@ -391,6 +396,40 @@ export default function HomeView({
     if (location.hash.indexOf('#faq-') === 0) setTopic(location.hash.replace('#faq-', ''))
 
     return () => cleanups.forEach(fn => fn())
+  }, [])
+
+  /* S6 Work 프리뷰 카드 — 마우스 위치 기반 내부 이미지 미세 패럴랙스.
+     프레임(.bf__bar)은 고정하고 .shot 이미지만 살짝 움직인다. 정밀 포인터 + 모션 허용
+     환경에서만 동작하며, 값 보간은 .shot에 걸린 CSS transition(home.css)이 담당한다. */
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduced || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('.wg2__grid .wcard'))
+    if (!cards.length) return
+
+    const onMove = (e: MouseEvent) => {
+      const card = e.currentTarget as HTMLElement
+      const shot = card.querySelector<HTMLElement>('.shot')
+      if (!shot) return
+      const r = card.getBoundingClientRect()
+      const px = (e.clientX - r.left) / r.width - 0.5
+      const py = (e.clientY - r.top) / r.height - 0.5
+      shot.style.transform = `translate(${(px * 16).toFixed(1)}px, ${(py * 16).toFixed(1)}px) scale(1.02)`
+    }
+    const onLeave = (e: MouseEvent) => {
+      const shot = (e.currentTarget as HTMLElement).querySelector<HTMLElement>('.shot')
+      if (shot) shot.style.transform = ''
+    }
+    cards.forEach(card => {
+      card.addEventListener('mousemove', onMove)
+      card.addEventListener('mouseleave', onLeave)
+    })
+    return () => {
+      cards.forEach(card => {
+        card.removeEventListener('mousemove', onMove)
+        card.removeEventListener('mouseleave', onLeave)
+      })
+    }
   }, [])
 
   /* 플로팅 독 — 스크롤 진입 후 표시, 최종 CTA·푸터 근처/닫기 시 숨김 */
@@ -688,7 +727,7 @@ export default function HomeView({
             <div className="wg2">
               <Link className="more-link wg2__more" href="/work">전체 보기</Link>
               <div className="wg2__grid">
-                {workPreviews.map(w => <WorkCard w={w} key={w.slug} />)}
+                {workPreviews.map((w, i) => <WorkCard w={w} index={i} key={w.slug} />)}
               </div>
             </div>
           </div>
