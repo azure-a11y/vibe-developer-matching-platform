@@ -3,6 +3,8 @@ import { getSiteSettingsRepository } from '@orca/content';
 
 import { Analytics } from '@/components/Analytics';
 import ChannelTalk from '@/components/ChannelTalk';
+import ContactModal from '@/components/ContactModal';
+import { ContactModalProvider } from '@/components/ContactModalContext';
 import Footer from '@/components/Footer';
 import Gnb from '@/components/Gnb';
 import SiteFx from '@/components/SiteFx';
@@ -83,15 +85,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <a className="skip" href="#main">본문 바로가기</a>
-        <Gnb brandName={settings.brandName} />
-        {children}
-        <Footer
-          brandName={settings.brandName}
-          companyName={settings.companyName}
-          ceoName={settings.ceoName}
-          businessRegistrationNumber={settings.businessRegistrationNumber}
-          operatedBy={settings.operatedBy}
-        />
+        <ContactModalProvider>
+          <Gnb brandName={settings.brandName} />
+          {children}
+          <Footer
+            brandName={settings.brandName}
+            companyName={settings.companyName}
+            ceoName={settings.ceoName}
+            businessRegistrationNumber={settings.businessRegistrationNumber}
+            operatedBy={settings.operatedBy}
+          />
+          <ContactModal pluugFormUrl={settings.pluugFormUrl} />
+        </ContactModalProvider>
         <SiteFx />
         <Analytics />
         {/* 플러그인 키가 없으면 아무것도 하지 않는다 */}

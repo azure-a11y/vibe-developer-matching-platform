@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect } from 'react'
+
+import ContactTrigger from '@/components/ContactTrigger'
 import { useRibbonFlow, useDock } from '@/components/fx'
 
 export type InsightRow = { slug: string; category: string; categoryLabel: string; img: string; title: string; desc: string; meta: string }
@@ -99,7 +101,7 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
 
       <div className="dock" data-dock>
         <div className="dock__txt"><b>검증된 바이브 코딩</b><span>무료 문의 — 부담 없이 남겨보세요</span></div>
-        <Link className="btn btn--lime btn--sm" href="/contact" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></Link>
+        <ContactTrigger className="btn btn--lime btn--sm" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
         <button className="dock__x" aria-label="닫기" data-dock-x>✕</button>
       </div>
       <button className="dock-open" data-dock-open aria-label="문의 바 다시 열기">💬</button>

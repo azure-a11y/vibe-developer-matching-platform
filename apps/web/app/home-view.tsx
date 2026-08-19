@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, type CSSProperties, type ReactNode } from 'react'
 
+import ContactTrigger from '@/components/ContactTrigger'
 import { useReplayOnView } from '@/components/fx'
 import { RibbonSep } from '@/components/RibbonSep'
 import type { FaqTopic } from '@/lib/faq'
@@ -450,7 +451,7 @@ export default function HomeView({
             <p className="st st2">기획부터 개발, 검수까지 한 팀이 끝까지 맡습니다.<br />
               아이디어만 가져오세요 — 나머지는 검증된 빌더의 일입니다.</p>
             <div className="st st3 hero-ctas">
-              <Link className="btn btn--ink btn--pulse" href="/contact" data-track="cta_click" data-location="hero">프로젝트 문의 <span className="arr">→</span></Link>
+              <ContactTrigger className="btn btn--ink btn--pulse" data-track="cta_click" data-location="hero">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
               <Link className="cta-sub" href="/work" data-track="cta_click" data-location="hero_secondary">작업물 먼저 보기 <span className="arr">→</span></Link>
             </div>
             <p className="st st3 hero-proof"><a className="proof-link" href="#builders">검증된 빌더 <b className="num">10</b>인</a><i></i><a className="proof-link" href="#work">공개 프로젝트 <b className="num">{workPreviews.length}</b>건</a><i></i><a className="proof-link" href="#system"><b>검수 시스템</b> 운영</a></p>
@@ -753,7 +754,7 @@ export default function HomeView({
             <span className="ast" aria-hidden="true">✳</span>
             <h2><span className="w300">만들고 싶은 것이</span><br />있으신가요?</h2>
             <p>지금 프로젝트를 문의해 주세요. 빠르게 연락드립니다.</p>
-            <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="footer_cta" style={{ fontSize: 17, padding: '18px 38px' }}>프로젝트 문의 <span className="arr">→</span></Link>
+            <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="footer_cta" style={{ fontSize: 17, padding: '18px 38px' }}>프로젝트 문의 <span className="arr">→</span></ContactTrigger>
           </div>
         </section>
 
@@ -761,7 +762,7 @@ export default function HomeView({
 
       <div className="dock" data-dock>
         <div className="dock__txt"><b>검증된 바이브 코딩</b><span>무료 문의 — 부담 없이 남겨보세요</span></div>
-        <Link className="btn btn--lime btn--sm" href="/contact" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></Link>
+        <ContactTrigger className="btn btn--lime btn--sm" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
         <button className="dock__x" aria-label="닫기" data-dock-x>✕</button>
       </div>
       <button className="dock-open" data-dock-open aria-label="문의 바 다시 열기">💬</button>

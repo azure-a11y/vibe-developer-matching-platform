@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 
+import ContactTrigger from '@/components/ContactTrigger'
+
 export type WorkDetailData = {
   title: string
   summary: string
@@ -85,7 +87,7 @@ export default function WorkDetailView({ work }: { work: WorkDetailData }) {
               <h3>비슷한 프로젝트를 계획 중이신가요?</h3>
               <p>지금 상황을 알려주시면, 맞는 빌더와 진행 방식을 제안드립니다.</p>
             </div>
-            <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="work_detail">프로젝트 문의 <span className="arr">→</span></Link>
+            <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="work_detail">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
           </div>
         </div>
       </section>

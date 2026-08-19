@@ -1,5 +1,30 @@
 /* ── v13 문의: 스플릿 카드 — 좌 신뢰 패널(잉크) + 우 폼(화이트) ── */
-.c-wrap { padding: 44px 0 96px; }
+/* 전역 문의 팝업(ContactModal) 오버레이 · 패널 · 닫기 버튼 */
+.contact-modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(14,14,12,.6);
+  backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
+  padding: 24px; overflow-y: auto; }
+.contact-modal-panel { position: relative; width: 100%; max-width: 980px; max-height: calc(100vh - 48px);
+  overflow-y: auto; border-radius: 30px; box-shadow: 0 40px 100px rgba(0,0,0,.35); }
+.contact-modal-close { position: absolute; top: 16px; right: 16px; z-index: 2; width: 40px; height: 40px;
+  border-radius: 50%; border: 0; background: rgba(255,255,255,.92); color: var(--ink); font-size: 16px;
+  cursor: pointer; display: grid; place-items: center; transition: transform .15s, background .15s; }
+.contact-modal-close:hover { background: #fff; transform: scale(1.06); }
+/* 열림 인터랙션 — 배경은 빠르게 페이드, 패널은 위에서 아래로 펼쳐지듯 등장 */
+@keyframes contactOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes contactPanelIn {
+  0% { clip-path: inset(0 0 100% 0); opacity: .5; transform: scaleY(.94); }
+  100% { clip-path: inset(0 0 0% 0); opacity: 1; transform: scaleY(1); }
+}
+.contact-modal-overlay { animation: contactOverlayIn .22s ease both; }
+.contact-modal-panel { transform-origin: top center; animation: contactPanelIn .45s cubic-bezier(.16,.8,.24,1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .contact-modal-overlay, .contact-modal-panel { animation: none; }
+}
+@media (max-width: 720px) {
+  .contact-modal-overlay { padding: 0; }
+  .contact-modal-panel { max-height: 100vh; border-radius: 0; }
+}
+
 .c-shell { display: grid; grid-template-columns: 420px 1fr; border-radius: 30px; overflow: hidden;
   border: 1px solid var(--line-2); box-shadow: 0 30px 80px rgba(14,14,12,.12); }
 

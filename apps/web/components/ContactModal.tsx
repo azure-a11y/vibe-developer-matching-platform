@@ -1,25 +1,42 @@
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useSyncExternalStore } from 'react'
+import { createPortal } from 'react-dom'
+
+import Link from 'next/link'
 
 import { buildPluugEmbedUrl } from '@/lib/site'
+
+import { useContactModal } from './ContactModalContext'
+import '@/app/contact/contact.css'
 
 const noopSubscribe = () => () => {}
 const getIsClientSnapshot = () => true
 const getIsClientServerSnapshot = () => false
 
-export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) {
+/* 전역 문의 팝업 — 어느 페이지에서 열어도 같은 모달. RootLayout에 한 번만 마운트된다.
+   /contact 직접 접속은 app/contact/page.tsx가 이 모달을 열고 홈으로 리다이렉트하는 방식으로 처리한다. */
+export default function ContactModal({ pluugFormUrl }: { pluugFormUrl: string }) {
+  const { isOpen, close } = useContactModal()
   const hasPluugUrl = pluugFormUrl.length > 0
 
-  /* pluug 폼을 직접 임베드한다 — 문의 데이터는 우리 DB로 오지 않고 pluug가 받는다.
-     주소는 클라이언트에서만 만든다 — 유입 utm_source를 location에서 읽기 때문에
-     서버 렌더 결과와 달라져 하이드레이션이 어긋난다. 마운트 후에 채운다.
-     ⚠ pluug 쪽 "제출 후 이동 링크"를 이 사이트의 /submit?src=pluug로 맞춰야 전환 측정이 성립한다. */
+  /* pluug 주소는 utm_source를 location에서 읽기 때문에 클라이언트에서만 만든다 (ContactView와 동일 이유) */
   const isClient = useSyncExternalStore(noopSubscribe, getIsClientSnapshot, getIsClientServerSnapshot)
-  const embedSrc = isClient && hasPluugUrl ? buildPluugEmbedUrl(pluugFormUrl, 'contact_page') : ''
+  const embedSrc = isClient && hasPluugUrl ? buildPluugEmbedUrl(pluugFormUrl, 'contact_modal') : ''
 
   useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
+    document.addEventListener('keydown', onKey)
+    document.body.classList.add('no-scroll')
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.classList.remove('no-scroll')
+    }
+  }, [isOpen, close])
+
+  useEffect(() => {
+    if (!isOpen) return
     document.querySelectorAll('[data-pills]').forEach(group => {
       group.querySelectorAll('.pill').forEach(p => {
         p.addEventListener('click', () => {
@@ -28,26 +45,20 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
         })
       })
     })
-  }, [])
+  }, [isOpen])
 
-  /* pluug URL이 설정돼 있으면 위 iframe으로 넘어가므로 이 폼은 렌더되지 않는다.
-     아직 설정 전(로컬 목업)에는 제출해도 갈 곳이 없으니 그냥 막아둔다. */
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
   }
 
-  return (
-    <main id="main">
-      <div className="page-head">
-        <div className="wrap">
-          <h1><span className="w300">프로젝트</span> 문의</h1>
-          <p>부담 없이 남겨주세요. 하루 안에 확인하고 연락드립니다.</p>
-        </div>
-      </div>
+  if (!isOpen || typeof document === 'undefined') return null
 
-      <div className="wrap c-wrap">
+  return createPortal(
+    <div className="contact-modal-overlay" role="dialog" aria-modal="true" aria-label="프로젝트 문의" onClick={close}>
+      <div className="contact-modal-panel" onClick={e => e.stopPropagation()}>
+        <button className="contact-modal-close" aria-label="닫기" onClick={close}>✕</button>
+
         <div className="c-shell">
-
           <div className="c-left">
             <span className="k">Project Inquiry</span>
             <h2>프로젝트 이야기를<br /><em>들려주세요</em></h2>
@@ -128,7 +139,7 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
             </div>
 
             <label className="agree"><input type="checkbox" required />
-              <span>개인정보 수집·이용에 동의합니다. <Link href="/privacy">전문 보기</Link></span></label>
+              <span>개인정보 수집·이용에 동의합니다. <Link href="/privacy" onClick={close}>전문 보기</Link></span></label>
 
             <button className="btn btn--lime" type="submit" disabled aria-disabled="true">
               문의 보내기 <span className="arr">→</span>
@@ -138,6 +149,7 @@ export default function ContactView({ pluugFormUrl }: { pluugFormUrl: string }) 
           )}
         </div>
       </div>
-    </main>
+    </div>,
+    document.body,
   )
 }

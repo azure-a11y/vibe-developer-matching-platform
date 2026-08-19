@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { blogPostingJsonLd, faqJsonLd, getRepository, postUrl } from '@orca/content';
 
+import ContactTrigger from '@/components/ContactTrigger';
 import { formatDate, renderMarkdown } from '@/lib/markdown';
 import { absoluteUrl, twitterSite } from '@/lib/site';
 
@@ -160,7 +161,7 @@ export default async function PostPage({ params }: Params) {
               <h3>글이 도움되셨나요?</h3>
               <p>프로젝트 이야기를 들려주세요.</p>
             </div>
-            <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="insight_detail">문의하기 <span className="arr">→</span></Link>
+            <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="insight_detail">문의하기 <span className="arr">→</span></ContactTrigger>
           </div>
         </div>
       </section>

@@ -256,9 +256,9 @@ footer { border-top: 1px solid var(--line); padding: 60px 0 52px; background: va
 .ft6__brand p { margin: 12px 0 0; color: var(--muted); font-size: 13.5px; max-width: 30ch; word-break: keep-all; }
 .ft6 .col b { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
   text-transform: uppercase; color: var(--muted-2); margin-bottom: 14px; font-weight: 500; }
-.ft6 .col a { display: block; text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--muted);
-  padding: 4px 0; transition: color var(--hover); }
-.ft6 .col a:hover { color: var(--ink); }
+.ft6 .col a, .ft6 .col button { display: block; text-decoration: none; font-size: 13.5px; font-weight: 600; color: var(--muted);
+  padding: 4px 0; transition: color var(--hover); background: none; border: 0; text-align: left; cursor: pointer; font-family: inherit; }
+.ft6 .col a:hover, .ft6 .col button:hover { color: var(--ink); }
 .ft6 .col span.soon { display: block; font-size: 12.5px; color: var(--muted-2); padding: 4px 0; }
 .ft__legal { border-top: 1px solid var(--line); padding-top: 26px; font-size: 13px; color: var(--muted-2); line-height: 1.9; }
 .ft__legal b { color: var(--muted); font-weight: 600; }
@@ -268,8 +268,8 @@ footer { border-top: 1px solid var(--line); padding: 60px 0 52px; background: va
 .ft__bottom a:hover { color: var(--ink); text-decoration: underline; }
 /* 다크 페이지 푸터 대응 */
 body.dark footer { background: #131310; border-top-color: var(--d-line); }
-body.dark .ft6__brand p, body.dark .ft6 .col a, body.dark .ft__legal, body.dark .ft__bottom { color: var(--d-mut2); }
-body.dark .ft6 .col a:hover, body.dark .ft__bottom a:hover { color: var(--paper); }
+body.dark .ft6__brand p, body.dark .ft6 .col a, body.dark .ft6 .col button, body.dark .ft__legal, body.dark .ft__bottom { color: var(--d-mut2); }
+body.dark .ft6 .col a:hover, body.dark .ft6 .col button:hover, body.dark .ft__bottom a:hover { color: var(--paper); }
 body.dark .ft__legal { border-top-color: var(--d-line); }
 body.dark .ft__legal b { color: var(--d-mut); }
 body.dark .logo { color: var(--paper); }

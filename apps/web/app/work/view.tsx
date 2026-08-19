@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect } from 'react'
+
+import ContactTrigger from '@/components/ContactTrigger'
 import { useRibbonFlow, useDock } from '@/components/fx'
 
 export type WorkCard = {
@@ -176,7 +178,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
               <h3>이 분야의 첫 프로젝트가 곧 공개됩니다</h3>
               <p>고민 중인 프로젝트가 이 분야라면, 30초 매칭으로 알려주세요.</p>
               <a className="btn btn--ghost btn--sm" href="#match">30초 매칭 받기 ↓</a>
-              <Link className="btn btn--ink btn--sm" href="/contact">문의하기 <span className="arr">→</span></Link>
+              <ContactTrigger className="btn btn--ink btn--sm">문의하기 <span className="arr">→</span></ContactTrigger>
             </div>
           </section>
 
@@ -257,7 +259,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                 <div className="qstep qres" data-s="r">
                   <p className="lead">조건에 맞는 빌더 <em>2명</em>을 찾았어요. 문의를 남기면 이 구성으로 제안을 드립니다.</p>
                   <div className="picks" data-picks></div>
-                  <Link className="btn btn--ink" href="/contact" data-track="cta_click" data-location="work_match">이 구성으로 문의하기 <span className="arr">→</span></Link>
+                  <ContactTrigger className="btn btn--ink" data-track="cta_click" data-location="work_match">이 구성으로 문의하기 <span className="arr">→</span></ContactTrigger>
                   <button className="qback" type="button" data-back="3">이전 질문</button>
                   <button className="redo" type="button">처음부터 다시</button>
                 </div>
@@ -273,7 +275,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                 <h3>비슷한 프로젝트를 계획 중이신가요?</h3>
                 <p>프로젝트 이야기를 들려주세요. 맞는 빌더를 배정해 드립니다.</p>
               </div>
-              <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="work_detail">프로젝트 문의 <span className="arr">→</span></Link>
+              <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="work_detail">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
             </div>
           </div>
         </section>
@@ -281,7 +283,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
 
       <div className="dock" data-dock>
         <div className="dock__txt"><b>검증된 바이브 코딩</b><span>부담 없이 문의를 남겨보세요</span></div>
-        <Link className="btn btn--lime btn--sm" href="/contact" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></Link>
+        <ContactTrigger className="btn btn--lime btn--sm" data-track="cta_click" data-location="floating">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
         <button className="dock__x" aria-label="닫기" data-dock-x>✕</button>
       </div>
       <button className="dock-open" data-dock-open aria-label="문의 바 다시 열기">💬</button>

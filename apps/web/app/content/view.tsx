@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
+import ContactTrigger from '@/components/ContactTrigger'
 import { RibbonSep } from '@/components/RibbonSep'
 
 type PublicVideo = { slug: string; title: string; youtubeId: string; youtubeUrl: string; featured: boolean }
@@ -123,7 +124,7 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
             <h3>비슷한 프로젝트를 계획 중이신가요?</h3>
             <p>프로젝트 이야기를 들려주세요.</p>
           </div>
-          <a className="btn btn--lime" href="/contact" data-track="cta_click" data-location="content">프로젝트 문의 <span className="arr">→</span></a>
+          <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="content">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
         </div>
       </div>
 

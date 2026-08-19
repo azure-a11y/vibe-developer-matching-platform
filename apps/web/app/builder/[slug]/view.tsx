@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 
+import ContactTrigger from '@/components/ContactTrigger'
+
 export type BuilderProfileData = {
   no: string
   name: string
@@ -43,7 +45,7 @@ export default function BuilderProfileView({ b }: { b: BuilderProfileData }) {
                 <div className="row"><dt>함께한 파트너</dt><dd>똑똑한개발자</dd></div>
               </dl>
               <div className="bp-cta">
-                <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="builder_profile">이 빌더와 프로젝트 문의 <span className="arr">→</span></Link>
+                <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="builder_profile">이 빌더와 프로젝트 문의 <span className="arr">→</span></ContactTrigger>
               </div>
             </div>
           </div>
@@ -115,7 +117,7 @@ export default function BuilderProfileView({ b }: { b: BuilderProfileData }) {
               <h3>{b.fname}와 비슷한 프로젝트를 계획 중이신가요?</h3>
               <p>프로젝트 이야기를 들려주세요. 상황에 맞는 빌더와 진행 방식을 제안드립니다.</p>
             </div>
-            <Link className="btn btn--lime" href="/contact" data-track="cta_click" data-location="builder_profile_bottom">프로젝트 문의 <span className="arr">→</span></Link>
+            <ContactTrigger className="btn btn--lime" data-track="cta_click" data-location="builder_profile_bottom">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
           </div>
         </div>
       </section>

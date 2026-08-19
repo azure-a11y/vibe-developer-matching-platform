@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 import BrandLink from './BrandLink'
+import ContactTrigger from './ContactTrigger'
 
 const NAV = [
   { href: '/' as const, label: 'Home', match: (p: string) => p === '/' },
@@ -56,9 +57,9 @@ export default function Gnb({ brandName }: { brandName?: string } = {}) {
         </nav>
         {/* 문의(진입)·접수 완료 페이지에서는 GNB CTA 미노출 (원본 스펙) */}
         {pathname !== '/contact' && pathname !== '/submit' && (
-          <Link className="btn btn--lime btn--sm btn--pulse" href="/contact" data-track="cta_click" data-location="gnb">
+          <ContactTrigger className="btn btn--lime btn--sm btn--pulse" data-track="cta_click" data-location="gnb">
             문의하기
-          </Link>
+          </ContactTrigger>
         )}
       </div>
     </header>

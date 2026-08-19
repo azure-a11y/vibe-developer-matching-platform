@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import BrandLink from './BrandLink'
+import ContactTrigger from './ContactTrigger'
 
 type FooterProps = {
   brandName?: string
@@ -33,7 +34,7 @@ export default function Footer({ brandName, companyName, ceoName, businessRegist
           </div>
           <div className="col">
             <b>Contact</b>
-            <Link href="/contact">프로젝트 문의</Link>
+            <ContactTrigger>프로젝트 문의</ContactTrigger>
             <a href="mailto:contact@example.com">contact@_______</a>
           </div>
           <div className="col">
