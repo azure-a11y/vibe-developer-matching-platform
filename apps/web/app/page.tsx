@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getFaqCategoryRepository, getFaqRepository, getRepository, getWorkRepository } from '@orca/content';
+import { getBuilderRepository, getFaqCategoryRepository, getFaqRepository, getRepository, getWorkRepository } from '@orca/content';
 
 import { buildFaqTopics } from '@/lib/faq';
 
@@ -16,15 +16,20 @@ export const metadata: Metadata = {
     'AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 기획부터 개발, 검수까지 검증된 빌더가 끝까지 맡습니다.',
 };
 
+// 홈 미리보기 개수 — 디자인 정책값(레이아웃이 이 개수를 전제로 짜여 있음). 늘리려면 홈 레이아웃도 같이 봐야 한다.
+const HOME_WORK_LIMIT = 2;
+const HOME_INSIGHT_LIMIT = 3;
+
 export default async function HomePage() {
-  const [{ works }, posts, faqs, faqCategories] = await Promise.all([
+  const [{ works }, posts, faqs, faqCategories, { builders }] = await Promise.all([
     getWorkRepository().getPublished().then((works) => ({ works })),
     getRepository().getPublished(),
     getFaqRepository().getPublished(),
     getFaqCategoryRepository().getActive(),
+    getBuilderRepository().getActive().then((builders) => ({ builders })),
   ]);
 
-  const workPreviews = works.slice(0, 2).map((w) => ({
+  const workPreviews = works.slice(0, HOME_WORK_LIMIT).map((w) => ({
     slug: w.slug,
     tag: w.tag || w.category,
     meta: w.year,
@@ -35,7 +40,7 @@ export default async function HomePage() {
     shotImg: w.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg',
   }));
 
-  const insightPreviews = posts.slice(0, 3).map((p) => ({
+  const insightPreviews = posts.slice(0, HOME_INSIGHT_LIMIT).map((p) => ({
     slug: p.slug,
     title: p.title,
     tag: p.category,
@@ -46,5 +51,12 @@ export default async function HomePage() {
   // 전체 목록은 "전체 보기" → /faq 에서 확인한다.
   const faqTopics = buildFaqTopics(faqs, faqCategories, { maxTopics: 2, maxItemsPerTopic: 3 });
 
-  return <HomeView workPreviews={workPreviews} insightPreviews={insightPreviews} faqTopics={faqTopics} />;
+  return (
+    <HomeView
+      workPreviews={workPreviews}
+      insightPreviews={insightPreviews}
+      faqTopics={faqTopics}
+      activeBuilderCount={builders.length}
+    />
+  );
 }

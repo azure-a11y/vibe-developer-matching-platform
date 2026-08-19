@@ -222,10 +222,12 @@ export default function HomeView({
   workPreviews,
   insightPreviews,
   faqTopics,
+  activeBuilderCount,
 }: {
   workPreviews: WorkPreview[]
   insightPreviews: InsightPreview[]
   faqTopics: FaqTopic[]
+  activeBuilderCount: number
 }) {
   /* 0.85 — 스테퍼가 화면에 거의 다 들어왔을 때 시작한다. 낮게 잡으면 아직 화면 끄트머리에
      있을 때 재생이 끝나서, 정작 눈이 갔을 땐 이미 다 켜져 있다. 스탯 숫자 펄스(s4x__stats)도
@@ -454,7 +456,7 @@ export default function HomeView({
               <ContactTrigger className="btn btn--ink btn--pulse" data-track="cta_click" data-location="hero">프로젝트 문의 <span className="arr">→</span></ContactTrigger>
               <Link className="cta-sub" href="/work" data-track="cta_click" data-location="hero_secondary">작업물 먼저 보기 <span className="arr">→</span></Link>
             </div>
-            <p className="st st3 hero-proof"><a className="proof-link" href="#builders">검증된 빌더 <b className="num">10</b>인</a><i></i><a className="proof-link" href="#work">공개 프로젝트 <b className="num">{workPreviews.length}</b>건</a><i></i><a className="proof-link" href="#system"><b>검수 시스템</b> 운영</a></p>
+            <p className="st st3 hero-proof"><a className="proof-link" href="#builders">검증된 빌더 <b className="num">{activeBuilderCount}</b>인</a><i></i><a className="proof-link" href="#work">공개 프로젝트 <b className="num">{workPreviews.length}</b>건</a><i></i><a className="proof-link" href="#system"><b>검수 시스템</b> 운영</a></p>
           </div>
           <div className="hero__scroll">SCROLL</div>
         </section>

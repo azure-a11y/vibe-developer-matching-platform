@@ -255,7 +255,11 @@ export const builderSupabaseRepository: BuilderRepository = {
 
   async getActive() {
     const supabase = createAdminSupabase();
-    const { data, error } = await supabase.from('builders').select('*').eq('status', 'active');
+    const { data, error } = await supabase
+      .from('builders')
+      .select('*')
+      .eq('status', 'active')
+      .order('updated_at', { ascending: false });
     if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
     return (data ?? []).map(toBuilder);
   },
@@ -366,7 +370,11 @@ export const workSupabaseRepository: WorkRepository = {
 
   async getPublished() {
     const supabase = createAdminSupabase();
-    const { data, error } = await supabase.from('works').select('*').eq('status', 'published');
+    const { data, error } = await supabase
+      .from('works')
+      .select('*')
+      .eq('status', 'published')
+      .order('updated_at', { ascending: false });
     if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
     return (data ?? []).map(toWork);
   },
@@ -553,7 +561,13 @@ export const faqSupabaseRepository: FaqRepository = {
 
   async getPublished() {
     const supabase = createAdminSupabase();
-    const { data, error } = await supabase.from('faqs').select('*').eq('status', 'published').order('sort_order', { ascending: true });
+    const { data, error } = await supabase
+      .from('faqs')
+      .select('*')
+      .eq('status', 'published')
+      .order('category_id', { ascending: true })
+      .order('sort_order', { ascending: true })
+      .order('question', { ascending: true });
     if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
     return (data ?? []).map(toFaq);
   },
