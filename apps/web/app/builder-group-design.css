@@ -167,8 +167,12 @@ body.assets .slot { outline: 2px dashed var(--ink); outline-offset: 3px; }
 .bf { position: absolute; inset: 0; display: flex; flex-direction: column; }
 .bf__bar { display: flex; align-items: center; gap: 5px; padding: 9px 12px; background: rgba(244,241,234,.06);
   border-bottom: 1px solid rgba(244,241,234,.08); }
-.bf__bar i { width: 7px; height: 7px; border-radius: 50%; background: rgba(244,241,234,.18); }
-.bf__bar .url { margin: 0 auto; font-family: var(--mono); font-size: 7.5px; letter-spacing: .08em;
+.bf__bar i { width: 7px; height: 7px; border-radius: 50%; }
+/* macOS 트래픽 라이트 — 빨강/노랑/초록 */
+.bf__bar i:nth-child(1) { background: #ff5f57; }
+.bf__bar i:nth-child(2) { background: #febc2e; }
+.bf__bar i:nth-child(3) { background: #28c840; }
+.bf__bar .url { margin: 0 auto; font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em;
   color: rgba(244,241,234,.35); background: rgba(0,0,0,.3); border-radius: 999px; padding: 2px 14px; }
 .bf__body { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
 .bf .bl { border-radius: 5px; background: rgba(244,241,234,.1); }
