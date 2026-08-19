@@ -1,19 +1,33 @@
-.doc { max-width: 720px; margin: 0 auto; padding: 52px 28px 92px; }
+/* v25: 720px 단일 컬럼 → 다른 페이지와 같은 폭(1120px)의 아이콘+본문 카드 리스트로 확장.
+   문단 자체는 여전히 68ch로 캡핑해 가독성을 지킨다(FAQ 답변 캡핑과 동일 관례). */
+.doc { max-width: 1120px; margin: 0 auto; padding: 52px 28px 92px; }
 /* v21: 뒤로가기 링크 */
 .backlink { display: inline-flex; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 700;
   color: var(--muted); text-decoration: none; margin-bottom: 22px; transition: color var(--hover); }
 .backlink::before { content: "←"; font-family: var(--mono); transition: transform var(--hover); }
 .backlink:hover { color: var(--ink); }
 .backlink:hover::before { transform: translateX(-4px); }
-.doc h2 { font-size: 19px; margin: 38px 0 10px; letter-spacing: -0.025em; display: flex; align-items: baseline; gap: 12px; }
-.doc h2 .no { font-family: var(--mono); font-size: 12px; color: var(--muted-2); letter-spacing: .14em; font-weight: 500; }
-.doc p, .doc li { font-size: 14.5px; color: var(--ink-2); line-height: 1.8; }
+
+.doc-card { display: grid; grid-template-columns: 56px 1fr; gap: 24px; align-items: start;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 30px 34px;
+  margin-bottom: 20px; }
+.doc-icon { width: 56px; height: 56px; border-radius: 10px; background: var(--paper-3);
+  display: grid; place-items: center; flex: none; }
+.doc-icon svg { width: 26px; height: 26px; stroke: var(--ink); fill: none; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round; }
+.doc-body h2 { font-size: 22px; margin: 0 0 14px; letter-spacing: -0.03em; display: flex; align-items: baseline; gap: 12px; }
+.doc-body h2 .no { font-family: var(--mono); font-size: 13px; color: var(--muted-2); letter-spacing: .14em; font-weight: 500; }
+.doc-body p, .doc-body li { font-size: 16px; color: var(--ink-2); line-height: 1.85; max-width: 68ch; }
 .doc .hold { background: var(--paper-3); border: 1px dashed var(--line-2); border-radius: 13px; padding: 14px 18px;
   font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 8px 0; letter-spacing: .02em; }
-.doc li { margin-bottom: 6px; }
-.doc li::marker { color: var(--muted-2); }
-.doc p + p { margin-top: 12px; }
-.doc section + section { margin-top: 8px; }
+.doc-body li { margin-bottom: 8px; }
+.doc-body li::marker { color: var(--muted-2); }
+.doc-body p + p { margin-top: 14px; }
+@media (max-width: 640px) {
+  .doc-card { grid-template-columns: 1fr; gap: 14px; padding: 24px; }
+  .doc-icon { width: 44px; height: 44px; }
+  .doc-icon svg { width: 22px; height: 22px; }
+}
 /* 아직 못 채운 값 — 라임 표식으로 띄워서 이 상태로 발행되는 걸 막는다. grep '\[\[' 로 찾는다. */
 .doc .todo, .page-head .todo { background: var(--lime); color: var(--ink); font-weight: 700;
   padding: 1px 8px; border-radius: 6px; font-family: var(--mono); font-size: .92em; letter-spacing: .02em; }

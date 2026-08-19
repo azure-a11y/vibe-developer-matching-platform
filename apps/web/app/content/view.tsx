@@ -81,13 +81,26 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
               </div>
             )}
 
+            <div className="vsearch-row">
+              <input
+                type="search"
+                className="vsearch"
+                placeholder="영상 제목으로 검색"
+                aria-label="영상 검색"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </div>
+
             {paged.length > 0 && (
-              <div className="vg" style={{ marginTop: 20 }}>
+              <div className="vg">
                 {paged.map(v => (
                   <button type="button" className="vcell slot" onClick={() => openModal(v)} key={v.slug}>
-                    <img className="vimg" src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} loading="lazy" decoding="async" />
-                    <div className="vshade"></div>
-                    <div className="play"><i>▶</i></div>
+                    <div className="vthumb">
+                      <img className="vimg" src={`https://i.ytimg.com/vi/${v.youtubeId}/hqdefault.jpg`} alt={v.title} loading="lazy" decoding="async" />
+                      <div className="vshade"></div>
+                      <div className="play"><i>▶</i></div>
+                    </div>
                     <div className="cap"><b>{v.title}</b></div>
                   </button>
                 ))}
@@ -105,17 +118,6 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
                 <button type="button" className="btn btn--ghost" disabled={currentPage === totalPages} onClick={() => setPage(p => p + 1)}>다음</button>
               </div>
             )}
-
-            <div className="vsearch-row">
-              <input
-                type="search"
-                className="vsearch"
-                placeholder="영상 제목으로 검색"
-                aria-label="영상 검색"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-              />
-            </div>
           </>
         )}
 

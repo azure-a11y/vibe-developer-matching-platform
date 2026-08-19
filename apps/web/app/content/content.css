@@ -31,10 +31,13 @@
 .vcell .cap { position: absolute; left: 22px; bottom: 18px; right: 22px; }
 .vcell .cap b { display: block; font-size: 16.5px; letter-spacing: -0.025em; font-weight: 700; }
 .vcell .cap span { font-family: var(--mono); font-size: 11px; color: var(--d-mut); letter-spacing: .12em; text-transform: uppercase; }
-.feat { aspect-ratio: 21/9; margin-bottom: 20px; }
+.feat { aspect-ratio: 16/9; margin-bottom: 40px; }
 .feat .cap b { font-size: 24px; letter-spacing: -0.035em; }
-.vg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.vg .vcell { aspect-ratio: 16/9; }
+.vg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.vg .vcell { aspect-ratio: unset; overflow: visible; border-radius: 0; background: none; }
+.vg .vcell .vthumb { position: relative; overflow: hidden; border-radius: 22px; background: #17170f; aspect-ratio: 16/9; }
+.vg .vcell .cap { position: static; left: auto; right: auto; bottom: auto; margin-top: 12px; padding: 0 2px; }
+.vg .vcell .cap b { color: var(--ink); text-shadow: none; }
 .sub-banner { position: relative; overflow: hidden; margin: 68px 0 0; border: 1px solid var(--d-line); border-radius: 26px;
   padding: 44px 48px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .sub-banner::before { content: "✳"; position: absolute; right: -20px; bottom: -54px; font-size: 180px;
@@ -43,7 +46,7 @@
   color: var(--d-mut2); display: block; margin-bottom: 10px; }
 .sub-banner h3 { margin: 0 0 4px; font-size: 23px; font-weight: 800; letter-spacing: -0.035em; }
 .sub-banner p { margin: 0; color: var(--d-mut); font-size: 14px; }
-@media (max-width: 900px) { .vg { grid-template-columns: 1fr; } .feat { aspect-ratio: 16/9; } }
+@media (max-width: 900px) { .vg { grid-template-columns: 1fr; } }
 .vcell .vimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .vcell .vshade { position: absolute; inset: 0; background: linear-gradient(200deg, rgba(0,0,0,.04) 40%, rgba(0,0,0,.72)); }
 .vcell .cap b { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
@@ -51,7 +54,7 @@
   font-size: 11.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: -0.01em; }
 
 /* 대표영상 — 화면 상단 중앙, 목록보다 폭을 좁혀 시선을 모으고 하단에 제목을 별도로 표시한다. */
-.vhero { max-width: 760px; margin: 0 auto; }
+.vhero { max-width: 988px; margin: 0 auto; }
 .vhero__cell { display: block; }
 .vhero__title { margin: 18px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
 
@@ -61,7 +64,7 @@
 .vpager .btn--ghost:disabled { opacity: .35; cursor: not-allowed; }
 .vpager__status { font-family: var(--mono); font-size: 13px; color: var(--muted); letter-spacing: .04em; }
 
-.vsearch-row { display: flex; justify-content: center; margin-top: 28px; }
+.vsearch-row { display: flex; justify-content: flex-end; margin: 0 0 16px; }
 .vsearch { width: 360px; max-width: 100%; padding: 12px 22px; border: 1.5px solid var(--line); border-radius: 999px;
   font-family: var(--sans); font-size: 14px; color: var(--ink); background: #fff; transition: var(--hover); }
 .vsearch::placeholder { color: var(--muted-2); }

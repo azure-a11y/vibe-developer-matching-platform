@@ -33,6 +33,39 @@ function Text({ s }: { s: string }) {
 type Block = string | string[];
 type Sec = { no: string; title: string; body: Block[] };
 
+/* 섹션별 아이콘 — 장식이 아니라 좌측 열의 시각적 앵커. 24x24 스트로크 라인 아이콘. */
+const ICONS: Record<string, React.ReactNode> = {
+  '01': (
+    <svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2" /><path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M9 11h6M9 15h6" /></svg>
+  ),
+  '02': (
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><circle cx="12" cy="12" r="4.5" /><circle cx="12" cy="12" r="0.6" fill="var(--ink)" /></svg>
+  ),
+  '03': (
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3.2 2" /></svg>
+  ),
+  '04': (
+    <svg viewBox="0 0 24 24"><path d="M4 8h6l3 3-3 3H4z" /><path d="M20 8h-6l-3 3 3 3h6z" /></svg>
+  ),
+  '05': (
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><ellipse cx="12" cy="12" rx="3.6" ry="8.5" />
+      <path d="M3.7 9.5h16.6M3.7 14.5h16.6" /></svg>
+  ),
+  '06': (
+    <svg viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z" /><path d="M9 12l2.2 2.2L15.5 9.8" /></svg>
+  ),
+  '07': (
+    <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V7.5a4 4 0 0 1 8 0V11" /></svg>
+  ),
+  '08': (
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20c0-3.5 3.1-6 7-6s7 2.5 7 6" /></svg>
+  ),
+  '09': (
+    <svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 4 1.4 5.5 1.4 5.5H4.6S6 13 6 9Z" /><path d="M10 18a2 2 0 0 0 4 0" /></svg>
+  ),
+};
+
 export default async function PrivacyPage() {
   const { settings } = await getSiteSettingsRepository().get();
   const brand = settings.brandName || 'AI 빌더 그룹';
@@ -161,19 +194,22 @@ export default async function PrivacyPage() {
 
       <div className="doc">
         {SECTIONS.map((s) => (
-          <section key={s.no}>
-            <h2><span className="no">{s.no}</span>{s.title}</h2>
-            {s.body.map((b, i) =>
-              Array.isArray(b) ? (
-                <ul key={i}>
-                  {b.map((li, j) => (
-                    <li key={j}><Text s={li} /></li>
-                  ))}
-                </ul>
-              ) : (
-                <p key={i}><Text s={b} /></p>
-              ),
-            )}
+          <section key={s.no} className="doc-card rv">
+            <div className="doc-icon" aria-hidden="true">{ICONS[s.no]}</div>
+            <div className="doc-body">
+              <h2><span className="no">{s.no}</span>{s.title}</h2>
+              {s.body.map((b, i) =>
+                Array.isArray(b) ? (
+                  <ul key={i}>
+                    {b.map((li, j) => (
+                      <li key={j}><Text s={li} /></li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p key={i}><Text s={b} /></p>
+                ),
+              )}
+            </div>
           </section>
         ))}
       </div>
