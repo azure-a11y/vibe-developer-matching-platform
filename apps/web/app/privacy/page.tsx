@@ -197,7 +197,7 @@ export default async function PrivacyPage() {
           <section key={s.no} className="doc-card rv">
             <div className="doc-icon" aria-hidden="true">{ICONS[s.no]}</div>
             <div className="doc-body">
-              <h2><span className="no">{s.no}</span>{s.title}</h2>
+              <h2><span className="no">{s.no}.</span>{s.title}</h2>
               {s.body.map((b, i) =>
                 Array.isArray(b) ? (
                   <ul key={i}>

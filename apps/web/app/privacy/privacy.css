@@ -16,7 +16,7 @@
 .doc-icon svg { width: 26px; height: 26px; stroke: var(--ink); fill: none; stroke-width: 1.7;
   stroke-linecap: round; stroke-linejoin: round; }
 .doc-body h2 { font-size: 22px; margin: 0 0 14px; letter-spacing: -0.03em; display: flex; align-items: baseline; gap: 12px; }
-.doc-body h2 .no { font-family: var(--mono); font-size: 13px; color: var(--muted-2); letter-spacing: .14em; font-weight: 500; }
+.doc-body h2 .no { color: var(--ink); font-weight: 800; }
 .doc-body p, .doc-body li { font-size: 16px; color: var(--ink-2); line-height: 1.85; max-width: 68ch; }
 .doc .hold { background: var(--paper-3); border: 1px dashed var(--line-2); border-radius: 13px; padding: 14px 18px;
   font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 8px 0; letter-spacing: .02em; }

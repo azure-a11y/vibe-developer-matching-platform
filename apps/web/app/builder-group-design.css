@@ -268,7 +268,7 @@ footer { border-top: 1px solid var(--line); padding: 60px 0 52px; background: va
 .ft__legal b { color: var(--muted); font-weight: 600; }
 .ft__bottom { margin-top: 16px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
   font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--muted-2); text-transform: uppercase; }
-.ft__bottom a { text-decoration: none; }
+.ft__bottom a { text-decoration: none; font-size: 12px; }
 .ft__bottom a:hover { color: var(--ink); text-decoration: underline; }
 /* 다크 페이지 푸터 대응 */
 body.dark footer { background: #131310; border-top-color: var(--d-line); }
