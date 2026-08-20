@@ -28,10 +28,10 @@ export default function ContactModal({ pluugFormUrl }: { pluugFormUrl: string })
     if (!isOpen) return
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close() }
     document.addEventListener('keydown', onKey)
-    document.body.classList.add('no-scroll')
+    document.body.classList.add('contact-modal-lock')
     return () => {
       document.removeEventListener('keydown', onKey)
-      document.body.classList.remove('no-scroll')
+      document.body.classList.remove('contact-modal-lock')
     }
   }, [isOpen, close])
 

@@ -1,5 +1,10 @@
 /* ── v13 문의: 스플릿 카드 — 좌 신뢰 패널(잉크) + 우 폼(화이트) ── */
 /* 전역 문의 팝업(ContactModal) 오버레이 · 패널 · 닫기 버튼 */
+/* GNB 모바일 메뉴의 .no-scroll(768px 이하 전용)과는 별개로, 모든 화면 폭에서 배경 스크롤을 잠근다.
+   실제 스크롤 루트는 body가 아니라 html이라 body.overflow:hidden만으로는 전파되지 않는 경우가 있어
+   :has()로 html에도 함께 건다. */
+body.contact-modal-lock { overflow: hidden; }
+html:has(body.contact-modal-lock) { overflow: hidden; }
 .contact-modal-overlay { position: fixed; inset: 0; z-index: 300; background: rgba(14,14,12,.6);
   backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center;
   padding: 24px; overflow-y: auto; }
