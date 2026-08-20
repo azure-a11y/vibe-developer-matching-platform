@@ -35,6 +35,14 @@ export function createServerSupabase(cookies: CookieAdapter) {
   });
 }
 
+/** Server-side public reads. RLS remains enforced with the anon key. */
+export function createPublicSupabase() {
+  const { url, anonKey } = requireConfig();
+  return createClient<Database>(url, anonKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+}
+
 /**
  * service role 클라이언트 — RLS 를 우회합니다.
  *

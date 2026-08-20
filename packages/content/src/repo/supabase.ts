@@ -1,4 +1,4 @@
-import { createAdminSupabase, isSupabaseWritable } from '@orca/supabase';
+import { createAdminSupabase as createAdminSupabaseClient, createPublicSupabase, isSupabaseWritable } from '@orca/supabase';
 import type { AdminAccountRow, BuilderRow, FaqCategoryRow, FaqRow, PostRow, SiteSettingsRow, VideoRow, WorkRow } from '@orca/supabase';
 
 import { readingTime } from '../posts.ts';
@@ -38,6 +38,14 @@ import type {
   VideoRepository,
   WorkRepository,
 } from './types.ts';
+
+/**
+ * Public deployments have only anon credentials; admin deployments also have
+ * the service-role key and therefore retain unrestricted admin reads/writes.
+ */
+function createAdminSupabase() {
+  return isSupabaseWritable() ? createAdminSupabaseClient() : createPublicSupabase();
+}
 
 /**
  * Postgres driver. Inactive until Supabase keys are set and the migration in

@@ -1,0 +1,15 @@
+.turbo/
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+.git/
+.omc/
+.dev-logs/
+.claude/
+agents/
+artifact/
+docs/
+wiki/
+reference/
+apps/admin/
