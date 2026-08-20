@@ -44,3 +44,5 @@ docs/work-log/
 # repo's history) — overlaps heavily with artifact/ai-builder-group/, which
 # is the actual tracked copy.
 reference/
+.vercel
+.env*
