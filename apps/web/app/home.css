@@ -708,7 +708,12 @@
 .faq-a p { margin: 0; padding: 0 8px 28px; color: var(--muted); font-size: 15px; line-height: 1.8; max-width: 64ch; word-break: keep-all; }
 
 /* ---- S10 최종 CTA ---- */
-.s10 { text-align: center; }
+/* 위/아래 눈대중 여백을 ~120px로 맞춘다. 위는 FAQ(.s9) 하단 116px + 여기 4px(마지막 FAQ 텍스트
+   → ✳ 아이콘 기준, 이 구간엔 시각적 경계선이 없어 콘텐츠-콘텐츠로 잰다). 아래는 버튼 바로 아래부터
+   Footer 박스 시작(border-top + 배경색이 바뀌는 실제 경계선)까지가 120px이 되도록 여기서 전부
+   부담한다 — Footer 자체 padding-top(60px)은 그 경계선 아래(Footer 내부) 여백이라 더하지 않는다.
+   인접 섹션의 고정 padding에 맞춰 역산한 값이라 FAQ/Footer 여백이 바뀌면 같이 조정해야 한다. */
+.s10 { text-align: center; padding: 4px 0 120px; }
 .s10 .ast { display: inline-block; font-size: 44px; line-height: 1; color: var(--lime);
   -webkit-text-stroke: 1.5px var(--ink); margin-bottom: 26px; animation: spin 14s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
