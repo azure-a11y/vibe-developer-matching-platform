@@ -34,6 +34,7 @@ export default async function WorkPage() {
     title: w.title,
     desc: w.summary,
     partner: w.partner,
+    stack: w.techStack,
     img: w.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg',
     alt: w.assets[0]?.alt ?? `${w.title} 화면`,
   }));
