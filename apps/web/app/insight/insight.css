@@ -45,3 +45,8 @@
   .ribbon-sep { margin-bottom: 8px; }
   .ribbon-sep svg { top: -108px; height: 150px; filter: drop-shadow(0 8px 16px rgba(14,14,12,.14)); }
 }
+/* 420px 이하에서 부제목이 2줄로 줄바꿈되면서 리본과 겹치던 문제 — 줄바꿈으로 늘어난
+   문서 흐름 높이만큼 리본 시작점을 자연스럽게 아래로 밀어 간격을 확보한다. */
+@media (max-width: 430px) {
+  .ribbon-sep { margin-top: 28px; }
+}
