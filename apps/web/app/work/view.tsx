@@ -14,6 +14,7 @@ export type WorkCard = {
   title: string
   desc: string
   partner: string
+  stack: string[]
   img: string
   alt: string
 }
@@ -116,7 +117,9 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
         <div className="page-head page-head--work">
           <div className="wrap page-head__row">
             <div className="page-head__text">
+              <span className="page-head__eyebrow">Our Work</span>
               <h1><span className="w300">만드는 사람과,</span> 만든 것들</h1>
+              <span className="page-head__rule" aria-hidden="true"></span>
               <p>추천받고 싶다면 30초 매칭으로, 직접 둘러보고 싶다면 작업물부터. 두 길 모두 열어두었습니다.</p>
             </div>
             <div className="head-stats">
@@ -158,20 +161,42 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
               <button className="chip" data-cat="finance">Finance</button>
             </div>
 
-            <div className="pxg" data-list>
-              {works.map(p => (
-                <Link className="wcard" href={`/work/${encodeURIComponent(p.slug)}`} data-c={p.category} data-cursor="VIEW →" key={p.slug}>
-                  <div className="slot mask">
-                    <img className="cover" src={p.img} alt={p.alt} loading="lazy" />
-                  </div>
-                  <div className="meta">
-                    <div className="mrow"><span className="tag">{p.tag}</span><span className="yr num">{p.year}</span></div>
-                    <h3>{p.title}</h3>
-                    <p>{p.desc}</p>
-                    {p.partner && <div className="builders">{p.partner}</div>}
-                  </div>
-                </Link>
-              ))}
+            <div className="stage">
+              <div className="stage__bg" aria-hidden="true">
+                {works.slice(0, 4).map(p => (
+                  <img key={p.slug} src={p.img} alt="" loading="lazy" />
+                ))}
+              </div>
+              <div className="pxg" data-list>
+                {works.map((p, i) => (
+                  <Link
+                    className="wcard rv"
+                    style={{ transitionDelay: `${Math.min(i, 6) * 70}ms` }}
+                    href={`/work/${encodeURIComponent(p.slug)}`}
+                    data-c={p.category}
+                    data-cursor="VIEW →"
+                    key={p.slug}
+                  >
+                    <div className="slot mask">
+                      <img className="cover" src={p.img} alt={p.alt} loading="lazy" />
+                    </div>
+                    <div className="meta">
+                      <div className="mrow"><span className="tag">{p.tag}</span><span className="yr num">{p.year}</span></div>
+                      <h3>{p.title}</h3>
+                      <p>{p.desc}</p>
+                      {p.stack.length > 0 && (
+                        <div className="wcard__stack">
+                          {p.stack.slice(0, 3).map(s => <i key={s}>{s}</i>)}
+                        </div>
+                      )}
+                      <div className="wcard__foot">
+                        {p.partner && <div className="builders">{p.partner}</div>}
+                        <span className="wcard__cta">View Project <span className="arr">→</span></span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
 
             <div className="empty" data-empty hidden>
