@@ -184,7 +184,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
               <div className="pxg" data-list>
                 {pagedWorks.map((p, i) => (
                   <Link
-                    className="wcard rv"
+                    className="wcard rv on"
                     style={{ transitionDelay: `${Math.min(i, 6) * 70}ms` }}
                     href={`/work/${encodeURIComponent(p.slug)}`}
                     data-c={p.category}
@@ -241,7 +241,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
             </div>
             <div className="bld__grid">
               {pagedBuilders.map(b => (
-                <Link className="bcard rv" href={`/builder/${b.slug}`} data-track="builder_click" data-slug={b.slug} key={b.slug}>
+                <Link className="bcard rv on" href={`/builder/${b.slug}`} data-track="builder_click" data-slug={b.slug} key={b.slug}>
                   <div className="slot mask">
                     <img src={b.avatar} alt={`${b.name} 프로필 사진`} />
                     {b.badgeLabel && <span className={b.isLead ? 'lv lv--lead' : 'lv lv--new'}>{b.badgeLabel}</span>}
