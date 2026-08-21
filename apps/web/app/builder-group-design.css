@@ -410,3 +410,9 @@ body.dark .logo { color: var(--paper); }
   .ribbon-sep { margin-bottom: 44px; }
   .ribbon-sep svg { top: -108px; height: 150px; filter: drop-shadow(0 8px 16px rgba(14,14,12,.14)); }
 }
+
+/* 서브페이지 리본만 시각적으로 10px 아래에 맞춘다. Home의 hero 리본은 제외한다. */
+.ribbon-sep:not(.ribbon-sep--hero) svg { top: -124px; }
+@media (max-width: 960px) {
+  .ribbon-sep:not(.ribbon-sep--hero) svg { top: -98px; }
+}
