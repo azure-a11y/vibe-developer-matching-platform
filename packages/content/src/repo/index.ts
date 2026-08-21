@@ -1,4 +1,4 @@
-import { describeStatus, isSupabaseConfigured } from '@orca/supabase';
+import { describeStatus, getPublicConfig, isSupabaseConfigured } from '@orca/supabase';
 
 import {
   adminAccountFileRepository,
@@ -53,6 +53,31 @@ export {
   workSupabaseRepository,
 } from './supabase.ts';
 
+function assertDevelopmentSupabaseConfigured(): void {
+  if (process.env.NODE_ENV !== 'development') return;
+  if (process.env.CONTENT_DRIVER === 'file') {
+    throw new Error('[development] CONTENT_DRIVER=file은 로컬 Supabase 고정 정책과 충돌합니다. CONTENT_DRIVER를 제거하세요.');
+  }
+  const config = getPublicConfig();
+  const missing: string[] = [];
+  if (!config.url) missing.push('NEXT_PUBLIC_SUPABASE_URL');
+  if (!config.anonKey) missing.push('NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  if (missing.length > 0) {
+    throw new Error(
+      `[development] Supabase 환경변수가 누락되어 로컬 실행을 중단합니다: ${missing.join(', ')}. ` +
+        'file Repository로 fallback하지 않습니다. root .env를 확인하세요.',
+    );
+  }
+}
+
+function selectRepository<T>(supabase: T, file: T): T {
+  assertDevelopmentSupabaseConfigured();
+  const forced = process.env.CONTENT_DRIVER;
+  if (forced === 'file') return file;
+  if (forced === 'supabase') return supabase;
+  return isSupabaseConfigured() ? supabase : file;
+}
+
 /**
  * Pick the active driver.
  *
@@ -64,66 +89,42 @@ export {
  * which is useful while migrating.
  */
 export function getRepository(): ContentRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return fileRepository;
-  if (forced === 'supabase') return supabaseRepository;
-  return isSupabaseConfigured() ? supabaseRepository : fileRepository;
+  return selectRepository(supabaseRepository, fileRepository);
 }
 
 /** Builder domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getBuilderRepository(): BuilderRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return builderFileRepository;
-  if (forced === 'supabase') return builderSupabaseRepository;
-  return isSupabaseConfigured() ? builderSupabaseRepository : builderFileRepository;
+  return selectRepository(builderSupabaseRepository, builderFileRepository);
 }
 
 /** Work domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getWorkRepository(): WorkRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return workFileRepository;
-  if (forced === 'supabase') return workSupabaseRepository;
-  return isSupabaseConfigured() ? workSupabaseRepository : workFileRepository;
+  return selectRepository(workSupabaseRepository, workFileRepository);
 }
 
 /** FAQ category domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getFaqCategoryRepository(): FaqCategoryRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return faqCategoryFileRepository;
-  if (forced === 'supabase') return faqCategorySupabaseRepository;
-  return isSupabaseConfigured() ? faqCategorySupabaseRepository : faqCategoryFileRepository;
+  return selectRepository(faqCategorySupabaseRepository, faqCategoryFileRepository);
 }
 
 /** FAQ entry domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getFaqRepository(): FaqRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return faqFileRepository;
-  if (forced === 'supabase') return faqSupabaseRepository;
-  return isSupabaseConfigured() ? faqSupabaseRepository : faqFileRepository;
+  return selectRepository(faqSupabaseRepository, faqFileRepository);
 }
 
 /** Video domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getVideoRepository(): VideoRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return videoFileRepository;
-  if (forced === 'supabase') return videoSupabaseRepository;
-  return isSupabaseConfigured() ? videoSupabaseRepository : videoFileRepository;
+  return selectRepository(videoSupabaseRepository, videoFileRepository);
 }
 
 /** Admin auth domain entry point. Same driver-selection rule as `getRepository()`. */
 export function getAdminAccountRepository(): AdminAccountRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return adminAccountFileRepository;
-  if (forced === 'supabase') return adminAccountSupabaseRepository;
-  return isSupabaseConfigured() ? adminAccountSupabaseRepository : adminAccountFileRepository;
+  return selectRepository(adminAccountSupabaseRepository, adminAccountFileRepository);
 }
 
 /** Site settings entry point. Same driver-selection rule as `getRepository()`. */
 export function getSiteSettingsRepository(): SiteSettingsRepository {
-  const forced = process.env.CONTENT_DRIVER;
-  if (forced === 'file') return siteSettingsFileRepository;
-  if (forced === 'supabase') return siteSettingsSupabaseRepository;
-  return isSupabaseConfigured() ? siteSettingsSupabaseRepository : siteSettingsFileRepository;
+  return selectRepository(siteSettingsSupabaseRepository, siteSettingsFileRepository);
 }
 
 /** Human-readable backend status for the admin banner and `pnpm check`. */
