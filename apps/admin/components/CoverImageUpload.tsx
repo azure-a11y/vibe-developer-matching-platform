@@ -13,6 +13,11 @@ interface CoverImageUploadProps {
 
 // Vercel rejects oversized multipart requests before /api/upload can read them.
 const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+const PUBLIC_SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://aibuilder-group-sis.vercel.app').replace(/\/$/, '');
+
+function previewUrl(value: string): string {
+  return value.startsWith('/assets/') ? `${PUBLIC_SITE_URL}${value}` : value;
+}
 
 export function CoverImageUpload({ slug, defaultValue, fallbackAlt, fieldName = 'coverSrc', inputId = 'coverSrc', altInputId = 'coverAlt' }: CoverImageUploadProps) {
   const [value, setValue] = useState(defaultValue);
@@ -63,11 +68,12 @@ export function CoverImageUpload({ slug, defaultValue, fallbackAlt, fieldName = 
             onChange={(event) => { const file = event.target.files?.[0]; if (file) void upload(file); event.currentTarget.value = ''; }} />
         </label>
         <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>Supabase Storage에 업로드됩니다.</span>
+        <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>JPG, PNG, WebP 이미지 · 파일당 최대 4MB</span>
       </div>
-      <label className="label" htmlFor="coverSrc">Public URL 또는 경로</label>
+      <label className="label" htmlFor={inputId}>Public URL 또는 경로</label>
       <input id={inputId} name={fieldName} className="field" value={value} onChange={(event) => setValue(event.target.value)}
         placeholder="https://…/storage/v1/object/public/post-images/…" />
-      {value && <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"><img src={value} alt="표지 미리보기" className="h-48 w-full object-cover" /></div>}
+      {value && <div className="overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-sunken)]"><img src={previewUrl(value)} alt="표지 미리보기" className="h-48 w-full object-cover" /></div>}
       {error && <p className="text-sm" style={{ color: 'var(--color-danger)' }}>{error}</p>}
     </div>
   );
