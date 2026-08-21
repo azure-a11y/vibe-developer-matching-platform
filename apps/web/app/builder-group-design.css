@@ -224,9 +224,11 @@ body.assets .asset-toggle { background: var(--lime); color: var(--ink); border-c
 .wcard .builders { margin-top: 10px; font-family: var(--mono); font-size: 13px; color: var(--muted-2); letter-spacing: .04em; }
 
 /* ---------- 페이지 헤더·필터·빈상태·CTA배너 ---------- */
-.page-head { padding: 88px 0 48px; border-bottom: 1px solid var(--line); }
+.page-head { padding: 88px 0 48px; border-bottom: 0; }
 .page-head h1 { margin: 0 0 14px; font-size: clamp(38px, 5.2vw, 64px); font-weight: 800; letter-spacing: -0.05em; line-height: 1.06; }
 .page-head p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.65; max-width: 60ch; word-break: keep-all; }
+.page-head:not(.page-head--work) .wrap::before { content: 'OUR'; display: block; margin-bottom: 14px; font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--muted-2); }
+.page-head:not(.page-head--work) h1::after { content: ''; display: block; width: 64px; height: 4px; margin: 18px 0 20px; border-radius: 999px; background: var(--lime); }
 .crumb { font-family: var(--mono); font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
   color: var(--muted-2); margin-bottom: 20px; }
 .crumb a { text-decoration: none; }
@@ -397,6 +399,7 @@ body.dark .logo { color: var(--paper); }
      새 페이지에 리본을 추가할 때도 반드시 리본 뒤 요소의 기존 top spacing을
      먼저 확인하고 값을 계산할 것. */
   margin-bottom: 90px; }
+.ribbon-sep:not(.ribbon-sep--hero) { margin-bottom: 50px; }
 .ribbon-sep svg { position: absolute; left: 0; right: 0; top: -134px; width: 100%; height: 220px;
   display: block; overflow: visible; filter: drop-shadow(0 14px 28px rgba(14,14,12,.16)); }
 .ribbon-sep .edge { fill: none; stroke: var(--paper); stroke-width: 50; stroke-linecap: round; }
