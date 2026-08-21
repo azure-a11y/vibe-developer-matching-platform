@@ -8,7 +8,7 @@ import { DetailNav } from '@/components/DetailNav';
 import { SubHeading } from '@/components/FormPrimitives';
 import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,8 +26,8 @@ const CATEGORY_OPTIONS = [
 ];
 
 export default async function WorkEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  const account = await requireMenuPermission('work', 'view');
-  const canWrite = hasPermission(account.menuPermissions.work, 'edit_approve');
+  const account = await requireContentPermission('work', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.work, 'edit_approve');
   const canDelete = hasPermission(account.menuPermissions.work, 'full');
 
   const { slug } = await params;
@@ -37,6 +37,7 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
     getBuilderRepository().getAll(),
   ]);
   if (!work) notFound();
+  if (account.role === 'builder' && work.ownerBuilderId !== account.builderId) notFound();
 
   // 목록과 동일한 정렬(수정일 최신순) 기준으로 이전/다음을 찾는다 — Work 목록에서 보이는 순서 그대로.
   const currentIndex = allWorks.findIndex((w) => w.slug === work.slug);

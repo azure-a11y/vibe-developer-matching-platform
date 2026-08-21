@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,11 +25,14 @@ export default async function BuilderListPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>;
 }) {
-  const account = await requireMenuPermission('builder', 'view');
-  const canWrite = hasPermission(account.menuPermissions.builder, 'edit_approve');
+  const account = await requireContentPermission('builder', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.builder, 'edit_approve');
 
   const { q = '', status = 'all' } = await searchParams;
-  const { builders: allBuilders, errors } = await getBuilderRepository().getAll();
+  const ownBuilder = account.role === 'builder' ? await getBuilderRepository().getById(account.builderId!) : null;
+  const { builders: allBuilders, errors } = account.role === 'builder'
+    ? { builders: ownBuilder ? [ownBuilder] : [], errors: [] as string[] }
+    : await getBuilderRepository().getAll();
 
   const counts = {
     total: allBuilders.length,

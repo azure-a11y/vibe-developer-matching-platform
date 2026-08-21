@@ -22,6 +22,7 @@ export type PostRow = {
   body: string;
   status: string;
   author: string;
+  owner_builder_id: string | null;
   category: string;
   tags: string[];
   created_at: string;
@@ -83,6 +84,7 @@ export type WorkRow = {
   result: string;
   assets: Record<string, unknown>[];
   builder_ids: string[];
+  owner_builder_id: string | null;
   status: string;
   /** 0003_work_builder_fields.sql 에서 추가 — Work 목록 필터/카드 표기용. */
   category: string;
@@ -103,6 +105,8 @@ export type AdminAccountRow = {
   name: string;
   grade: string;
   password_hash: string;
+  role: string;
+  builder_id: string | null;
   menu_permissions: Record<string, unknown>;
   status: string;
   created_at: string;
@@ -158,6 +162,7 @@ export type VideoRow = {
   youtube_id: string;
   sort_order: number;
   featured: boolean;
+  status: 'published' | 'private';
   created_at: string;
   updated_at: string;
 };

@@ -64,6 +64,7 @@ function toPost(row: PostRow): Post {
     description: row.description,
     status: row.status,
     author: row.author,
+    ownerBuilderId: row.owner_builder_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     publishedAt: row.published_at ?? undefined,
@@ -98,6 +99,7 @@ function toRow(frontmatter: PostFrontmatterInput, body: string) {
     body: body.trim(),
     status: v.status,
     author: v.author,
+    owner_builder_id: v.ownerBuilderId,
     category: v.category,
     tags: v.tags,
     created_at: v.createdAt,
@@ -159,6 +161,13 @@ export const supabaseRepository: ContentRepository = {
     const { data, error } = await supabase.from('posts').select('*').eq('slug', slug).maybeSingle();
     if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
     return data ? toPost(data) : null;
+  },
+
+  async getOwnedByBuilder(builderId: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('posts').select('*').eq('owner_builder_id', builderId).order('updated_at', { ascending: false });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return (data ?? []).map(toPost);
   },
 
   async save(frontmatter: PostFrontmatterInput, body: string) {
@@ -279,6 +288,13 @@ export const builderSupabaseRepository: BuilderRepository = {
     return data ? toBuilder(data) : null;
   },
 
+  async getById(id: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('builders').select('*').eq('id', id).maybeSingle();
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return data ? toBuilder(data) : null;
+  },
+
   async save(frontmatter: BuilderFrontmatterInput, bio: string) {
     if (!isSupabaseWritable()) {
       throw new Error('Supabase 쓰기가 비활성입니다. SUPABASE_SERVICE_ROLE_KEY 를 .env 에 넣으세요.');
@@ -314,6 +330,7 @@ function toWork(row: WorkRow): Work {
     result: row.result,
     assets: row.assets,
     builderIds: row.builder_ids,
+    ownerBuilderId: row.owner_builder_id,
     status: row.status,
     category: row.category,
     tag: row.tag,
@@ -346,6 +363,7 @@ function toWorkRow(frontmatter: WorkFrontmatterInput) {
     result: v.result,
     assets: v.assets,
     builder_ids: v.builderIds,
+    owner_builder_id: v.ownerBuilderId,
     status: v.status,
     category: v.category,
     tag: v.tag,
@@ -392,6 +410,13 @@ export const workSupabaseRepository: WorkRepository = {
     const { data, error } = await supabase.from('works').select('*').eq('slug', slug).maybeSingle();
     if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
     return data ? toWork(data) : null;
+  },
+
+  async getOwnedByBuilder(builderId: string) {
+    const supabase = createAdminSupabase();
+    const { data, error } = await supabase.from('works').select('*').eq('owner_builder_id', builderId).order('updated_at', { ascending: false });
+    if (error) throw new Error(`Supabase 조회 실패: ${error.message}`);
+    return (data ?? []).map(toWork);
   },
 
   async save(frontmatter: WorkFrontmatterInput) {
@@ -620,6 +645,7 @@ function toVideo(row: VideoRow): Video {
     youtubeId: row.youtube_id,
     order: row.sort_order,
     featured: row.featured,
+    status: row.status,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   });
@@ -641,6 +667,7 @@ function toVideoRow(frontmatter: VideoFrontmatterInput) {
     youtube_id: v.youtubeId,
     sort_order: v.order,
     featured: v.featured,
+    status: v.status,
     created_at: v.createdAt,
     updated_at: v.updatedAt,
   };
@@ -716,6 +743,8 @@ function toAdminAccount(row: AdminAccountRow): AdminAccount {
     name: row.name,
     grade: row.grade,
     passwordHash: row.password_hash,
+    role: row.role,
+    builderId: row.builder_id,
     menuPermissions: row.menu_permissions,
     status: row.status,
     createdAt: row.created_at,
@@ -738,6 +767,8 @@ function toAdminAccountRow(frontmatter: AdminAccountFrontmatterInput) {
     name: v.name,
     grade: v.grade,
     password_hash: v.passwordHash,
+    role: v.role,
+    builder_id: v.builderId,
     menu_permissions: v.menuPermissions,
     status: v.status,
     created_at: v.createdAt,

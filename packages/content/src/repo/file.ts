@@ -72,6 +72,10 @@ export const fileRepository: ContentRepository = {
     return getPostBySlug(slug);
   },
 
+  async getOwnedByBuilder(builderId: string) {
+    return getAllPosts().posts.filter((post) => post.ownerBuilderId === builderId);
+  },
+
   async save(frontmatter: PostFrontmatterInput, body: string) {
     writePost(frontmatter, body);
     return frontmatter.slug;
@@ -97,6 +101,10 @@ export const builderFileRepository: BuilderRepository = {
     return getBuilderBySlug(slug);
   },
 
+  async getById(_id: string) {
+    return null;
+  },
+
   async save(frontmatter: BuilderFrontmatterInput, bio: string) {
     writeBuilder(frontmatter, bio);
     return frontmatter.slug;
@@ -120,6 +128,10 @@ export const workFileRepository: WorkRepository = {
 
   async getBySlug(slug: string) {
     return getWorkBySlug(slug);
+  },
+
+  async getOwnedByBuilder(builderId: string) {
+    return getAllWorks().works.filter((work) => work.ownerBuilderId === builderId);
   },
 
   async save(frontmatter: WorkFrontmatterInput) {

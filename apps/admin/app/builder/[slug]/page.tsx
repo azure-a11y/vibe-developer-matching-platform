@@ -7,7 +7,7 @@ import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
 import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { BuilderStatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,8 +18,8 @@ const STATUS_OPTIONS = [
 ];
 
 export default async function BuilderEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  const account = await requireMenuPermission('builder', 'view');
-  const canWrite = hasPermission(account.menuPermissions.builder, 'edit_approve');
+  const account = await requireContentPermission('builder', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.builder, 'edit_approve');
   const canDelete = hasPermission(account.menuPermissions.builder, 'full');
 
   const { slug } = await params;
@@ -28,6 +28,10 @@ export default async function BuilderEditorPage({ params }: { params: Promise<{ 
     getBuilderRepository().getAll(),
   ]);
   if (!builder) notFound();
+  if (account.role === 'builder') {
+    const own = await getBuilderRepository().getById(account.builderId!);
+    if (!own || own.slug !== builder.slug) notFound();
+  }
 
   // 목록과 동일한 정렬(수정일 최신순) 기준으로 이전/다음을 찾는다.
   const currentIndex = allBuilders.findIndex((b) => b.slug === builder.slug);

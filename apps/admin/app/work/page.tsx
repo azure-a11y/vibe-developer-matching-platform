@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
 import { WorkStatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,12 +25,12 @@ export default async function WorkListPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>;
 }) {
-  const account = await requireMenuPermission('work', 'view');
-  const canWrite = hasPermission(account.menuPermissions.work, 'edit_approve');
+  const account = await requireContentPermission('work', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.work, 'edit_approve');
 
   const { q = '', status = 'all' } = await searchParams;
   const [{ works: allWorks, errors }, { builders }] = await Promise.all([
-    getWorkRepository().getAll(),
+    account.role === 'builder' ? getWorkRepository().getOwnedByBuilder(account.builderId!).then((works) => ({ works, errors: [] as string[] })) : getWorkRepository().getAll(),
     getBuilderRepository().getAll(),
   ]);
   const builderNames = new Map(builders.map((b) => [b.slug, b.displayName]));

@@ -7,7 +7,7 @@ import { DetailNav } from '@/components/DetailNav';
 import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { ScoreCircle, StatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireAdminAccount } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +28,7 @@ const SEVERITY_STYLE: Record<'error' | 'warn' | 'info', string> = {
 };
 
 export default async function ReviewPage({ params }: { params: Promise<{ slug: string }> }) {
-  const account = await requireMenuPermission('insight', 'view');
+  const account = await requireAdminAccount();
   const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
 
   const { slug } = await params;

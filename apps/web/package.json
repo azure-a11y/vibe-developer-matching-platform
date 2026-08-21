@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "bash ../../scripts/with-env.sh sh -c 'next dev --turbopack --port ${WEB_PORT:-3000}'",
+    "dev:direct": "next dev --turbopack --port 3000",
     "build": "next build",
     "start": "bash ../../scripts/with-env.sh sh -c 'next start --port ${WEB_PORT:-3000}'",
     "lint": "eslint .",

@@ -141,6 +141,14 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
+              <div className="vmodal__controls" aria-hidden="true">
+                <span className="vmodal__progress"><i /></span>
+                <span className="vmodal__control-row">
+                  <b>▶</b><b>◀</b><b>▶</b><b>◖</b>
+                  <span className="vmodal__time">03:47 / 10:00</span>
+                  <b>⚙</b><b>⛶</b>
+                </span>
+              </div>
             </div>
             <div className="vmodal__foot">
               <b>{openVideo.title}</b>

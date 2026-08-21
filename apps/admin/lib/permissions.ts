@@ -19,8 +19,42 @@ export function hasPermission(level: PermissionLevel, required: PermissionLevel)
 export async function requireMenuPermission(menu: MenuKey, required: PermissionLevel): Promise<AdminAccount> {
   const account = await getCurrentAccount();
   if (!account) redirect('/login');
+  if (account.role === 'builder' && !['dashboard', 'builder', 'insight', 'work'].includes(menu)) {
+    redirect(`/?denied=${menu}`);
+  }
   if (!hasPermission(account.menuPermissions[menu], required)) {
     redirect(`/?denied=${menu}`);
   }
+  return account;
+}
+
+export async function requireAdminAccount(): Promise<AdminAccount> {
+  const account = await getCurrentAccount();
+  if (!account) redirect('/login');
+  if (account.role !== 'admin') redirect('/?denied=admin');
+  return account;
+}
+
+export async function requireBuilderAccount(): Promise<AdminAccount & { builderId: string }> {
+  const account = await getCurrentAccount();
+  if (!account) redirect('/login');
+  if (account.role !== 'builder' || !account.builderId) redirect('/?denied=builder');
+  return account as AdminAccount & { builderId: string };
+}
+
+export async function requireBuilderOrAdmin(): Promise<AdminAccount> {
+  const account = await getCurrentAccount();
+  if (!account) redirect('/login');
+  return account;
+}
+
+export async function requireContentPermission(menu: 'builder' | 'insight' | 'work', required: PermissionLevel): Promise<AdminAccount> {
+  const account = await getCurrentAccount();
+  if (!account) redirect('/login');
+  if (account.role === 'builder') {
+    if (!account.builderId || required === 'full') redirect(`/?denied=${menu}`);
+    return account;
+  }
+  if (!hasPermission(account.menuPermissions[menu], required)) redirect(`/?denied=${menu}`);
   return account;
 }

@@ -167,6 +167,7 @@ export const PostFrontmatterSchema = z.object({
   status: PostStatus.default('draft'),
   /** Agent or human that authored the draft. */
   author: z.string().default('unknown'),
+  ownerBuilderId: z.string().uuid().nullable().default(null),
   createdAt: z.string(),
   updatedAt: z.string(),
   publishedAt: z.string().optional(),
@@ -295,6 +296,7 @@ export const WorkFrontmatterSchema = z.object({
   assets: z.array(ImageSchema).default([]),
   /** Participating builders — N:M, resolved against Builder.slug at read time. */
   builderIds: z.array(z.string()).default([]),
+  ownerBuilderId: z.string().uuid().nullable().default(null),
   status: WorkStatus.default('pending_review'),
   /** Filter-chip category. Added for the 지홍님 1안 Work 목록 필터 (아이엑스/커머스/플랫폼/파이낸스). */
   category: WorkCategory.default('platform'),
@@ -406,6 +408,7 @@ export const VideoFrontmatterSchema = z.object({
   order: z.number().int().default(0),
   /** 대표영상 — 공개 페이지 상단에 고정 노출. 한 번에 하나만 true. */
   featured: z.boolean().default(false),
+  status: z.enum(['published', 'private']).default('published'),
   createdAt: z.string(),
   updatedAt: z.string(),
 });
@@ -449,6 +452,8 @@ export type MenuKey = keyof AdminMenuPermissions;
 
 export const AdminAccountStatus = z.enum(['active', 'inactive']);
 export type AdminAccountStatus = z.infer<typeof AdminAccountStatus>;
+export const AdminAccountRole = z.enum(['admin', 'builder']);
+export type AdminAccountRole = z.infer<typeof AdminAccountRole>;
 
 export const AdminAccountFrontmatterSchema = z.object({
   slug: z
@@ -465,6 +470,8 @@ export const AdminAccountFrontmatterSchema = z.object({
    */
   grade: z.string().default('미지정'),
   passwordHash: z.string().min(1),
+  role: AdminAccountRole.default('admin'),
+  builderId: z.string().uuid().nullable().default(null),
   menuPermissions: AdminMenuPermissionsSchema.prefault({}),
   status: AdminAccountStatus.default('active'),
   createdAt: z.string(),

@@ -39,6 +39,8 @@ export interface ContentRepository {
 
   getBySlug(slug: string): Promise<Post | null>;
 
+  getOwnedByBuilder(builderId: string): Promise<Post[]>;
+
   /** Create or overwrite. Returns the stored slug. */
   save(frontmatter: PostFrontmatterInput, body: string): Promise<string>;
 
@@ -59,6 +61,8 @@ export interface BuilderRepository {
 
   getBySlug(slug: string): Promise<Builder | null>;
 
+  getById(id: string): Promise<Builder | null>;
+
   save(frontmatter: BuilderFrontmatterInput, bio: string): Promise<string>;
 
   remove(slug: string): Promise<boolean>;
@@ -76,6 +80,8 @@ export interface WorkRepository {
   getPublished(): Promise<Work[]>;
 
   getBySlug(slug: string): Promise<Work | null>;
+
+  getOwnedByBuilder(builderId: string): Promise<Work[]>;
 
   save(frontmatter: WorkFrontmatterInput): Promise<string>;
 

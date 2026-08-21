@@ -4,6 +4,7 @@ import { getVideoRepository } from '@orca/content';
 import { deleteVideoAction, saveVideoAction } from '@/app/video/actions';
 import { DetailNav } from '@/components/DetailNav';
 import { SaveButton } from '@/components/SaveButton';
+import { Select } from '@/components/Select';
 import { hasPermission, requireMenuPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -30,7 +31,7 @@ export default async function VideoEditorPage({ params }: { params: Promise<{ sl
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <h1 className="text-xl font-semibold tracking-tight">{video.title}</h1>
-          {video.featured && <span className="badge badge-confirmed">대표영상</span>}
+          {video.featured && <span className="badge badge-featured">대표영상</span>}
         </div>
         <div className="flex items-center gap-6">
           <DetailNav
@@ -90,6 +91,10 @@ export default async function VideoEditorPage({ params }: { params: Promise<{ sl
                 </span>
               </span>
             </label>
+            <div>
+              <label className="label" htmlFor="status">공개상태</label>
+              <Select id="status" name="status" defaultValue={video.status} options={[{ value: 'published', label: '공개' }, { value: 'private', label: '비공개' }]} />
+            </div>
             <div>
               <label className="label" htmlFor="order">
                 정렬 순서 (낮을수록 먼저)

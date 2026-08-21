@@ -10,7 +10,7 @@ import {
   slugify,
 } from '@orca/content';
 
-import { requireMenuPermission } from '@/lib/permissions';
+import { requireAdminAccount, requireContentPermission, requireMenuPermission } from '@/lib/permissions';
 
 function text(form: FormData, key: string): string {
   return String(form.get(key) ?? '').trim();
@@ -60,7 +60,7 @@ function alternateList(form: FormData) {
 }
 
 export async function createPostAction(formData: FormData) {
-  await requireMenuPermission('insight', 'edit_approve');
+  const account = await requireContentPermission('insight', 'edit_approve');
 
   const title = text(formData, 'title');
   if (!title) throw new Error('제목은 필수입니다.');
@@ -76,6 +76,7 @@ export async function createPostAction(formData: FormData) {
       title,
       slug,
       status: 'draft',
+      ownerBuilderId: account.role === 'builder' ? account.builderId : null,
       author: text(formData, 'author') || 'blog-writer',
       createdAt: now,
       updatedAt: now,
@@ -90,12 +91,14 @@ export async function createPostAction(formData: FormData) {
 }
 
 export async function savePostAction(formData: FormData) {
-  await requireMenuPermission('insight', 'edit_approve');
+  const account = await requireContentPermission('insight', 'edit_approve');
 
   const repo = getRepository();
   const slug = text(formData, 'slug');
   const existing = await repo.getBySlug(slug);
   if (!existing) throw new Error(`글을 찾을 수 없습니다: ${slug}`);
+
+  if (account.role === 'builder' && existing.ownerBuilderId !== account.builderId) throw new Error('본인 Insight만 수정할 수 있습니다.');
 
   const coverSrc = text(formData, 'coverSrc');
   const status = text(formData, 'status') as PostStatus;
@@ -104,7 +107,8 @@ export async function savePostAction(formData: FormData) {
     ...existing,
     title: text(formData, 'title') || existing.title,
     description: text(formData, 'description'),
-    status,
+    status: account.role === 'builder' ? (status === 'published' ? 'in_review' : status) : status,
+    ownerBuilderId: existing.ownerBuilderId,
     author: text(formData, 'author') || existing.author,
     category: text(formData, 'category') || 'general',
     tags: list(formData, 'tags'),
@@ -171,7 +175,7 @@ export async function savePostAction(formData: FormData) {
 }
 
 export async function saveReviewAction(formData: FormData) {
-  await requireMenuPermission('insight', 'edit_approve');
+  await requireAdminAccount();
 
   const repo = getRepository();
   const slug = text(formData, 'slug');

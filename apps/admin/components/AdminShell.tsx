@@ -19,7 +19,7 @@ const NAV_ITEMS: { href: string; label: string; menuKey: MenuKey; countKey?: Pen
   { href: '/', label: 'Dashboard', menuKey: 'dashboard' },
   { href: '/work', label: 'Work', menuKey: 'work', countKey: 'work' },
   { href: '/insight', label: 'Insight', menuKey: 'insight', countKey: 'insight' },
-  { href: '/video', label: 'Video', menuKey: 'video' },
+  { href: '/video', label: 'Content / Video', menuKey: 'video' },
   { href: '/faq', label: 'Faq', menuKey: 'faq' },
   { href: '/builder', label: 'Builder', menuKey: 'builder', countKey: 'builder' },
   { href: '/permissions', label: 'Accounts & Permissions', menuKey: 'accountPermission' },
@@ -50,9 +50,11 @@ export function AdminShell({ children, account, pendingCounts, attentionItems, b
 
   const current = NAV_ITEMS.find((item) => isActive(pathname, item.href));
   // Dashboard always shows; every other item hides once its permission is `none`.
-  const visibleItems = NAV_ITEMS.filter(
-    (item) => item.menuKey === 'dashboard' || !account || account.menuPermissions[item.menuKey] !== 'none',
-  );
+  const builderItems = new Set(['/', '/builder/me', '/insight', '/work']);
+  const visibleItems = NAV_ITEMS.filter((item) => {
+    if (account?.role === 'builder') return builderItems.has(item.href);
+    return item.menuKey === 'dashboard' || !account || account.menuPermissions[item.menuKey] !== 'none';
+  });
   const initial = account?.name.trim().charAt(0).toUpperCase() || '?';
 
   return (

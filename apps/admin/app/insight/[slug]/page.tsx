@@ -6,10 +6,11 @@ import { deletePostAction, savePostAction } from '@/app/actions';
 import { DetailNav } from '@/components/DetailNav';
 import { Editor } from '@/components/Editor';
 import { CheckboxRow, SubHeading } from '@/components/FormPrimitives';
+import { CoverImageUpload } from '@/components/CoverImageUpload';
 import { SaveButton } from '@/components/SaveButton';
 import { Select } from '@/components/Select';
 import { ScoreCircle, StatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,8 +37,8 @@ const PRIORITY_OPTIONS = [
 ];
 
 export default async function PostEditorPage({ params }: { params: Promise<{ slug: string }> }) {
-  const account = await requireMenuPermission('insight', 'view');
-  const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
+  const account = await requireContentPermission('insight', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.insight, 'edit_approve');
   const canDelete = hasPermission(account.menuPermissions.insight, 'full');
 
   const { slug } = await params;
@@ -46,6 +47,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
     getRepository().getAll(),
   ]);
   if (!post) notFound();
+  if (account.role === 'builder' && post.ownerBuilderId !== account.builderId) notFound();
 
   // 목록과 동일한 정렬(발행일·수정일 최신순) 기준으로 이전/다음을 찾는다.
   const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
@@ -378,13 +380,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <label className="label" htmlFor="coverSrc">경로</label>
-              <input
-                id="coverSrc"
-                name="coverSrc"
-                className="field"
-                defaultValue={post.cover?.src ?? ''}
-                placeholder="/images/posts/my-post.png"
-              />
+              <CoverImageUpload slug={post.slug} defaultValue={post.cover?.src ?? ''} />
             </div>
             <div>
               <label className="label" htmlFor="coverAlt">대체 텍스트</label>

@@ -45,6 +45,11 @@
 /* 대표영상 — 화면 상단 중앙, 목록보다 폭을 좁혀 시선을 모으고 하단에 제목을 별도로 표시한다. */
 .vhero { max-width: 988px; margin: 0 auto; }
 .vhero__cell { display: block; }
+.vhero__cell, .vg .vthumb { box-shadow: inset 0 0 0 10px rgba(236,250,252,.92), inset 0 0 0 11px rgba(65,211,230,.48); background: linear-gradient(135deg, #b9fff0, #20c7ee 58%, #b6ffd9); }
+.vhero__cell::after, .vg .vthumb::after { content: "▶   ◀   ▶   ◖                                  ⚙   ⛶"; position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 22px 18px 10px; background: linear-gradient(transparent, rgba(241,247,248,.98) 46%); color: rgba(44,78,84,.88); font: 12px var(--mono); letter-spacing: .08em; white-space: pre; pointer-events: none; }
+.vhero__cell::before, .vg .vthumb::before { content: ""; position: absolute; left: 14px; right: 14px; bottom: 8px; z-index: 3; height: 4px; background: linear-gradient(90deg, #ff3b30 0 34%, rgba(110,110,110,.45) 34%); pointer-events: none; }
+.vhero__cell .vshade, .vg .vthumb .vshade { background: linear-gradient(135deg, rgba(143,255,226,.26), rgba(0,190,238,.24)); }
+.vhero__cell .play i, .vg .vthumb .play i { background: rgba(107,237,247,.42); color: #fff; border: 2px solid rgba(255,255,255,.72); box-shadow: 0 0 0 1px rgba(255,255,255,.22); }
 .vhero__title { margin: 18px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
 
 .vempty { padding: 40px 8px; color: var(--muted); font-size: 15px; text-align: center; }
@@ -71,6 +76,12 @@
 .vmodal__close:hover { background: var(--lime); color: var(--ink); }
 .vmodal__frame { position: relative; aspect-ratio: 16/9; background: #000; }
 .vmodal__frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.vmodal__controls { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 0 22px 14px; pointer-events: none; background: linear-gradient(transparent, rgba(0,0,0,.78)); color: #fff; }
+.vmodal__progress { display: block; height: 5px; margin-bottom: 12px; background: rgba(255,255,255,.28); }
+.vmodal__progress i { display: block; width: 34%; height: 100%; background: #fff; }
+.vmodal__control-row { display: flex; align-items: center; gap: 22px; font: 18px var(--mono); }
+.vmodal__control-row b { display: grid; place-items: center; width: 28px; height: 28px; font-size: 15px; font-weight: 700; }
+.vmodal__time { margin-left: auto; font: 700 14px var(--mono); letter-spacing: .02em; }
 .vmodal__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px;
   flex-wrap: wrap; }
 .vmodal__foot b { color: #fff; font-size: 15.5px; letter-spacing: -0.02em; font-weight: 700; }
@@ -80,4 +91,7 @@
 @media (max-width: 640px) {
   .vhero__title { font-size: 18px; }
   .vsearch { width: 100%; }
+  .vmodal__controls { padding: 0 12px 9px; }
+  .vmodal__control-row { gap: 8px; }
+  .vmodal__time { font-size: 10px; }
 }

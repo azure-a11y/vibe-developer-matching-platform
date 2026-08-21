@@ -1,5 +1,5 @@
 /** Status badge 4단계 톤과 동일한 클래스를 재사용한다 — components/StatusBadge.tsx 참고. */
-export type CountTone = 'pending' | 'confirmed' | 'scheduled' | 'inactive' | 'muted';
+export type CountTone = 'pending' | 'confirmed' | 'scheduled' | 'inactive' | 'muted' | 'featured';
 
 interface CountItem {
   label: string;

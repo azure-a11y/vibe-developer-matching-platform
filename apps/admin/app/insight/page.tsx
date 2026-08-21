@@ -9,7 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
 import { ScoreValue, StatusBadge } from '@/components/StatusBadge';
-import { hasPermission, requireMenuPermission } from '@/lib/permissions';
+import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,11 +27,13 @@ export default async function InsightListPage({
 }: {
   searchParams: Promise<{ q?: string; status?: string }>;
 }) {
-  const account = await requireMenuPermission('insight', 'view');
-  const canWrite = hasPermission(account.menuPermissions.insight, 'edit_approve');
+  const account = await requireContentPermission('insight', 'view');
+  const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.insight, 'edit_approve');
 
   const { q = '', status = 'all' } = await searchParams;
-  const { posts: allPosts, errors } = await getRepository().getAll();
+  const { posts: allPosts, errors } = account.role === 'builder'
+    ? { posts: await getRepository().getOwnedByBuilder(account.builderId!), errors: [] as string[] }
+    : await getRepository().getAll();
   const audits = new Map(allPosts.map((post) => [post.slug, auditPost(post)]));
 
   const counts = {

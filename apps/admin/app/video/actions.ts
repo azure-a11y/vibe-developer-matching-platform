@@ -47,6 +47,7 @@ export async function createVideoAction(formData: FormData) {
     youtubeId,
     order: num(formData, 'order', 0),
     featured: bool(formData, 'featured'),
+    status: text(formData, 'status') === 'private' ? 'private' : 'published',
     createdAt: now,
     updatedAt: now,
   });
@@ -74,6 +75,7 @@ export async function saveVideoAction(formData: FormData) {
     youtubeId,
     order: num(formData, 'order', existing.order),
     featured: bool(formData, 'featured'),
+    status: text(formData, 'status') === 'private' ? 'private' : 'published',
   };
 
   await repo.save(frontmatter);
