@@ -190,7 +190,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                     data-c={p.category}
                     key={p.slug}
                   >
-                    <div className="slot mask">
+                    <div className="slot mask on">
                       <img className="cover" src={p.img} alt={p.alt} loading="lazy" />
                     </div>
                     <div className="meta">
@@ -242,7 +242,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
             <div className="bld__grid">
               {pagedBuilders.map(b => (
                 <Link className="bcard rv on" href={`/builder/${b.slug}`} data-track="builder_click" data-slug={b.slug} key={b.slug}>
-                  <div className="slot mask">
+                  <div className="slot mask on">
                     <img src={b.avatar} alt={`${b.name} 프로필 사진`} />
                     {b.badgeLabel && <span className={b.isLead ? 'lv lv--lead' : 'lv lv--new'}>{b.badgeLabel}</span>}
                     <div className="ct"><span>수행 <span className="num">{b.done}</span>건</span><span className="go">Profile →</span></div>
