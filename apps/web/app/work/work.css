@@ -134,8 +134,8 @@
 
 /* ── 포트폴리오 쇼케이스 — 넓은 비주얼 배경 위에 카드가 떠 있는 구조 ── */
 .stage { position: relative; padding: clamp(22px, 3vw, 34px) clamp(12px, 2vw, 22px); }
-.stage__bg { position: absolute; inset: 0; border-radius: 24px; overflow: hidden; background: var(--ink); display: flex; }
-.stage__bg img { flex: 1; height: 100%; min-width: 0; object-fit: cover; filter: grayscale(85%) blur(1.5px) brightness(.62); }
+.stage__bg { position: absolute; inset: 0; border-radius: 24px; overflow: hidden; background: var(--ink) url('/assets/img/work-projects-bg.jpg') center / cover no-repeat; display: flex; }
+.stage__bg img { display: none; }
 .stage__bg::before { content: ""; position: absolute; inset: 0;
   background: radial-gradient(120% 90% at 15% 0%, rgba(216,255,61,.14), transparent 55%), linear-gradient(180deg, rgba(14,14,12,.72), rgba(14,14,12,.86) 55%, rgba(14,14,12,.94)); }
 .stage__bg::after { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(244,241,234,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(244,241,234,.05) 1px, transparent 1px); background-size: 64px 64px; }

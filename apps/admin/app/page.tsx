@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getBuilderRepository, getRepository, getWorkRepository } from '@orca/content';
+import { getBuilderRepository, getRepository, getSiteSettingsRepository, getWorkRepository } from '@orca/content';
 import type { MenuKey } from '@orca/content';
 
 import type { CountTone } from '@/components/CountSummary';
@@ -30,11 +30,14 @@ export default async function DashboardPage({
   searchParams: Promise<{ denied?: string }>;
 }) {
   const { denied } = await searchParams;
-  const [{ posts, errors }, { builders }, { works }] = await Promise.all([
+  const [{ posts, errors }, { builders }, { works }, { settings }] = await Promise.all([
     getRepository().getAll(),
     getBuilderRepository().getAll(),
     getWorkRepository().getAll(),
+    getSiteSettingsRepository().get(),
   ]);
+
+  const configuredPluugUrl = settings.pluugFormUrl.trim();
 
   const counts = {
     total: posts.length,
@@ -102,6 +105,12 @@ export default async function DashboardPage({
 
       {/* 핵심 KPI — 항목마다 독립 카드로, 클릭하면 해당 관리 화면으로 이동한다. */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="card sm:col-span-2 lg:col-span-4">
+          <p className="label mb-2">pluug 문의 폼 URL</p>
+          <p className="break-all text-sm" style={{ color: 'var(--color-ink-muted)' }}>
+            {configuredPluugUrl || 'Settings에서 pluug 폼 URL을 설정하세요'}
+          </p>
+        </div>
         <KpiCard
           href="/builder"
           label="Builder"

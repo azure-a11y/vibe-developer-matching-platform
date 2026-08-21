@@ -1,4 +1,4 @@
-.ins { display: grid; grid-template-columns: 230px 1fr; gap: 60px; padding: 84px 0 76px; align-items: start; }
+.ins { display: grid; grid-template-columns: 230px 1fr; gap: 60px; padding: 60px 0 76px; align-items: start; }
 .page-head + .ribbon-sep { margin-top: 0; }
 .cats { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 2px; }
 .page-head p { font-size: 18px; }

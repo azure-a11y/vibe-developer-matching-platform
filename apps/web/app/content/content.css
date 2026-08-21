@@ -3,7 +3,7 @@
    path가 곡선이라 svg 박스 상단/하단과 실제로 보이는 선 위치가 다르므로,
    top·height만으로 계산하면 어긋난다. 설명문구-리본 간격 20px(다른 서브
    페이지와 통일), 리본-본문 간격 35px 기준. */
-.vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #17170f;
+.vcell { position: relative; border-radius: 22px; overflow: hidden; cursor: pointer; background: #17170f url('/assets/img/content-video-frame.jpg') center / cover no-repeat;
   transition: transform .35s cubic-bezier(.2,.6,.2,1); display: block; text-decoration: none;
   width: 100%; border: 0; padding: 0; text-align: left; font: inherit; -webkit-appearance: none; appearance: none; }
 .vcell:hover { transform: scale(1.018); }
@@ -14,6 +14,7 @@
 .vcell .dur { position: absolute; top: 16px; right: 16px; font-family: var(--mono); font-size: 11px;
   letter-spacing: .1em; background: rgba(0,0,0,.55); color: rgba(244,241,234,.8); padding: 5px 10px; border-radius: 999px; }
 .vcell .play { position: absolute; inset: 0; display: grid; place-items: center; }
+.vcell .play { z-index: 4; }
 .vcell .play i { width: 60px; height: 60px; border-radius: 50%; background: var(--lime); color: var(--ink);
   display: grid; place-items: center; font-size: 18px; transition: transform .3s; box-shadow: 0 12px 40px rgba(216,255,61,.22); }
 .vcell:hover .play i { transform: scale(1.14); }
@@ -22,9 +23,9 @@
 .vcell .cap span { font-family: var(--mono); font-size: 11px; color: var(--d-mut); letter-spacing: .12em; text-transform: uppercase; }
 .feat { aspect-ratio: 16/9; margin-bottom: 40px; }
 .feat .cap b { font-size: 24px; letter-spacing: -0.035em; }
-.vg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-.vg .vcell { aspect-ratio: unset; overflow: visible; border-radius: 0; background: none; }
-.vg .vcell .vthumb { position: relative; overflow: hidden; border-radius: 22px; background: #17170f; aspect-ratio: 16/9; }
+.vg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; width: 100%; min-width: 0; }
+.vg .vcell { aspect-ratio: 16 / 9; width: 100%; min-width: 0; overflow: visible; border-radius: 0; background: none; }
+.vg .vcell .vthumb { position: relative; overflow: hidden; border-radius: 22px; background: #17170f url('/assets/img/content-video-frame.jpg') center / cover no-repeat; aspect-ratio: 16/9; }
 .vg .vcell .cap { position: static; left: auto; right: auto; bottom: auto; margin-top: 12px; padding: 0 2px; }
 .vg .vcell .cap b { color: var(--ink); text-shadow: none; }
 .sub-banner { position: relative; overflow: hidden; margin: 68px 0 0; border: 1px solid var(--d-line); border-radius: 26px;
@@ -36,20 +37,22 @@
 .sub-banner h3 { margin: 0 0 4px; font-size: 23px; font-weight: 800; letter-spacing: -0.035em; }
 .sub-banner p { margin: 0; color: var(--d-mut); font-size: 14px; }
 @media (max-width: 900px) { .vg { grid-template-columns: 1fr; } }
-.vcell .vimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.vcell .vimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; }
+.vhero__cell .vimg { inset: 0; width: 100%; height: 100%; clip-path: inset(7px 0 0); }
 .vcell .vshade { position: absolute; inset: 0; background: linear-gradient(200deg, rgba(0,0,0,.04) 40%, rgba(0,0,0,.72)); }
 .vcell .cap b { text-shadow: 0 1px 8px rgba(0,0,0,.6); }
 .chbadge { position: absolute; top: 14px; left: 14px; z-index: 3; background: rgba(0,0,0,.6); color: #fff;
   font-size: 11.5px; font-weight: 700; padding: 5px 11px; border-radius: 999px; letter-spacing: -0.01em; }
 
 /* 대표영상 — 화면 상단 중앙, 목록보다 폭을 좁혀 시선을 모으고 하단에 제목을 별도로 표시한다. */
-.vhero { max-width: 988px; margin: 0 auto; }
+.vhero { max-width: 840px; margin: 0 auto; }
 .vhero__cell { display: block; }
-.vhero__cell, .vg .vthumb { box-shadow: inset 0 0 0 10px rgba(236,250,252,.92), inset 0 0 0 11px rgba(65,211,230,.48); background: linear-gradient(135deg, #b9fff0, #20c7ee 58%, #b6ffd9); }
-.vhero__cell::after, .vg .vthumb::after { content: "▶   ◀   ▶   ◖                                  ⚙   ⛶"; position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; padding: 22px 18px 10px; background: linear-gradient(transparent, rgba(241,247,248,.98) 46%); color: rgba(44,78,84,.88); font: 12px var(--mono); letter-spacing: .08em; white-space: pre; pointer-events: none; }
-.vhero__cell::before, .vg .vthumb::before { content: ""; position: absolute; left: 14px; right: 14px; bottom: 8px; z-index: 3; height: 4px; background: linear-gradient(90deg, #ff3b30 0 34%, rgba(110,110,110,.45) 34%); pointer-events: none; }
-.vhero__cell .vshade, .vg .vthumb .vshade { background: linear-gradient(135deg, rgba(143,255,226,.26), rgba(0,190,238,.24)); }
-.vhero__cell .play i, .vg .vthumb .play i { background: rgba(107,237,247,.42); color: #fff; border: 2px solid rgba(255,255,255,.72); box-shadow: 0 0 0 1px rgba(255,255,255,.22); }
+.vhero__cell, .vg .vthumb { box-shadow: inset 0 8px #f4d34c; border: 0; border-top: 0; background: #f4d34c url('/assets/img/content-video-frame.jpg') center / 120% 120% no-repeat; }
+.vhero__cell::after, .vg .vthumb::after, .vhero__cell::before, .vg .vthumb::before { display: none; }
+.vhero__cell::after { content: "▶   ◀   ▶   ◖                                  ⚙   ⛶"; display: block; position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; padding: 22px 18px 10px; background: linear-gradient(transparent, rgba(20,20,18,.9) 46%); color: rgba(255,255,255,.9); font: 12px var(--mono); letter-spacing: .08em; white-space: pre; pointer-events: none; }
+.vhero__cell::before { content: ""; display: block; position: absolute; left: 14px; right: 14px; bottom: 8px; z-index: 4; height: 4px; background: linear-gradient(90deg, #fff 0 34%, rgba(255,255,255,.45) 34%); pointer-events: none; }
+.vhero__cell .vshade, .vg .vthumb .vshade { background: transparent; }
+.vhero__cell .play i, .vg .vthumb .play i { background: rgba(216,255,61,.78); color: var(--ink); border: 2px solid rgba(216,255,61,.92); box-shadow: 0 0 0 1px rgba(216,255,61,.28); }
 .vhero__title { margin: 18px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.03em; text-align: center; }
 
 .vempty { padding: 40px 8px; color: var(--muted); font-size: 15px; text-align: center; }

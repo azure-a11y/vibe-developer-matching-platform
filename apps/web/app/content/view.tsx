@@ -64,7 +64,7 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
           '김이솝의 AI 가이드 ✳ 똑똑한개발자 ✳ AI 서대표 ✳ ',
         ]}
       />
-      <div className="wrap" style={{ padding: '20px 32px 100px' }}>
+      <div className="wrap" style={{ padding: '72px 32px 100px' }}>
         {videos.length === 0 ? (
           <p style={{ color: 'var(--muted)' }}>아직 등록된 영상이 없습니다.</p>
         ) : (
@@ -136,7 +136,7 @@ export default function ContentView({ videos }: { videos: PublicVideo[] }) {
             <button type="button" className="vmodal__close" aria-label="닫기" onClick={() => setOpenVideo(null)}>✕</button>
             <div className="vmodal__frame">
               <iframe
-                src={`https://www.youtube.com/embed/${openVideo.youtubeId}?autoplay=1&rel=0`}
+                src={`https://www.youtube.com/embed/${openVideo.youtubeId}?autoplay=1&controls=1&playsinline=1&rel=0`}
                 title={openVideo.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
