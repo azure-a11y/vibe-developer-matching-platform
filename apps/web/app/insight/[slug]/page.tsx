@@ -15,14 +15,9 @@ import './insight-detail.css';
    지우지 못한다 — 60초 시간 기반 재검증으로 Supabase 변경이 재배포 없이 반영되게 한다.
    generateStaticParams에 없는 새 slug는 dynamicParams 기본값(true)에 따라 첫 방문 시
    on-demand로 렌더되고 이후 이 주기로 다시 신선해진다. */
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 type Params = { params: Promise<{ slug: string }> };
-
-export async function generateStaticParams() {
-  const posts = await getRepository().getPublished();
-  return posts.map((post) => ({ slug: post.slug }));
-}
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
