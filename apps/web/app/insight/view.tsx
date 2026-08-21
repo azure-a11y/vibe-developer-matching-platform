@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useMemo, useState } from 'react'
 
 import ContactTrigger from '@/components/ContactTrigger'
 import { useRibbonFlow, useDock } from '@/components/fx'
@@ -15,8 +15,12 @@ const CATEGORY_LABEL: Record<string, string> = {
   how: '일하는 방식',
   project: '프로젝트',
 }
+const PAGE_SIZE = 6
 
 export default function InsightView({ articles }: { articles: InsightRow[] }) {
+  const [query, setQuery] = useState('')
+  const [page, setPage] = useState(1)
+  const [category, setCategory] = useState('all')
   useRibbonFlow({
     rsI: [
       '발주 가이드 ✳ 일하는 방식 ✳ AI · AX ✳ 프로젝트 비하인드 ✳ ',
@@ -27,27 +31,18 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
   }, { rsI: 5500 })
   useDock('sub')
 
-  useEffect(() => {
-    const rows = document.querySelectorAll<HTMLElement>('[data-list] .arow')
-    const empty = document.querySelector('[data-empty]') as HTMLElement | null
-    document.querySelectorAll<HTMLElement>('.cats button').forEach(b => {
-      b.addEventListener('click', () => {
-        document.querySelectorAll('.cats button').forEach(x => x.classList.remove('on'))
-        b.classList.add('on')
-        const cat = b.dataset.cat
-        let n = 0
-        rows.forEach(r => {
-          const show = cat === 'all' || r.dataset.c === cat
-          r.style.display = show ? '' : 'none'
-          if (show) n++
-        })
-        if (empty) empty.hidden = n > 0
-        history.replaceState(null, '', cat === 'all' ? '#' : '#' + cat)
-      })
-    })
-  }, [])
-
   const counts = CATEGORY_ORDER.map(c => ({ c, n: articles.filter(a => a.category === c).length }))
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return articles.filter(a => {
+      const matchesCategory = category === 'all' || a.category === category
+      const matchesQuery = !q || `${a.title} ${a.desc} ${a.categoryLabel}`.toLowerCase().includes(q)
+      return matchesCategory && matchesQuery
+    })
+  }, [articles, category, query])
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const paged = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   return (
     <>
@@ -60,11 +55,11 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
         </div>
 
         <div className="ribbon-sep" aria-hidden="true">
-          <svg viewBox="0 0 1600 200" preserveAspectRatio="xMidYMid slice">
-            <path id="rsI" d="M -80,90 C 280,130 560,70 860,110 C 1160,150 1360,90 1700,120" fill="none" />
-            <use href="#rsI" className="edge" />
-            <use href="#rsI" className="lane" />
-            <text dy="6">
+          <svg viewBox="0 0 1600 220" preserveAspectRatio="xMidYMid slice">
+            <path id="rsI" d="M -80,150 C 240,90 420,190 720,150 C 1020,110 1220,170 1420,120 C 1520,95 1600,100 1700,80" fill="none" />
+            <use href="#rsI" className="edge2" />
+            <use href="#rsI" className="lane2" />
+            <text className="t2" dy="6">
               <textPath href="#rsI" data-wflow data-unit="4" data-speed="0.02">발주 가이드 ✳ 일하는 방식 ✳ AI · AX ✳ 프로젝트 비하인드 ✳ 발주 가이드 ✳ 일하는 방식 ✳ AI · AX ✳ 프로젝트 비하인드 ✳ </textPath>
             </text>
           </svg>
@@ -72,14 +67,17 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
 
         <div className="wrap ins">
           <nav className="cats" aria-label="카테고리">
-            <button className="on" data-cat="all">전체 <span className="cnt">{String(articles.length).padStart(2, '0')}</span></button>
+            <button className={category === 'all' ? 'on' : ''} type="button" onClick={() => { setCategory('all'); setPage(1) }}>전체 <span className="cnt">{String(articles.length).padStart(2, '0')}</span></button>
             {counts.map(({ c, n }) => (
-              <button key={c} data-cat={c}>{CATEGORY_LABEL[c]} <span className="cnt">{String(n).padStart(2, '0')}</span></button>
+              <button className={category === c ? 'on' : ''} type="button" key={c} onClick={() => { setCategory(c); setPage(1) }}>{CATEGORY_LABEL[c]} <span className="cnt">{String(n).padStart(2, '0')}</span></button>
             ))}
           </nav>
 
           <div data-list>
-            {articles.map(a => (
+            <div className="ins-search-row">
+              <input className="ins-search" type="search" value={query} onChange={e => { setQuery(e.target.value); setPage(1) }} placeholder="인사이트 검색" aria-label="인사이트 검색" />
+            </div>
+            {paged.map(a => (
               <Link className="arow" href={`/insight/${encodeURIComponent(a.slug)}`} data-c={a.category} key={a.slug}>
                 <img className="athumb" src={a.img} alt="" loading="lazy" />
                 <div>
@@ -91,7 +89,15 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
               </Link>
             ))}
 
-            <div className="empty" data-empty hidden style={{ marginTop: 24 }}>
+            {totalPages > 1 && (
+              <div className="ins-pager">
+                <button type="button" className="btn btn--ghost" disabled={currentPage === 1} onClick={() => setPage(p => p - 1)}>←</button>
+                <span>{currentPage} / {totalPages}</span>
+                <button type="button" className="btn btn--ghost" disabled={currentPage === totalPages} onClick={() => setPage(p => p + 1)}>→</button>
+              </div>
+            )}
+
+            <div className="empty" hidden={filtered.length > 0} style={{ marginTop: 24 }}>
               <h3>이 주제의 첫 글을 준비 중입니다</h3>
               <p>다른 카테고리의 글을 먼저 읽어보세요.</p>
             </div>

@@ -103,6 +103,10 @@ export default async function PostPage({ params }: Params) {
 
   // Drafts and in-review posts are invisible to the public site.
   if (!post || post.status !== 'published') notFound();
+  const posts = await getRepository().getPublished();
+  const index = posts.findIndex((item) => item.slug === post.slug);
+  const previous = index < posts.length - 1 ? posts[index + 1] : null;
+  const next = index > 0 ? posts[index - 1] : null;
 
   const faq = faqJsonLd(post);
   const categoryLabel = CATEGORY_LABEL[post.category] ?? post.category;
@@ -153,6 +157,12 @@ export default async function PostPage({ params }: Params) {
 
         <FaqToc items={post.geo.faq} />
       </div>
+
+      <nav className="post-nav wrap" aria-label="게시물 이동">
+        {previous ? <Link href={`/insight/${encodeURIComponent(previous.slug)}`}>← 이전 글</Link> : <span />}
+        {next ? <Link href={`/insight/${encodeURIComponent(next.slug)}`}>다음 글 →</Link> : <span />}
+        <Link href="/insight">목록</Link>
+      </nav>
 
       <section style={{ paddingTop: 0 }}>
         <div className="wrap" style={{ maxWidth: 776 }}>

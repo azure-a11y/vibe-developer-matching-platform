@@ -2,7 +2,10 @@
    /builder 목록에서도 쓰는데, 그쪽 스타일은 work.css 에만 있어서 이 라우트 CSS
    번들에는 빠져 있었다 — 이미지가 컨테이너를 못 채우고 .slot 배경(잉크색)이
    그대로 드러나는 원인이었다) ── */
-.bld__grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.bld__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.list-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 28px 0 4px; color: var(--muted); font: 12px var(--mono); }
+.list-pager button { border: 1px solid var(--line); background: transparent; color: inherit; border-radius: 999px; width: 34px; height: 30px; cursor: pointer; }
+.list-pager button:disabled { opacity: .35; cursor: not-allowed; }
 .bcard { display: block; text-decoration: none; }
 .bcard .slot { aspect-ratio: 4/5; border-radius: 20px; outline: 2px solid transparent; outline-offset: -2px;
   transition: outline-color var(--hover); }

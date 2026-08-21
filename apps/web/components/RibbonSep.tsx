@@ -10,12 +10,14 @@ export function RibbonSep({
   rotateMs = 5200,
   speed = 0.026,
   dir = 'rev',
+  className,
 }: {
   id: string
   phrases: string[]
   rotateMs?: number
   speed?: number
   dir?: 'fwd' | 'rev'
+  className?: string
 }) {
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -72,7 +74,7 @@ export function RibbonSep({
   }, [id, phrases, rotateMs, speed, dir])
 
   return (
-    <div className="ribbon-sep" aria-hidden="true">
+    <div className={className ? `ribbon-sep ${className}` : 'ribbon-sep'} aria-hidden="true">
       <svg viewBox="0 0 1600 220" preserveAspectRatio="xMidYMid slice">
         <path id={id} d="M -80,150 C 240,90 420,190 720,150 C 1020,110 1220,170 1420,120 C 1520,95 1600,100 1700,80" fill="none" />
         <use href={`#${id}`} className="edge2" />

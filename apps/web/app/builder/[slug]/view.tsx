@@ -76,7 +76,7 @@ export default function BuilderProfileView({ b }: { b: BuilderProfileData }) {
           <p className="note">※ 공개 가능한 프로젝트만 게재합니다 · 전체 수행 {b.done}건</p>
           <div className="grid g2">
             {b.projects.map((p, i) => (
-              <Link className={'wcard rv d' + (i % 4)} href={`/work/${p.slug}`} data-cursor="VIEW →" key={p.slug}>
+                    <Link className={'wcard rv d' + (i % 4)} href={`/work/${p.slug}`} key={p.slug}>
                 <div className="slot mask"><img className="cover" src={p.img} alt={`${p.title} 화면`} loading="lazy" /></div>
                 <div className="meta">
                   <div className="mrow"><span className="tag">{p.tag}</span><span className="yr num">{p.year}</span></div>

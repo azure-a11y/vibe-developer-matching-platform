@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { getBuilderRepository, getWorkRepository } from '@orca/content';
+import BuilderListView from './view';
 
 import './builder.css';
 
@@ -32,9 +32,10 @@ export default async function BuilderListPage() {
         </div>
       </div>
       <div className="wrap" style={{ padding: '40px 32px 100px' }}>
-        <div className="bld__grid">
+        <BuilderListView builders={active.map((b) => ({ slug: b.slug, name: b.displayName, role: b.role, bio: b.bio, specialties: b.specialties, avatar: b.avatar?.src ?? '/assets/img/avatar-placeholder.png', badgeLabel: b.badgeLabel, isLead: b.isLead, done: doneCountBySlug.get(b.slug) ?? 0 }))} />
+        {/*
           {active.map((b) => (
-            <Link className="bcard rv" href={`/builder/${b.slug}`} data-cursor="PROFILE →" key={b.slug}>
+            <Link className="bcard rv" href={`/builder/${b.slug}`} key={b.slug}>
               <div className="slot mask">
                 <img src={b.avatar?.src ?? '/assets/img/avatar-placeholder.png'} alt={`${b.displayName} 프로필 사진`} />
                 {b.badgeLabel && <span className={b.isLead ? 'lv lv--lead' : 'lv lv--new'}>{b.badgeLabel}</span>}
@@ -48,7 +49,7 @@ export default async function BuilderListPage() {
               </div>
             </Link>
           ))}
-        </div>
+        </div> */}
       </div>
     </main>
   );

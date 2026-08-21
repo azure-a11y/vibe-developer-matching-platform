@@ -21,7 +21,7 @@ export function useRibbonFlow(DECKS: Record<string, string[]>, ROT: Record<strin
       txt.style.transition = 'opacity .45s ease'
       const f: Flow = {
         tp, di: 0, off: 0, unit: 10,
-        speed: parseFloat(tp.dataset.speed || '0.022') * (tp.dataset.dir === 'rev' ? -1 : 1),
+        speed: -0.026,
       }
       const setDeck = (i: number) => {
         f.di = i

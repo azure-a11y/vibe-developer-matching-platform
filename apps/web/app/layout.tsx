@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   applicationName: siteName,
-  icons: { icon: '/favicon.png' },
+  icons: { icon: '/favicon.png?v=2' },
   openGraph: {
     type: 'website',
     siteName,

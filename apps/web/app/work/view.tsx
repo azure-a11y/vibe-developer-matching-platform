@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import ContactTrigger from '@/components/ContactTrigger'
 import { useRibbonFlow, useDock } from '@/components/fx'
@@ -44,6 +44,12 @@ const MATCH_SLUGS: Record<string, [string, string]> = {
 }
 
 export default function WorkView({ works, builders }: { works: WorkCard[]; builders: BuilderCard[] }) {
+  const [category, setCategory] = useState('all')
+  const [page, setPage] = useState(1)
+  const filteredWorks = useMemo(() => category === 'all' ? works : works.filter((work) => work.category === category), [category, works])
+  const totalPages = Math.max(1, Math.ceil(filteredWorks.length / 6))
+  const currentPage = Math.min(page, totalPages)
+  const pagedWorks = filteredWorks.slice((currentPage - 1) * 6, currentPage * 6)
   useRibbonFlow({
     rsW: [
       'AI 에이전트 ✳ 랜딩 ✳ 플랫폼 ✳ 모바일 앱 ✳ 자동화 ✳ ',
@@ -131,8 +137,8 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
         </div>
 
         <div className="ribbon-sep" aria-hidden="true">
-          <svg viewBox="0 0 1600 200" preserveAspectRatio="xMidYMid slice">
-            <path id="rsW" d="M -80,120 C 260,80 520,150 820,110 C 1120,70 1320,130 1700,90" fill="none" />
+          <svg viewBox="0 0 1600 220" preserveAspectRatio="xMidYMid slice">
+            <path id="rsW" d="M -80,150 C 240,90 420,190 720,150 C 1020,110 1220,170 1420,120 C 1520,95 1600,100 1700,80" fill="none" />
             <use href="#rsW" className="edge2" />
             <use href="#rsW" className="lane2" />
             <text className="t2" dy="5">
@@ -154,11 +160,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
             </div>
 
             <div className="chips" role="tablist" style={{ margin: '0 0 34px' }}>
-              <button className="chip on" data-cat="all">전체</button>
-              <button className="chip" data-cat="aiax">AI · AX</button>
-              <button className="chip" data-cat="commerce">Commerce</button>
-              <button className="chip" data-cat="platform">SaaS · Admin</button>
-              <button className="chip" data-cat="finance">Finance</button>
+              {['all', 'aiax', 'commerce', 'platform', 'finance'].map((cat) => <button className={`chip ${category === cat ? 'on' : ''}`} data-cat={cat} type="button" key={cat} onClick={() => { setCategory(cat); setPage(1) }}>{cat === 'all' ? '전체' : cat === 'aiax' ? 'AI · AX' : cat === 'platform' ? 'SaaS · Admin' : cat.slice(0, 1).toUpperCase() + cat.slice(1)}</button>)}
             </div>
 
             <div className="stage">
@@ -168,13 +170,12 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                 ))}
               </div>
               <div className="pxg" data-list>
-                {works.map((p, i) => (
+                {pagedWorks.map((p, i) => (
                   <Link
                     className="wcard rv"
                     style={{ transitionDelay: `${Math.min(i, 6) * 70}ms` }}
                     href={`/work/${encodeURIComponent(p.slug)}`}
                     data-c={p.category}
-                    data-cursor="VIEW →"
                     key={p.slug}
                   >
                     <div className="slot mask">
@@ -197,9 +198,10 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                   </Link>
                 ))}
               </div>
+              {totalPages > 1 && <div className="list-pager" aria-label="Work 페이지 이동"><button type="button" disabled={currentPage === 1} onClick={() => setPage((value) => value - 1)}>←</button><span>{currentPage} / {totalPages}</span><button type="button" disabled={currentPage === totalPages} onClick={() => setPage((value) => value + 1)}>→</button></div>}
             </div>
 
-            <div className="empty" data-empty hidden>
+            <div className="empty" data-empty hidden={filteredWorks.length > 0}>
               <h3>이 분야의 첫 프로젝트가 곧 공개됩니다</h3>
               <p>고민 중인 프로젝트가 이 분야라면, 30초 매칭으로 알려주세요.</p>
               <a className="btn btn--ghost btn--sm" href="#match">30초 매칭 받기 ↓</a>
@@ -218,7 +220,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
             </div>
             <div className="bld__grid">
               {builders.map(b => (
-                <Link className="bcard rv" href={`/builder/${b.slug}`} data-cursor="PROFILE →" data-track="builder_click" data-slug={b.slug} key={b.slug}>
+                <Link className="bcard rv" href={`/builder/${b.slug}`} data-track="builder_click" data-slug={b.slug} key={b.slug}>
                   <div className="slot mask">
                     <img src={b.avatar} alt={`${b.name} 프로필 사진`} />
                     {b.badgeLabel && <span className={b.isLead ? 'lv lv--lead' : 'lv lv--new'}>{b.badgeLabel}</span>}

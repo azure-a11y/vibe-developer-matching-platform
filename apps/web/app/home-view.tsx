@@ -206,7 +206,6 @@ function WorkCard({ w, index }: { w: WorkPreview; index: number }) {
       className={`wcard rv${index === 1 ? ' d2' : ''}`}
       href={`/work/${w.slug}`}
       data-track="work_card"
-      data-cursor="VIEW →"
     >
       <div className="slot mask">
         <div className="bf"><div className="bf__bar"><i></i><i></i><i></i><span className="url">{w.shotUrl}</span></div><img className="shot" src={w.shotImg} alt="" /></div>
@@ -502,6 +501,7 @@ export default function HomeView({
 
         <RibbonSep
           id="rsepA"
+          className="ribbon-sep--hero"
           phrases={[
             'AI 에이전트 ✳ 랜딩 페이지 ✳ 플랫폼 ✳ 모바일 앱 ✳ 업무 자동화 ✳ ',
             'PLAN ✳ DESIGN ✳ BUILD ✳ REVIEW ✳ 올인원 턴키 ✳ ',
