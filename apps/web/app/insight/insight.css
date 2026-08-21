@@ -1,5 +1,5 @@
 .ins { display: grid; grid-template-columns: 230px 1fr; gap: 60px; padding: 84px 0 76px; align-items: start; }
-.page-head + .ribbon-sep { margin-top: 20px; }
+.page-head + .ribbon-sep { margin-top: 0; }
 .cats { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 2px; }
 .page-head p { font-size: 18px; }
 .cats .k { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--muted-2);
