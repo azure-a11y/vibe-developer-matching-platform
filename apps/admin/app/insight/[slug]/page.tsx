@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { auditPost, getRepository } from '@orca/content';
+import { INSIGHT_CATEGORIES, auditPost, getRepository, normalizeInsightCategory } from '@orca/content';
 
 import { deletePostAction, savePostAction } from '@/app/actions';
 import { DetailNav } from '@/components/DetailNav';
@@ -325,7 +325,12 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <label className="label" htmlFor="category">카테고리</label>
-              <input id="category" name="category" className="field" defaultValue={post.category} />
+              <Select
+                id="category"
+                name="category"
+                defaultValue={normalizeInsightCategory(post.category)}
+                options={INSIGHT_CATEGORIES.map(({ value, label }) => ({ value, label }))}
+              />
             </div>
             <div>
               <label className="label" htmlFor="tags">태그 (쉼표 구분)</label>
@@ -380,7 +385,7 @@ export default async function PostEditorPage({ params }: { params: Promise<{ slu
             </div>
             <div>
               <label className="label" htmlFor="coverSrc">경로</label>
-              <CoverImageUpload slug={post.slug} defaultValue={post.cover?.src ?? ''} />
+              <CoverImageUpload slug={post.slug} defaultValue={post.cover?.src ?? ''} fallbackAlt={post.title} />
             </div>
             <div>
               <label className="label" htmlFor="coverAlt">대체 텍스트</label>

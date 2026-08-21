@@ -8,6 +8,18 @@ export interface UploadResult {
   path: string;
 }
 
+export class StorageUploadError extends Error {
+  readonly statusCode?: string;
+  readonly code?: string;
+
+  constructor(error: { message: string; statusCode?: string; code?: string }) {
+    super(error.message);
+    this.name = 'StorageUploadError';
+    this.statusCode = error.statusCode;
+    this.code = error.code;
+  }
+}
+
 /**
  * 이미지를 Supabase Storage 에 업로드합니다.
  *
@@ -26,6 +38,10 @@ export async function uploadImage(
     contentType: options.contentType,
     upsert: options.upsert ?? true,
   });
+
+  if (Boolean(error)) {
+    throw new StorageUploadError(error as NonNullable<typeof error>);
+  }
 
   if (error) {
     throw new Error(`Supabase Storage 업로드 실패: ${error.message}`);

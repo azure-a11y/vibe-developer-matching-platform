@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { blogPostingJsonLd, faqJsonLd, getRepository, postUrl } from '@orca/content';
+import { blogPostingJsonLd, faqJsonLd, getRepository, insightCategoryLabel, postUrl } from '@orca/content';
 
 import ContactTrigger from '@/components/ContactTrigger';
 import { formatDate, renderMarkdown } from '@/lib/markdown';
@@ -9,7 +9,6 @@ import { absoluteUrl, twitterSite } from '@/lib/site';
 
 import FaqToc from './FaqToc';
 import InsightDetailTrack from './track';
-import { CATEGORY_LABEL } from '../view';
 import './insight-detail.css';
 
 /* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 페이지 캐시를
@@ -109,7 +108,7 @@ export default async function PostPage({ params }: Params) {
   const next = index > 0 ? posts[index - 1] : null;
 
   const faq = faqJsonLd(post);
-  const categoryLabel = CATEGORY_LABEL[post.category] ?? post.category;
+  const categoryLabel = insightCategoryLabel(post.category);
 
   return (
     <main id="main">
@@ -159,9 +158,9 @@ export default async function PostPage({ params }: Params) {
       </div>
 
       <nav className="post-nav wrap" aria-label="게시물 이동">
-        {previous ? <Link href={`/insight/${encodeURIComponent(previous.slug)}`}>← 이전 글</Link> : <span />}
-        {next ? <Link href={`/insight/${encodeURIComponent(next.slug)}`}>다음 글 →</Link> : <span />}
+        {previous && <Link href={`/insight/${encodeURIComponent(previous.slug)}`}>← 이전 글</Link>}
         <Link href="/insight">목록</Link>
+        {next && <Link href={`/insight/${encodeURIComponent(next.slug)}`}>다음 글 →</Link>}
       </nav>
 
       <section style={{ paddingTop: 0 }}>

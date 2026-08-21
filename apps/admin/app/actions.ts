@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
   type ImageSource,
+  normalizeInsightCategory,
   type PostFrontmatterInput,
   type PostStatus,
   getRepository,
@@ -80,7 +81,7 @@ export async function createPostAction(formData: FormData) {
       author: text(formData, 'author') || 'blog-writer',
       createdAt: now,
       updatedAt: now,
-      category: text(formData, 'category') || 'general',
+      category: normalizeInsightCategory(text(formData, 'category') || 'general'),
     },
     '## 개요\n\n여기서부터 작성하세요.\n',
   );
@@ -110,7 +111,7 @@ export async function savePostAction(formData: FormData) {
     status: account.role === 'builder' ? (status === 'published' ? 'in_review' : status) : status,
     ownerBuilderId: existing.ownerBuilderId,
     author: text(formData, 'author') || existing.author,
-    category: text(formData, 'category') || 'general',
+    category: normalizeInsightCategory(text(formData, 'category') || existing.category),
     tags: list(formData, 'tags'),
     // Stamp the publish date the first time a post reaches `published`.
     publishedAt:
@@ -118,7 +119,7 @@ export async function savePostAction(formData: FormData) {
     cover: coverSrc
       ? {
           src: coverSrc,
-          alt: text(formData, 'coverAlt'),
+          alt: text(formData, 'coverAlt') || `${text(formData, 'title') || existing.title} 커버 이미지`,
           // Provenance is chosen by a human here; agents set it via the
           // imagegen script. `claude` is not a member of ImageSource, so
           // Claude-generated images cannot be recorded at all.

@@ -35,8 +35,6 @@
 .tags { display: flex; gap: 8px; margin: 40px 0 0; }
 .post-nav { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 28px 0 52px; }
 .post-nav a, .post-nav > span { min-width: 96px; box-sizing: border-box; padding: 12px 18px; border: 1px solid var(--line); border-radius: 999px; background: rgba(255,255,255,.35); text-align: center; }
-.post-nav a:nth-of-type(2) { order: 3; }
-.post-nav a:nth-of-type(3) { order: 2; }
 .post-nav a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color .15s, border-color .15s, background .15s; }
 .post-nav a:hover { color: var(--ink); border-color: var(--ink); background: var(--paper-2); }
 main#main > section:last-child { padding-bottom: 30px !important; }

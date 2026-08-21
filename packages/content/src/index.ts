@@ -10,4 +10,5 @@ export * from './admin-accounts.ts';
 export * from './site-settings.ts';
 export * from './audit.ts';
 export * from './jsonld.ts';
+export * from './insight-categories.ts';
 export * from './repo/index.ts';

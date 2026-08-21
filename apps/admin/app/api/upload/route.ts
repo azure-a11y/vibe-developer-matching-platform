@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { findRepoRoot, slugify } from '@orca/content';
-import { isSupabaseWritable, uploadImage } from '@orca/supabase';
+import { isSupabaseWritable, StorageUploadError, uploadImage } from '@orca/supabase';
 
 /**
  * Image upload endpoint for the tiptap editor.
@@ -54,7 +54,10 @@ export async function POST(request: Request): Promise<Response> {
   // Timestamp keeps repeated uploads of the same filename from colliding.
   const base = slugify(file.name.replace(/\.[^.]+$/, '')) || 'image';
   const filename = `${base}-${Date.now()}.${extension}`;
-  const objectPath = `${postSlug}/${filename}`;
+  // Supabase Storage rejects non-ASCII object keys. Keep the human-readable
+  // slug out of the key while retaining a stable per-post namespace.
+  const storageSlug = Buffer.from(postSlug, 'utf8').toString('base64url');
+  const objectPath = `${storageSlug}/${filename}`;
 
   const bytes = new Uint8Array(await file.arrayBuffer());
 
@@ -71,6 +74,15 @@ export async function POST(request: Request): Promise<Response> {
 
     return Response.json({ url: `/images/uploads/${objectPath}`, storage: 'local' });
   } catch (error) {
+    if (error instanceof StorageUploadError) {
+      console.error('[api/upload] Supabase Storage upload failed', {
+        stage: 'storage.upload',
+        message: error.message,
+        statusCode: error.statusCode,
+        code: error.code,
+      });
+      return fail('Storage upload failed.', 500);
+    }
     return fail(error instanceof Error ? error.message : '업로드 중 오류가 발생했습니다.', 500);
   }
 }

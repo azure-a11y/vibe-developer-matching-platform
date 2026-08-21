@@ -5,10 +5,11 @@ import { useMemo, useState } from 'react'
 
 import ContactTrigger from '@/components/ContactTrigger'
 import { useRibbonFlow, useDock } from '@/components/fx'
+import { INSIGHT_CATEGORIES } from '@orca/content/insight-categories'
 
 export type InsightRow = { slug: string; category: string; categoryLabel: string; img: string; title: string; desc: string; meta: string }
 
-const CATEGORY_ORDER = ['ai-ax', 'guide', 'how', 'project'] as const
+const CATEGORY_ORDER = INSIGHT_CATEGORIES.map(({ value }) => value)
 const CATEGORY_LABEL: Record<string, string> = {
   'ai-ax': 'AI · AX',
   guide: '발주 가이드',
@@ -69,7 +70,7 @@ export default function InsightView({ articles }: { articles: InsightRow[] }) {
           <nav className="cats" aria-label="카테고리">
             <button className={category === 'all' ? 'on' : ''} type="button" onClick={() => { setCategory('all'); setPage(1) }}>전체 <span className="cnt">{String(articles.length).padStart(2, '0')}</span></button>
             {counts.map(({ c, n }) => (
-              <button className={category === c ? 'on' : ''} type="button" key={c} onClick={() => { setCategory(c); setPage(1) }}>{CATEGORY_LABEL[c]} <span className="cnt">{String(n).padStart(2, '0')}</span></button>
+              <button className={category === c ? 'on' : ''} type="button" key={c} onClick={() => { setCategory(c); setPage(1) }}>{INSIGHT_CATEGORIES.find(item => item.value === c)?.label} <span className="cnt">{String(n).padStart(2, '0')}</span></button>
             ))}
           </nav>
 
