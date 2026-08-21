@@ -49,6 +49,9 @@
   background: linear-gradient(var(--ink), transparent); animation: scrollHint 1.9s ease-in-out infinite; }
 @keyframes scrollHint { 0%,100% { transform: scaleY(.35); transform-origin: top; } 50% { transform: scaleY(1); } }
 
+/* 히어로 직후만 소폭 압축해 다음 섹션 시작 위치를 당긴다. 리본 내부 간격은 유지한다. */
+.ribbon-sep--hero { margin-bottom: 74px; }
+
 /* 대각선 스트림 — v13: 3열 · 8° · 상하 페이드 강화 (GNB 비충돌) */
 .streamwrap { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
 .stream { position: absolute; top: -10%; bottom: -12%; right: max(-50px, calc((100vw - 1500px) / 2));

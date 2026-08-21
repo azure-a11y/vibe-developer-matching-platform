@@ -16,9 +16,11 @@ const getIsClientServerSnapshot = () => false
 
 /* 전역 문의 팝업 — 어느 페이지에서 열어도 같은 모달. RootLayout에 한 번만 마운트된다.
    /contact 직접 접속은 app/contact/page.tsx가 이 모달을 열고 홈으로 리다이렉트하는 방식으로 처리한다. */
-export default function ContactModal({ pluugFormUrl }: { pluugFormUrl: string }) {
+export default function ContactModal({ pluugFormUrl, activeBuilderCount }: { pluugFormUrl: string; activeBuilderCount: number }) {
   const { isOpen, close } = useContactModal()
   const hasPluugUrl = pluugFormUrl.length > 0
+  const visibleBuilderCount = 3
+  const additionalBuilderCount = Math.max(0, activeBuilderCount - visibleBuilderCount)
 
   /* pluug 주소는 utm_source를 location에서 읽기 때문에 클라이언트에서만 만든다 (ContactView와 동일 이유) */
   const isClient = useSyncExternalStore(noopSubscribe, getIsClientSnapshot, getIsClientServerSnapshot)
@@ -83,9 +85,9 @@ export default function ContactModal({ pluugFormUrl }: { pluugFormUrl: string })
                 <img src="/assets/img/av-josh.jpg" alt="빌더 조쉬" />
                 <img src="/assets/img/av-ria.jpg" alt="빌더 리아" />
                 <img src="/assets/img/av-yuna.jpg" alt="빌더 유나" />
-                <span className="more">+7</span>
+                {additionalBuilderCount > 0 && <span className="more">+{additionalBuilderCount}</span>}
               </div>
-              <p><b>검증된 빌더 10인</b>이<br />다음 프로젝트를 기다리고 있어요</p>
+              <p><b>검증된 빌더 {activeBuilderCount}인</b>이<br />다음 프로젝트를 기다리고 있어요</p>
             </div>
           </div>
 

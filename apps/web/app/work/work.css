@@ -158,8 +158,12 @@
 .wcard__stack i { font-style: normal; font-family: var(--mono); font-size: 11px; letter-spacing: .03em; background: var(--paper-3); color: var(--muted); border-radius: 999px; padding: 4px 10px; }
 .wcard__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); }
 .list-pager { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 28px 0 4px; color: var(--muted); font: 12px var(--mono); }
+.stage > .list-pager { display: none; }
+.work-list-pager { position: relative; z-index: 1; margin: 20px 0; }
+.stage > .list-pager { position: relative; z-index: 1; margin: 20px 0 0; }
 .list-pager button { border: 1px solid var(--line); background: transparent; color: inherit; border-radius: 999px; width: 34px; height: 30px; cursor: pointer; }
 .list-pager button:disabled { opacity: .35; cursor: not-allowed; }
+.list-pager button.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .wcard__foot .builders { margin-top: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .wcard__cta { font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .04em; color: var(--ink); display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; margin-left: auto; }
 .wcard__cta .arr { transition: transform var(--hover); }

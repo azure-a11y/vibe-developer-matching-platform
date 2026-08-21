@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 }
 
 export default async function ContentPage() {
-  const { videos } = await getVideoRepository().getAll()
+  const { videos: allVideos } = await getVideoRepository().getAll()
+  const videos = allVideos.filter(v => v.status === 'published')
 
   return (
     <ContentView

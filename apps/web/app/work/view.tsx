@@ -46,10 +46,22 @@ const MATCH_SLUGS: Record<string, [string, string]> = {
 export default function WorkView({ works, builders }: { works: WorkCard[]; builders: BuilderCard[] }) {
   const [category, setCategory] = useState('all')
   const [page, setPage] = useState(1)
+  const [builderPage, setBuilderPage] = useState(1)
   const filteredWorks = useMemo(() => category === 'all' ? works : works.filter((work) => work.category === category), [category, works])
   const totalPages = Math.max(1, Math.ceil(filteredWorks.length / 6))
   const currentPage = Math.min(page, totalPages)
   const pagedWorks = filteredWorks.slice((currentPage - 1) * 6, currentPage * 6)
+  const builderTotalPages = Math.max(1, Math.ceil(builders.length / 8))
+  const currentBuilderPage = Math.min(builderPage, builderTotalPages)
+  const pagedBuilders = builders.slice((currentBuilderPage - 1) * 8, currentBuilderPage * 8)
+  const changePage = (nextPage: number) => {
+    setPage(nextPage)
+    requestAnimationFrame(() => document.getElementById('works')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
+  const changeBuilderPage = (nextPage: number) => {
+    setBuilderPage(nextPage)
+    requestAnimationFrame(() => document.getElementById('builders')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
   useRibbonFlow({
     rsW: [
       'AI 에이전트 ✳ 랜딩 ✳ 플랫폼 ✳ 모바일 앱 ✳ 자동화 ✳ ',
@@ -198,9 +210,18 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
                   </Link>
                 ))}
               </div>
-              {totalPages > 1 && <div className="list-pager" aria-label="Work 페이지 이동"><button type="button" disabled={currentPage === 1} onClick={() => setPage((value) => value - 1)}>←</button><span>{currentPage} / {totalPages}</span><button type="button" disabled={currentPage === totalPages} onClick={() => setPage((value) => value + 1)}>→</button></div>}
+              {totalPages > 1 && <nav className="list-pager" aria-label="Work 페이지 이동">
+                <button type="button" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)}>이전</button>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => <button className={pageNumber === currentPage ? 'on' : ''} type="button" aria-current={pageNumber === currentPage ? 'page' : undefined} key={pageNumber} onClick={() => changePage(pageNumber)}>{pageNumber}</button>)}
+                <button type="button" disabled={currentPage === totalPages} onClick={() => changePage(currentPage + 1)}>다음</button>
+              </nav>}
             </div>
 
+            <nav className="list-pager work-list-pager" aria-label="Work 페이지 이동">
+              <button type="button" disabled={currentPage === 1} onClick={() => changePage(currentPage - 1)}>이전</button>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => <button className={pageNumber === currentPage ? 'on' : ''} type="button" aria-current={pageNumber === currentPage ? 'page' : undefined} key={pageNumber} onClick={() => changePage(pageNumber)}>{pageNumber}</button>)}
+              <button type="button" disabled={currentPage === totalPages} onClick={() => changePage(currentPage + 1)}>다음</button>
+            </nav>
             <div className="empty" data-empty hidden={filteredWorks.length > 0}>
               <h3>이 분야의 첫 프로젝트가 곧 공개됩니다</h3>
               <p>고민 중인 프로젝트가 이 분야라면, 30초 매칭으로 알려주세요.</p>
@@ -219,7 +240,7 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
               <div className="panel__side">누구에게 맡길지 고민된다면 → <a href="#match">03 빠른 매칭 ↓</a></div>
             </div>
             <div className="bld__grid">
-              {builders.map(b => (
+              {pagedBuilders.map(b => (
                 <Link className="bcard rv" href={`/builder/${b.slug}`} data-track="builder_click" data-slug={b.slug} key={b.slug}>
                   <div className="slot mask">
                     <img src={b.avatar} alt={`${b.name} 프로필 사진`} />
@@ -237,6 +258,12 @@ export default function WorkView({ works, builders }: { works: WorkCard[]; build
             </div>
             <p className="bld-note">※ <b>✳ 이달의 빌더</b>는 매달 고객 평가로 새로 선정합니다 · <b>NEW</b>는 합류 90일 이내의 빌더입니다</p>
           </section>
+
+            {builderTotalPages > 1 && <nav className="list-pager" aria-label="Builder 페이지 이동">
+              <button type="button" disabled={currentBuilderPage === 1} onClick={() => changeBuilderPage(currentBuilderPage - 1)}>이전</button>
+              {Array.from({ length: builderTotalPages }, (_, index) => index + 1).map((pageNumber) => <button className={pageNumber === currentBuilderPage ? 'on' : ''} type="button" aria-current={pageNumber === currentBuilderPage ? 'page' : undefined} key={pageNumber} onClick={() => changeBuilderPage(pageNumber)}>{pageNumber}</button>)}
+              <button type="button" disabled={currentBuilderPage === builderTotalPages} onClick={() => changeBuilderPage(currentBuilderPage + 1)}>다음</button>
+            </nav>}
 
           <section className="panel panel--tint" id="match">
             <div className="panel__head">
