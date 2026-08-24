@@ -6,6 +6,11 @@ import { stripUndefined } from './posts.ts';
 import { faqDir, faqPath } from './paths.ts';
 import { type Faq, type FaqFrontmatterInput, FaqFrontmatterSchema } from './schema.ts';
 
+/** FAQ answers are displayed as a single line in the public FAQ list. */
+export function normalizeFaqAnswer(answer: string): string {
+  return answer.replace(/\s*\r?\n\s*/g, ' ').replace(/\s{2,}/g, ' ').trim();
+}
+
 /** Parse one markdown file into a validated Faq. Throws on schema violation. */
 export function parseFaq(filePath: string): Faq {
   const raw = fs.readFileSync(filePath, 'utf8');
@@ -19,7 +24,7 @@ export function parseFaq(filePath: string): Faq {
 
   return {
     ...parsed.data,
-    answer: content.trim(),
+    answer: normalizeFaqAnswer(content),
     filePath,
   };
 }
@@ -66,7 +71,7 @@ export function writeFaq(frontmatter: FaqFrontmatterInput, answer: string): stri
   fs.mkdirSync(dir, { recursive: true });
 
   const file = faqPath(validated.slug);
-  fs.writeFileSync(file, matter.stringify(`\n${answer.trim()}\n`, stripUndefined(validated)), 'utf8');
+  fs.writeFileSync(file, matter.stringify(`\n${normalizeFaqAnswer(answer)}\n`, stripUndefined(validated)), 'utf8');
   return file;
 }
 

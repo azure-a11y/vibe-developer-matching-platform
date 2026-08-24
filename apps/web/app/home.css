@@ -354,7 +354,7 @@
 @media (max-width: 1080px) { .s3__grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 640px) { .s3__grid { grid-template-columns: 1fr; } }
 /* ---- S4 v10 — 아이코닉 카드 (컴팩트 · 정지 구간) ---- */
-.s4x { padding: 104px 0 96px; background: var(--paper-3); border-bottom: 1px solid var(--line); }
+.s4x { padding: 35px 0 96px; background: var(--paper-3); border-bottom: 1px solid var(--line); }
 .s4b { padding: 104px 0; background: var(--paper); border-bottom: 1px solid var(--line); }
 .s4x__head { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 40px; }
 .s4x__head h2 { margin: 0; }

@@ -7,6 +7,7 @@ import { BuilderStatusBadge, WorkStatusBadge } from '@/components/StatusBadge';
 import { DetailNav } from '@/components/DetailNav';
 import { SubHeading } from '@/components/FormPrimitives';
 import { SaveButton } from '@/components/SaveButton';
+import { CoverImageUpload } from '@/components/CoverImageUpload';
 import { Select } from '@/components/Select';
 import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
@@ -67,6 +68,21 @@ export default async function WorkEditorPage({ params }: { params: Promise<{ slu
 
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
         <div className="min-w-0 space-y-6">
+          <section className="card space-y-4">
+            <h2 className="font-semibold">Work 이미지</h2>
+            <CoverImageUpload
+              slug={work.slug}
+              defaultValue={work.assets[0]?.src ?? ''}
+              fallbackAlt={work.title}
+              fieldName="workImageSrc"
+              inputId="workImageSrc"
+              altInputId="workImageAlt"
+            />
+            <div>
+              <label className="label" htmlFor="workImageAlt">대체 텍스트</label>
+              <input id="workImageAlt" name="workImageAlt" className="field" defaultValue={work.assets[0]?.alt ?? ''} />
+            </div>
+          </section>
           <section className="card space-y-4">
             <h2 className="font-semibold">프로젝트 개요</h2>
             <div>

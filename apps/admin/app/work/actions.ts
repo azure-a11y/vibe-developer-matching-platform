@@ -35,6 +35,13 @@ export async function createWorkAction(formData: FormData) {
     ownerBuilderId: account.role === 'builder' ? account.builderId : null,
     createdAt: now,
     updatedAt: now,
+    assets: text(formData, 'workImageSrc')
+      ? [{
+          src: text(formData, 'workImageSrc'),
+          alt: text(formData, 'workImageAlt') || `${title} Work 이미지`,
+          source: 'user-upload',
+        }]
+      : [],
   });
 
   revalidatePath('/');
@@ -63,6 +70,17 @@ export async function saveWorkAction(formData: FormData) {
     problem: text(formData, 'problem'),
     solution: text(formData, 'solution'),
     result: text(formData, 'result'),
+    assets: text(formData, 'workImageSrc')
+      ? [
+          {
+            ...(existing.assets[0] ?? { source: 'user-upload' as const }),
+            src: text(formData, 'workImageSrc'),
+            alt: text(formData, 'workImageAlt') || `${text(formData, 'title') || existing.title} Work 이미지`,
+            source: 'user-upload',
+          },
+          ...existing.assets.slice(1),
+        ]
+      : existing.assets,
     status: account.role === 'builder' ? 'pending_review' : (text(formData, 'status') || existing.status) as WorkStatus,
     ownerBuilderId: existing.ownerBuilderId,
     builderIds: formData.getAll('builderIds').map(String),

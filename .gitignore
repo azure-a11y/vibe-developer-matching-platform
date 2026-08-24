@@ -32,6 +32,10 @@ wiki/memory/short-term/*.local.md
 # Generated images land in the repo, but codex scratch does not
 .codex-tmp/
 
+# Scratch working copies left by deploy/agent tooling — full repo clones with
+# their own .env.local/.vercel/.claude state, never meant to be tracked.
+.tmp-admin-*/
+
 # Admin account passwordHash values are credentials, not content — never commit
 content/admin-accounts/
 

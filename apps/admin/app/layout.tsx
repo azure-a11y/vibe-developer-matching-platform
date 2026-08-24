@@ -8,7 +8,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'AI 빌더 그룹 관리자',
-  icons: { icon: '/favicon.png' },
+  icons: { icon: [{ url: '/favicon.png?v=2', type: 'image/png' }] },
   description: '콘텐츠 · SEO/GEO · 검수 대시보드',
   robots: { index: false, follow: false },
 };

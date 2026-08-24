@@ -2,6 +2,7 @@ import { createAdminSupabase as createAdminSupabaseClient, createPublicSupabase,
 import type { AdminAccountRow, BuilderRow, FaqCategoryRow, FaqRow, PostRow, SiteSettingsRow, VideoRow, WorkRow } from '@orca/supabase';
 
 import { readingTime } from '../posts.ts';
+import { normalizeFaqAnswer } from '../faq.ts';
 import {
   type AdminAccount,
   type AdminAccountFrontmatterInput,
@@ -580,7 +581,7 @@ function toFaq(row: FaqRow): Faq {
     throw new Error(`Invalid record for slug "${row.slug}"\n  - ${issues.join('\n  - ')}`);
   }
 
-  return { ...parsed.data, answer: row.answer, filePath: '' };
+  return { ...parsed.data, answer: normalizeFaqAnswer(row.answer), filePath: '' };
 }
 
 function toFaqRow(frontmatter: FaqFrontmatterInput, answer: string) {
@@ -588,7 +589,7 @@ function toFaqRow(frontmatter: FaqFrontmatterInput, answer: string) {
   return {
     slug: v.slug,
     question: v.question,
-    answer: answer.trim(),
+    answer: normalizeFaqAnswer(answer),
     category_id: v.categoryId,
     sort_order: v.order,
     status: v.status,

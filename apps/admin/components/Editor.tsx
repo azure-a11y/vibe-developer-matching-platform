@@ -150,6 +150,8 @@ export function Editor({ name, defaultValue, slug }: EditorProps) {
           {uploading ? '업로드 중…' : '🖼 이미지'}
         </ToolbarButton>
 
+        <span className="text-xs" style={{ color: 'var(--color-ink-muted)' }}>JPG, PNG, WebP 이미지 · 파일당 최대 4MB</span>
+
         <input
           ref={fileInputRef}
           type="file"

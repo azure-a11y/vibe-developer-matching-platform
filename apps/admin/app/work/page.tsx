@@ -9,6 +9,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
 import { WorkStatusBadge } from '@/components/StatusBadge';
+import { CoverImageUpload } from '@/components/CoverImageUpload';
 import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -93,6 +94,18 @@ export default async function WorkListPage({
                 슬러그 (선택)
               </label>
               <input id="slug" name="slug" className="field" placeholder="자동 생성" />
+            </div>
+            <div className="min-w-72 flex-1">
+              <CoverImageUpload
+                slug="new-work"
+                defaultValue=""
+                fallbackAlt="새 Work"
+                fieldName="workImageSrc"
+                inputId="workImageSrc"
+                altInputId="workImageAlt"
+              />
+              <label className="label" htmlFor="workImageAlt">대체 텍스트</label>
+              <input id="workImageAlt" name="workImageAlt" className="field" placeholder="Work 이미지 설명" />
             </div>
             <button type="submit" className="btn-primary">
               Work 추가
