@@ -67,7 +67,10 @@ const ICONS: Record<string, React.ReactNode> = {
 };
 
 export default async function PrivacyPage() {
-  const { settings } = await getSiteSettingsRepository().get();
+  const { settings, error } = await getSiteSettingsRepository().get();
+  if (error) {
+    console.error('[privacy] site settings 조회 실패', error);
+  }
   const brand = settings.brandName || 'AI 빌더 그룹';
   const bizLine = settings.companyName
     ? `상호 ${settings.companyName}${settings.ceoName ? ` · 대표 ${settings.ceoName}` : ''}${

@@ -15,6 +15,7 @@
     "dev:admin:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/with-env.ps1 pnpm --filter @orca/admin dev:direct",
     "dev:admin": "turbo run dev --filter=@orca/admin",
     "build": "turbo run build",
+    "build:win": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/with-env.ps1 pnpm build",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
