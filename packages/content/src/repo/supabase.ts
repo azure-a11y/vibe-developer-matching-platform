@@ -201,6 +201,7 @@ export const supabaseRepository: ContentRepository = {
 
 function toBuilder(row: BuilderRow): Builder {
   const parsed = BuilderFrontmatterSchema.safeParse({
+    id: row.id,
     displayName: row.display_name,
     slug: row.slug,
     avatar: row.avatar ?? undefined,
@@ -227,9 +228,20 @@ function toBuilder(row: BuilderRow): Builder {
   return { ...parsed.data, bio: row.bio, filePath: '' };
 }
 
+/**
+ * Includes `id` so a builder migrated in from the file driver (or created
+ * there while `CONTENT_DRIVER=file` overrides an active Supabase config)
+ * keeps the same uuid in both places instead of Postgres minting a new one
+ * via `builders.id`'s `gen_random_uuid()` default on insert — the two
+ * drivers would otherwise disagree on a Builder's identity, breaking
+ * `AdminAccount.builderId`/`ownerBuilderId` links across a driver switch.
+ * `save()` below strips `id` back out before updating an existing row, so
+ * this only ever takes effect on insert.
+ */
 function toBuilderRow(frontmatter: BuilderFrontmatterInput, bio: string) {
   const v = BuilderFrontmatterSchema.parse({ ...frontmatter, updatedAt: new Date().toISOString() });
   return {
+    id: v.id,
     slug: v.slug,
     display_name: v.displayName,
     bio: bio.trim(),
@@ -295,13 +307,30 @@ export const builderSupabaseRepository: BuilderRepository = {
     return data ? toBuilder(data) : null;
   },
 
+  /**
+   * Insert vs. update, not a slug-conflict upsert — an upsert would put `id`
+   * in the `DO UPDATE SET` list along with every other column, so an existing
+   * Builder's primary key would move if the caller's `id` ever disagreed
+   * with the stored one. Splitting the two paths makes that structurally
+   * impossible: the update branch's payload never contains `id` at all.
+   */
   async save(frontmatter: BuilderFrontmatterInput, bio: string) {
     if (!isSupabaseWritable()) {
       throw new Error('Supabase 쓰기가 비활성입니다. SUPABASE_SERVICE_ROLE_KEY 를 .env 에 넣으세요.');
     }
     const supabase = createAdminSupabase();
-    const row = toBuilderRow(frontmatter, bio);
-    const { error } = await supabase.from('builders').upsert(row, { onConflict: 'slug' });
+    const { id, ...row } = toBuilderRow(frontmatter, bio);
+
+    const { data: existing, error: lookupError } = await supabase
+      .from('builders')
+      .select('id')
+      .eq('slug', row.slug)
+      .maybeSingle();
+    if (lookupError) throw new Error(`Supabase 조회 실패: ${lookupError.message}`);
+
+    const { error } = existing
+      ? await supabase.from('builders').update(row).eq('slug', row.slug)
+      : await supabase.from('builders').insert({ id, ...row });
     if (error) throw new Error(`Supabase 저장 실패: ${error.message}`);
     return row.slug;
   },

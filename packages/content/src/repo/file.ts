@@ -9,6 +9,7 @@ import {
   deleteBuilder,
   getActiveBuilders,
   getAllBuilders,
+  getBuilderById,
   getBuilderBySlug,
   writeBuilder,
 } from '../builders.ts';
@@ -101,8 +102,8 @@ export const builderFileRepository: BuilderRepository = {
     return getBuilderBySlug(slug);
   },
 
-  async getById(_id: string) {
-    return null;
+  async getById(id: string) {
+    return getBuilderById(id);
   },
 
   async save(frontmatter: BuilderFrontmatterInput, bio: string) {

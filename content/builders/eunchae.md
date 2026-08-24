@@ -1,4 +1,5 @@
 ---
+id: 6cc324fe-0f92-4c4c-bb92-db80c7da44d9
 displayName: 빌더 은채
 slug: eunchae
 avatar:
@@ -30,4 +31,5 @@ isLead: false
 createdAt: '2026-08-11T00:00:00.000Z'
 updatedAt: '2026-08-11T00:00:00.000Z'
 ---
+
 검색 유입과 콘텐츠 구조를 설계하는 빌더입니다. 잘 만든 서비스가 발견되지 않는 것이 가장 아까운 일이라, 만든 뒤에 발견되게 하는 것까지를 일로 봅니다.

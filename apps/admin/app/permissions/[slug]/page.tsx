@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getAdminAccountRepository } from '@orca/content';
+import { getAdminAccountRepository, getBuilderRepository } from '@orca/content';
 
 import { saveAdminAccountAction } from '@/app/permissions/actions';
 import { DetailNav } from '@/components/DetailNav';
@@ -20,6 +21,8 @@ export default async function AdminAccountEditorPage({ params }: { params: Promi
     getAdminAccountRepository().getAll(),
   ]);
   if (!account) notFound();
+
+  const linkedBuilder = account.builderId ? await getBuilderRepository().getById(account.builderId) : null;
 
   // 목록과 동일한 정렬(이메일순) 기준으로 이전/다음을 찾는다.
   const currentIndex = allAccounts.findIndex((a) => a.slug === account.slug);
@@ -45,6 +48,24 @@ export default async function AdminAccountEditorPage({ params }: { params: Promi
           <SaveButton />
         </div>
       </header>
+
+      {account.role === 'builder' && (
+        <section className="card space-y-2">
+          <h2 className="font-semibold">연결된 빌더</h2>
+          {linkedBuilder ? (
+            <p className="text-sm">
+              <Link href={`/builder/${encodeURIComponent(linkedBuilder.slug)}`} className="font-medium hover:underline" style={{ color: 'var(--color-accent-soft-text)' }}>
+                {linkedBuilder.displayName}
+              </Link>
+              <span style={{ color: 'var(--color-ink-faint)' }}> · {linkedBuilder.slug}</span>
+            </p>
+          ) : (
+            <p className="text-sm" style={{ color: 'var(--color-danger)' }}>
+              연결된 빌더를 찾을 수 없습니다 (builderId: {account.builderId}).
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="card space-y-4">
         <h2 className="font-semibold">계정 정보</h2>

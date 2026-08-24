@@ -55,6 +55,10 @@ export function getBuilderBySlug(slug: string): Builder | null {
   return fs.existsSync(file) ? parseBuilder(file) : null;
 }
 
+export function getBuilderById(id: string): Builder | null {
+  return getAllBuilders().builders.find((builder) => builder.id === id) ?? null;
+}
+
 /** Serialize frontmatter + bio back to disk. Used by the admin editor. */
 export function writeBuilder(frontmatter: BuilderFrontmatterInput, bio: string): string {
   const validated = BuilderFrontmatterSchema.parse({

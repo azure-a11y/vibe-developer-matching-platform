@@ -1,5 +1,7 @@
 'use server';
 
+import { randomUUID } from 'node:crypto';
+
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import {
@@ -41,6 +43,7 @@ export async function createBuilderAction(formData: FormData) {
   const now = new Date().toISOString();
   await repo.save(
     {
+      id: randomUUID(),
       displayName,
       slug,
       status: 'pending',

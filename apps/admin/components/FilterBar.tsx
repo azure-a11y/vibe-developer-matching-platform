@@ -45,9 +45,17 @@ export function FilterBar({
  * form panel unfolds below it instead of always occupying the top of the
  * screen.
  */
-export function CreatePanel({ label, children }: { label: string; children: React.ReactNode }) {
+export function CreatePanel({
+  label,
+  children,
+  defaultOpen = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   return (
-    <details className="group">
+    <details className="group" open={defaultOpen}>
       <summary className="flex list-none items-center justify-end [&::-webkit-details-marker]:hidden">
         <span className="btn-primary cursor-pointer">{label}</span>
       </summary>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getBuilderRepository } from '@orca/content';
+import { getAdminAccountRepository, getBuilderRepository } from '@orca/content';
 import type { BuilderStatus } from '@orca/content';
 
 import { createBuilderAction } from '@/app/builder/actions';
@@ -8,7 +8,7 @@ import { CountSummary } from '@/components/CountSummary';
 import { EmptyState } from '@/components/EmptyState';
 import { CreatePanel, FilterBar } from '@/components/FilterBar';
 import { PageHeader } from '@/components/PageHeader';
-import { BuilderStatusBadge } from '@/components/StatusBadge';
+import { AccountStatusBadge, BuilderStatusBadge } from '@/components/StatusBadge';
 import { hasPermission, requireContentPermission } from '@/lib/permissions';
 
 export const dynamic = 'force-dynamic';
@@ -27,12 +27,17 @@ export default async function BuilderListPage({
 }) {
   const account = await requireContentPermission('builder', 'view');
   const canWrite = account.role === 'builder' || hasPermission(account.menuPermissions.builder, 'edit_approve');
+  const canManageAccounts = account.role === 'admin' && hasPermission(account.menuPermissions.accountPermission, 'edit_approve');
 
   const { q = '', status = 'all' } = await searchParams;
   const ownBuilder = account.role === 'builder' ? await getBuilderRepository().getById(account.builderId!) : null;
   const { builders: allBuilders, errors } = account.role === 'builder'
     ? { builders: ownBuilder ? [ownBuilder] : [], errors: [] as string[] }
     : await getBuilderRepository().getAll();
+
+  const accountByBuilderId = canManageAccounts
+    ? new Map((await getAdminAccountRepository().getAll()).accounts.filter((a) => a.builderId).map((a) => [a.builderId!, a]))
+    : null;
 
   const counts = {
     total: allBuilders.length,
@@ -112,7 +117,14 @@ export default async function BuilderListPage({
       <div className="table-shell">
         <table className="w-full text-sm">
           <thead>
-            <TableHeadRow labels={['이름', '전문 분야', '상태', 'Insight 권한', '수정일']} centerColumns={[2]} />
+            <TableHeadRow
+              labels={
+                canManageAccounts
+                  ? ['이름', '전문 분야', '상태', 'Insight 권한', '수정일', '계정']
+                  : ['이름', '전문 분야', '상태', 'Insight 권한', '수정일']
+              }
+              centerColumns={canManageAccounts ? [2, 5] : [2]}
+            />
           </thead>
           <tbody className="divide-y">
             {builders.map((builder) => (
@@ -143,11 +155,38 @@ export default async function BuilderListPage({
                 <td className="px-5 py-4 tabular-nums" style={{ color: 'var(--color-ink-faint)' }}>
                   {builder.updatedAt.slice(0, 10)}
                 </td>
+                {canManageAccounts && (
+                  <td className="px-5 py-4 text-center">
+                    {(() => {
+                      const linkedAccount = accountByBuilderId?.get(builder.id);
+                      return linkedAccount ? (
+                        <span className="inline-flex items-center gap-2">
+                          <AccountStatusBadge status={linkedAccount.status} />
+                          <Link
+                            href={`/permissions/${encodeURIComponent(linkedAccount.slug)}`}
+                            className="text-sm whitespace-nowrap"
+                            style={{ color: 'var(--color-accent-soft-text)' }}
+                          >
+                            계정 보기
+                          </Link>
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/permissions?builder=${encodeURIComponent(builder.slug)}`}
+                          className="text-sm whitespace-nowrap"
+                          style={{ color: 'var(--color-accent-soft-text)' }}
+                        >
+                          계정 생성
+                        </Link>
+                      );
+                    })()}
+                  </td>
+                )}
               </tr>
             ))}
             {builders.length === 0 && (
               <tr>
-                <td colSpan={5}>
+                <td colSpan={canManageAccounts ? 6 : 5}>
                   <EmptyState>
                     {allBuilders.length === 0 ? '아직 등록된 빌더가 없습니다. 위에서 추가해 보세요.' : '검색 조건에 맞는 빌더가 없습니다.'}
                   </EmptyState>

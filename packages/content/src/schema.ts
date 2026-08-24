@@ -225,6 +225,15 @@ export const BuilderPrincipleSchema = z.object({
 export type BuilderPrinciple = z.infer<typeof BuilderPrincipleSchema>;
 
 export const BuilderFrontmatterSchema = z.object({
+  /**
+   * Stable identity used for FK references (`AdminAccount.builderId`,
+   * `Work.ownerBuilderId`, `Post.ownerBuilderId`) — the Supabase `builders`
+   * table already enforces these as uuid FKs to `builders.id`
+   * (0009/0010 migrations), so file-driver builders carry the same uuid in
+   * frontmatter to keep both drivers referencable the same way. `slug` stays
+   * the human-facing identity and is never used for these references.
+   */
+  id: z.string().uuid(),
   displayName: z.string().min(1),
   slug: z
     .string()

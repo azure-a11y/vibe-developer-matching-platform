@@ -1,4 +1,5 @@
 ---
+id: 27fc38e5-72c7-4f4d-8d0b-2e7b22805ed0
 displayName: 빌더 유나
 slug: yuna
 avatar:
@@ -30,4 +31,5 @@ isLead: false
 createdAt: '2026-08-11T00:00:00.000Z'
 updatedAt: '2026-08-11T00:00:00.000Z'
 ---
+
 LLM 연동과 프롬프트 설계를 실무로 다루는 빌더입니다. 전면 도입 대신 PoC부터 단계 검증으로 리스크를 줄이며 AI 서비스를 만듭니다.
