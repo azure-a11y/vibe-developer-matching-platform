@@ -77,6 +77,7 @@ pnpm dev       # web → :3000 · admin → :3001
 ```
 
 자세한 설치 절차와 문제 해결은 **[INSTALL.md](./INSTALL.md)** 를 보세요.
+Windows 로컬 실행 안내: [docs/LOCAL_SETUP_WINDOWS.md](./docs/LOCAL_SETUP_WINDOWS.md)
 
 ---
 
