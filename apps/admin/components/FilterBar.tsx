@@ -44,20 +44,29 @@ export function FilterBar({
  * state needed. The summary renders as a right-aligned primary button; the
  * form panel unfolds below it instead of always occupying the top of the
  * screen.
+ *
+ * `fullWidth` makes the trigger span the container instead of hugging the
+ * right edge — for screens that stack multiple `CreatePanel`s and need their
+ * buttons to line up as one clean top-to-bottom block (e.g. Accounts &
+ * Permissions' "빌더 계정 생성" / "관리자 계정 생성").
  */
 export function CreatePanel({
   label,
   children,
   defaultOpen = false,
+  fullWidth = false,
 }: {
   label: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  fullWidth?: boolean;
 }) {
   return (
     <details className="group" open={defaultOpen}>
-      <summary className="flex list-none items-center justify-end [&::-webkit-details-marker]:hidden">
-        <span className="btn-primary cursor-pointer">{label}</span>
+      <summary
+        className={`flex list-none items-center [&::-webkit-details-marker]:hidden ${fullWidth ? 'justify-start' : 'justify-end'}`}
+      >
+        <span className={`btn-primary cursor-pointer ${fullWidth ? 'w-full text-center' : ''}`}>{label}</span>
       </summary>
       <div className="card mt-3">{children}</div>
     </details>

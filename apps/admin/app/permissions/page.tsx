@@ -150,7 +150,7 @@ export default async function PermissionsPage({
 
       {canManage && (
         <div className="flex flex-col gap-3">
-          <CreatePanel label="+ 빌더 계정 생성" defaultOpen={Boolean(preselectedBuilder)}>
+          <CreatePanel label="+ 빌더 계정 생성" defaultOpen={Boolean(preselectedBuilder)} fullWidth>
             {createError && (
               <p
                 className="mb-4 rounded-lg px-3 py-2 text-sm"
@@ -202,7 +202,7 @@ export default async function PermissionsPage({
             )}
           </CreatePanel>
 
-          <CreatePanel label="+ 관리자 계정 생성">
+          <CreatePanel label="+ 관리자 계정 생성" fullWidth>
             <form action={createAdminAccountAction} className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
