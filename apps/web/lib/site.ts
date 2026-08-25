@@ -10,6 +10,13 @@ export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:30
 
 export const siteName = process.env.NEXT_PUBLIC_SITE_NAME ?? 'Orca Blog';
 
+/**
+ * 실제 사용 중인 브랜드명. `siteName`(env, 아직 템플릿 기본값 "Orca Blog")과 별개로 둔다 —
+ * 프로덕션 배포 전 NEXT_PUBLIC_SITE_NAME이 확정되기 전까지는 화면 카피에 이미 쓰이는
+ * 실제 브랜드명을 메타데이터/JSON-LD에서 참조하기 위한 값.
+ */
+export const siteBrandName = 'AI 빌더 그룹';
+
 export const siteDescription =
   process.env.NEXT_PUBLIC_SITE_DESCRIPTION ?? 'AI 에이전트 팀이 기획하고, 검수하고, 발행하는 블로그.';
 

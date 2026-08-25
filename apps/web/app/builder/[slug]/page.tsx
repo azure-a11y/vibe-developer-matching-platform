@@ -51,34 +51,52 @@ export default async function BuilderProfilePage({ params }: Params) {
 
   const idx = builders.filter((b) => b.status === 'active').findIndex((b) => b.slug === builder.slug);
 
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: builder.displayName,
+    jobTitle: builder.role,
+    description: builder.bio,
+    url: absoluteUrl(`/builder/${builder.slug}`),
+    ...(builder.avatar ? { image: absoluteUrl(builder.avatar.src) } : {}),
+    ...(builder.specialties.length ? { knowsAbout: builder.specialties } : {}),
+    worksFor: { '@type': 'Organization', name: 'AI 빌더 그룹' },
+  };
+
   return (
-    <BuilderProfileView
-      b={{
-        no: `B—${String(idx + 1).padStart(3, '0')}`,
-        name: builder.displayName,
-        fname: builder.displayName.replace(/^빌더\s*/, ''),
-        role: builder.role,
-        bio: builder.bio,
-        focus: builder.focus,
-        stack: builder.specialties,
-        done,
-        badgeLabel: builder.badgeLabel,
-        isLead: builder.isLead,
-        avatar: builder.avatar?.src ?? '/assets/img/avatar-placeholder.png',
-        principles: builder.principles,
-        projects: own.map((w) => ({
-          slug: w.slug,
-          title: w.title,
-          desc: w.summary,
-          tag: w.tag || w.category,
-          year: w.year,
-          img: w.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg',
-          withTeam: w.partner,
-        })),
-        others: builders
-          .filter((b) => b.status === 'active' && b.slug !== builder.slug)
-          .map((b) => ({ slug: b.slug, name: b.displayName, role: b.role, avatar: b.avatar?.src ?? '/assets/img/avatar-placeholder.png' })),
-      }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <BuilderProfileView
+        b={{
+          no: `B—${String(idx + 1).padStart(3, '0')}`,
+          name: builder.displayName,
+          fname: builder.displayName.replace(/^빌더\s*/, ''),
+          role: builder.role,
+          bio: builder.bio,
+          focus: builder.focus,
+          stack: builder.specialties,
+          done,
+          badgeLabel: builder.badgeLabel,
+          isLead: builder.isLead,
+          avatar: builder.avatar?.src ?? '/assets/img/avatar-placeholder.png',
+          principles: builder.principles,
+          projects: own.map((w) => ({
+            slug: w.slug,
+            title: w.title,
+            desc: w.summary,
+            tag: w.tag || w.category,
+            year: w.year,
+            img: w.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg',
+            withTeam: w.partner,
+          })),
+          others: builders
+            .filter((b) => b.status === 'active' && b.slug !== builder.slug)
+            .map((b) => ({ slug: b.slug, name: b.displayName, role: b.role, avatar: b.avatar?.src ?? '/assets/img/avatar-placeholder.png' })),
+        }}
+      />
+    </>
   );
 }

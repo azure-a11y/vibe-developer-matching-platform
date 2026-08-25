@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import Gnb from '@/components/Gnb';
 import SiteFx from '@/components/SiteFx';
 import {
+  absoluteUrl,
   bingVerification,
   googleVerification,
   naverVerification,
@@ -81,6 +82,29 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     console.error('[layout] site settings 조회 실패', siteSettingsError);
   }
 
+  // 실제 브랜드명 — settings가 비어 있으면(초기 상태) 사이트 전역에서 이미 쓰는 표기를 그대로 따른다.
+  // env(siteName)는 템플릿 기본값("Orca Blog")이라 여기서는 쓰지 않는다.
+  const orgName = settings.brandName || 'AI 빌더 그룹';
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: orgName,
+    url: siteUrl,
+    description:
+      'AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 기획부터 개발, 검수까지 검증된 빌더가 끝까지 맡습니다.',
+    logo: absoluteUrl('/favicon.png'),
+    ...(settings.companyName ? { legalName: settings.companyName } : {}),
+    ...(settings.businessRegistrationNumber ? { taxID: settings.businessRegistrationNumber } : {}),
+    ...(settings.ceoName ? { employee: [{ '@type': 'Person', name: settings.ceoName, jobTitle: '대표' }] } : {}),
+  };
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: orgName,
+    url: siteUrl,
+    inLanguage: siteLocale,
+  };
+
   return (
     <html lang={siteLocale.split('-')[0]}>
       <head>
@@ -88,6 +112,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {naverVerification && <meta name="naver-site-verification" content={naverVerification} />}
         {/* Points LLM crawlers at the machine-readable site summary. */}
         <link rel="llms" href={`${siteUrl}/llms.txt`} />
+        {/* site_settings에 채워진 실제 값만 반영 — 사업자 정보는 admin에서 입력해야 나간다 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
       </head>
       <body>
         <a className="skip" href="#main">본문 바로가기</a>

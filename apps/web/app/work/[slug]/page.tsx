@@ -51,22 +51,42 @@ export default async function WorkDetailPage({ params }: Params) {
     .filter((b): b is NonNullable<typeof b> => !!b)
     .map((b) => ({ slug: b.slug, name: b.displayName, role: b.role, avatar: b.avatar?.src ?? '/assets/img/avatar-placeholder.png' }));
 
+  const workJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: work.title,
+    description: work.summary,
+    url: absoluteUrl(`/work/${work.slug}`),
+    dateModified: work.updatedAt,
+    ...(work.assets[0] ? { image: [absoluteUrl(work.assets[0].src)] } : {}),
+    ...(work.techStack.length ? { keywords: work.techStack.join(', ') } : {}),
+    ...(resolvedBuilders.length
+      ? { creator: resolvedBuilders.map((b) => ({ '@type': 'Person', name: b.name })) }
+      : {}),
+  };
+
   return (
-    <WorkDetailView
-      work={{
-        title: work.title,
-        summary: work.summary,
-        tag: work.tag || work.category,
-        year: work.year,
-        period: work.period,
-        techStack: work.techStack,
-        scope: work.scope,
-        problem: work.problem,
-        solution: work.solution,
-        result: work.result,
-        cover: { src: work.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg', alt: work.assets[0]?.alt ?? work.title },
-        builders: resolvedBuilders,
-      }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(workJsonLd) }}
+      />
+      <WorkDetailView
+        work={{
+          title: work.title,
+          summary: work.summary,
+          tag: work.tag || work.category,
+          year: work.year,
+          period: work.period,
+          techStack: work.techStack,
+          scope: work.scope,
+          problem: work.problem,
+          solution: work.solution,
+          result: work.result,
+          cover: { src: work.assets[0]?.src ?? '/assets/img/ref-toktokhan.jpg', alt: work.assets[0]?.alt ?? work.title },
+          builders: resolvedBuilders,
+        }}
+      />
+    </>
   );
 }

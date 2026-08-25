@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { getBuilderRepository, getWorkRepository } from '@orca/content';
 
+import { absoluteUrl, siteBrandName } from '@/lib/site';
+
 import WorkView, { type BuilderCard, type WorkCard } from './view';
 import './work.css';
 
@@ -8,9 +10,22 @@ import './work.css';
    지우지 못한다 — 60초 시간 기반 재검증으로 Supabase 변경이 재배포 없이 반영되게 한다. */
 export const revalidate = 60;
 
+/* title은 핵심 검색어만 — layout.tsx의 title.template(`%s | 브랜드`)이 하위 세그먼트에는
+   자동 적용되어 최종 <title>이 "바이브 코딩 외주 포트폴리오 | AI 빌더 그룹"이 된다.
+   반면 openGraph.title은 템플릿이 적용되지 않아 브랜드를 직접 붙인다. */
+const WORK_TITLE = '바이브 코딩 외주 포트폴리오';
+const WORK_DESCRIPTION = '실제로 수행한 프로젝트와 검증된 빌더를 확인하세요. 30초 매칭으로 맞는 빌더를 추천받을 수도 있습니다.';
+
 export const metadata: Metadata = {
-  title: 'Work — 만드는 사람과, 만든 것들',
-  description: '실제로 수행한 프로젝트와 검증된 빌더를 확인하세요. 30초 매칭으로 맞는 빌더를 추천받을 수도 있습니다.',
+  title: WORK_TITLE,
+  description: WORK_DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/work') },
+  openGraph: {
+    type: 'website',
+    title: `${WORK_TITLE} | ${siteBrandName}`,
+    description: WORK_DESCRIPTION,
+    url: absoluteUrl('/work'),
+  },
 };
 
 export default async function WorkPage() {

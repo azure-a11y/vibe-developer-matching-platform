@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getBuilderRepository, getFaqCategoryRepository, getFaqRepository, getRepository, getWorkRepository } from '@orca/content';
 
 import { buildFaqTopics } from '@/lib/faq';
+import { absoluteUrl, siteBrandName } from '@/lib/site';
 
 import HomeView from './home-view';
 import './home.css';
@@ -10,10 +11,22 @@ import './home.css';
    지우지 못한다 — 60초 시간 기반 재검증으로 Supabase 변경이 재배포 없이 반영되게 한다. */
 export const revalidate = 60;
 
+/* 루트 페이지(app/page.tsx)는 layout.tsx의 title.template이 적용되지 않는 세그먼트라
+   브랜드 표기를 title에 직접 포함한다 — 핵심 검색어(바이브 코딩 외주)를 앞에 두고 브랜드는 뒤에. */
+const HOME_TITLE = `검증된 바이브 코딩 외주 | ${siteBrandName}`;
+const HOME_DESCRIPTION =
+  'AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 기획부터 개발, 검수까지 검증된 빌더가 끝까지 맡습니다.';
+
 export const metadata: Metadata = {
-  title: 'AI 빌더 그룹 — 바이브 코딩 외주',
-  description:
-    'AI 시대에 최적화된 개발자가 바이브 코딩으로 외주를 해드립니다. 기획부터 개발, 검수까지 검증된 빌더가 끝까지 맡습니다.',
+  title: HOME_TITLE,
+  description: HOME_DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/') },
+  openGraph: {
+    type: 'website',
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
+    url: absoluteUrl('/'),
+  },
 };
 
 // 홈 미리보기 개수 — 디자인 정책값(레이아웃이 이 개수를 전제로 짜여 있음). 늘리려면 홈 레이아웃도 같이 봐야 한다.

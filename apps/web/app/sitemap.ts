@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/builder`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
     { url: `${siteUrl}/insight`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${siteUrl}/content`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.5 },
-    { url: `${siteUrl}/contact`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.6 },
+    // /contact는 서버 콘텐츠 없이 즉시 홈으로 리다이렉트하는 페이지라 noindex 처리했다(app/contact/page.tsx) — sitemap에서도 제외.
     { url: `${siteUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
     ...workEntries,
     ...builderEntries,

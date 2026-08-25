@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { getRepository, insightCategoryLabel } from '@orca/content';
 
+import { absoluteUrl, siteBrandName } from '@/lib/site';
+
 import InsightView, { CATEGORY_LABEL, type InsightRow } from './view';
 import './insight.css';
 
@@ -11,9 +13,21 @@ import './insight.css';
 // changes appear without a web redeploy.
 export const revalidate = 0;
 
+/* title은 핵심 검색어만 — layout.tsx의 title.template이 하위 세그먼트에 자동으로 브랜드를 붙인다.
+   openGraph.title은 템플릿이 적용되지 않아 브랜드를 직접 붙인다. */
+const INSIGHT_TITLE = '외주 발주 가이드 · AI 인사이트';
+const INSIGHT_DESCRIPTION = '외주 발주 가이드부터 AI 도입, 일하는 방식까지 — 파트너 똑똑한개발자와 함께 쓰는 실무 인사이트입니다.';
+
 export const metadata: Metadata = {
-  title: 'Insight — 우리의 생각',
-  description: '파트너 똑똑한개발자의 실제 인사이트를 함께 발행합니다.',
+  title: INSIGHT_TITLE,
+  description: INSIGHT_DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/insight') },
+  openGraph: {
+    type: 'website',
+    title: `${INSIGHT_TITLE} | ${siteBrandName}`,
+    description: INSIGHT_DESCRIPTION,
+    url: absoluteUrl('/insight'),
+  },
 };
 
 export default async function InsightIndexPage() {

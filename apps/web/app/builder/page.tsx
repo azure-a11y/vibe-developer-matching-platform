@@ -2,15 +2,29 @@ import type { Metadata } from 'next';
 import { getBuilderRepository, getWorkRepository } from '@orca/content';
 import BuilderListView from './view';
 
+import { absoluteUrl, siteBrandName } from '@/lib/site';
+
 import './builder.css';
 
 /* admin과 web은 별도 Next.js 프로세스라 admin의 revalidatePath()가 이 페이지 캐시를
    지우지 못한다 — 60초 시간 기반 재검증으로 Supabase 변경이 재배포 없이 반영되게 한다. */
 export const revalidate = 60;
 
+/* title은 핵심 검색어만 — layout.tsx의 title.template이 하위 세그먼트에 자동으로 브랜드를 붙인다.
+   openGraph.title은 템플릿이 적용되지 않아 브랜드를 직접 붙인다. */
+const BUILDER_TITLE = '검증된 바이브 코딩 개발자';
+const BUILDER_DESCRIPTION = '교육을 수료하고 검수를 통과한 빌더들의 프로필과 수행 프로젝트를 확인하세요.';
+
 export const metadata: Metadata = {
-  title: 'Builder — 검증된 빌더',
-  description: '교육을 수료하고 검수를 통과한 빌더들의 프로필과 수행 프로젝트를 확인하세요.',
+  title: BUILDER_TITLE,
+  description: BUILDER_DESCRIPTION,
+  alternates: { canonical: absoluteUrl('/builder') },
+  openGraph: {
+    type: 'website',
+    title: `${BUILDER_TITLE} | ${siteBrandName}`,
+    description: BUILDER_DESCRIPTION,
+    url: absoluteUrl('/builder'),
+  },
 };
 
 export default async function BuilderListPage() {
